@@ -163,7 +163,7 @@ public class StringUtils {
      * @param s 字符串
      * @return {@code true} 字符串为空；{@code false} 字符串不为空
      */
-    public static boolean isEmpty(String s) {
+    public static boolean isEmpty(final String s) {
         return s == null || s.length() == 0;
     }
 
@@ -191,7 +191,7 @@ public class StringUtils {
      * @param s 字符串
      * @return {@code true} 字符串不为空；{@code false} 字符串为空
      */
-    public static boolean isNotEmpty(String s) {
+    public static boolean isNotEmpty(final String s) {
         return !isEmpty(s);
     }
 
@@ -215,7 +215,7 @@ public class StringUtils {
      * @param s 字符串
      * @return 去除首尾空格后的字符串
      */
-    public static String trim(String s) {
+    public static String trim(final String s) {
         return isBlank(s) ? null : s.trim();
     }
 
@@ -226,8 +226,8 @@ public class StringUtils {
      * @param t 目标字符串
      * @return {@code true} s 包含字符串 t；{@code false} s 不包含字符串 t
      */
-    public static boolean contains(String s, String t) {
-        return isNotBlank(s) && isNotBlank(t) && s.contains(t);
+    public static boolean contains(final String s, final String t) {
+        return s != null && t != null && s.contains(t);
     }
 
     /**
@@ -237,7 +237,7 @@ public class StringUtils {
      * @param t 字符串2
      * @return {@code true} 两个字符串相等；{@code false} 两个字符串不相等
      */
-    public static boolean equals(String s, String t) {
+    public static boolean equals(final String s, final String t) {
         return Objects.equals(s, t);
     }
 
@@ -248,7 +248,7 @@ public class StringUtils {
      * @param t 字符串2
      * @return {@code true} 两个字符串相等；{@code false} 两个字符串不相等
      */
-    public static boolean equalsIgnoreCase(String s, String t) {
+    public static boolean equalsIgnoreCase(final String s, final String t) {
         return s == null ? t == null : s.equalsIgnoreCase(t);
     }
 
@@ -258,7 +258,7 @@ public class StringUtils {
      * @param s 字符串
      * @return {@code true} 字符串是纯数字；{@code false} 字符串不是纯数字
      */
-    public static boolean isNumeric(String s) {
+    public static boolean isNumeric(final String s) {
         return isNotBlank(s) && Pattern.compile("[0-9]*").matcher(s).matches();
     }
 
@@ -268,8 +268,8 @@ public class StringUtils {
      * @param s 字符串
      * @return {@code true} 字符串是数值；{@code false} 字符串不是数值
      */
-    public static boolean isNumber(String s) {
-        return isNotBlank(s) && Pattern.compile("^([+|-]?0\\.\\d+)|^([+|-]?[1-9]\\d*(\\.\\d+)?)$").matcher(s).matches();
+    public static boolean isNumber(final String s) {
+        return isNotBlank(s) && Pattern.compile("^([+|-]?0|([+|-]?0\\.\\d+)|^([+|-]?[1-9]\\d*(\\.\\d+)?))$").matcher(s).matches();
     }
 
     /**
@@ -288,7 +288,7 @@ public class StringUtils {
      * @param s 待压缩的字符串内容
      * @return 压缩后的字节数组
      */
-    public static byte[] compress(String s) {
+    public static byte[] compress(final String s) {
         if (isBlank(s))
             return null;
 
@@ -384,7 +384,7 @@ public class StringUtils {
      * @param s 字符串
      * @return 首字母转为大写后的字符串
      */
-    public static String capitalize(String s) {
+    public static String capitalize(final String s) {
         return isEmpty(s) ? s : Character.toTitleCase(s.charAt(0)) + s.substring(1);
     }
 
@@ -394,7 +394,7 @@ public class StringUtils {
      * @param s 字符串
      * @return 首字母转为小写后的字符串
      */
-    public static String uncapitalize(String s) {
+    public static String uncapitalize(final String s) {
         return isEmpty(s) ? s : Character.toLowerCase(s.charAt(0)) + s.substring(1);
     }
 
@@ -404,7 +404,7 @@ public class StringUtils {
      * @param s 待转换的字符串
      * @return 转换后的 Unicode 码
      */
-    public static String string2Unicode(String s) {
+    public static String string2Unicode(final String s) {
         StringBuilder unicode = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
             unicode.append("\\u").append(Integer.toHexString(s.charAt(i)));
@@ -419,7 +419,7 @@ public class StringUtils {
      * @param unicode 待转换的 Unicode 码
      * @return 转换后的字符串
      */
-    public static String unicode2String(String unicode) {
+    public static String unicode2String(final String unicode) {
         StringBuilder s = new StringBuilder();
         String[] hex = unicode.split("\\\\u");
         for (int i = 1; i < hex.length; i++) {
