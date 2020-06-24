@@ -17,6 +17,7 @@ package com.chanus.yuntao.utils.core;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -427,5 +428,50 @@ public class StringUtils {
         }
 
         return s.toString();
+    }
+
+    /**
+     * 获取字符串 UTF-8 格式的字节码
+     *
+     * @param str 字符串
+     * @return 编码后的字节码
+     */
+    public static byte[] utf8Bytes(CharSequence str) {
+        return bytes(str, CHARSET_UTF8);
+    }
+
+    /**
+     * 获取字符串系统默认编码格式的字节码
+     *
+     * @param str 字符串
+     * @return 编码后的字节码
+     */
+    public static byte[] bytes(CharSequence str) {
+        return bytes(str, Charset.defaultCharset());
+    }
+
+    /**
+     * 获取字符串指定编码格式的字节码
+     *
+     * @param str     字符串
+     * @param charset 字符集，如果为空，则使用系统默认编码格式
+     * @return 编码后的字节码
+     */
+    public static byte[] bytes(CharSequence str, String charset) {
+        return bytes(str, isBlank(charset) ? Charset.defaultCharset() : Charset.forName(charset));
+    }
+
+    /**
+     * 获取字符串指定编码格式的字节码
+     *
+     * @param str     字符串
+     * @param charset 字符集，如果为空，则使用系统默认编码格式
+     * @return 编码后的字节码
+     */
+    public static byte[] bytes(CharSequence str, Charset charset) {
+        if (str == null)
+            return null;
+
+        return charset == null ? str.toString().getBytes() : str.toString().getBytes(charset);
     }
 }
