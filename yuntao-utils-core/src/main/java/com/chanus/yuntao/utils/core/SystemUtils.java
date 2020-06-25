@@ -18,9 +18,8 @@ package com.chanus.yuntao.utils.core;
 import com.sun.management.OperatingSystemMXBean;
 
 import java.lang.management.ManagementFactory;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.Enumeration;
+import java.net.*;
+import java.util.*;
 
 /**
  * 系统工具类
@@ -51,18 +50,6 @@ public class SystemUtils {
      */
     public static String OS_ARCH = System.getProperty("os.arch");
     /**
-     * 主机名
-     */
-    public static String HOST_NAME;
-    /**
-     * 主机 mac 地址
-     */
-    public static String HOST_MAC;
-    /**
-     * 主机本地 IP
-     */
-    public static String HOST_IP;
-    /**
      * 当前用户
      */
     public static final String CURRENT_USER = System.getProperty("user.name");
@@ -76,7 +63,7 @@ public class SystemUtils {
      */
     public static long totalPhysicalMemorySize;
 
-    private static OperatingSystemMXBean osmxb;
+    private static final OperatingSystemMXBean osmxb;
 
     /**
      * 1KB = 1024B
@@ -97,46 +84,91 @@ public class SystemUtils {
 
     static {
         try {
-            InetAddress inetAddress = InetAddress.getLocalHost();
-            HOST_NAME = inetAddress.getHostName();
-
-            StringBuilder sb = new StringBuilder();
-            byte[] mac = NetworkInterface.getByInetAddress(inetAddress).getHardwareAddress();
-            for (int i = 0; i < mac.length; i++) {
-                if (i != 0) {
-                    sb.append("-");
-                }
-                String str = Integer.toHexString(mac[i] & 0xff);
-                if (str.length() == 1) {
-                    sb.append("0").append(str);
-                } else {
-                    sb.append(str);
-                }
-            }
-            HOST_MAC = sb.toString().toUpperCase();
-
-            Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
-            sb = new StringBuilder();
-            while (nets.hasMoreElements()) {
-                NetworkInterface networkInterface = nets.nextElement();
-                Enumeration<InetAddress> enumIpAddr = networkInterface.getInetAddresses();
-                while (enumIpAddr.hasMoreElements()) {
-                    InetAddress ia = enumIpAddr.nextElement();
-                    if (!ia.isLoopbackAddress() && !ia.isLinkLocalAddress() && ia.isSiteLocalAddress()) {
-                        sb.append(ia.getHostAddress()).append(",");
-                    }
-                }
-            }
-            HOST_IP = sb.substring(0, sb.lastIndexOf(","));
-        } catch (Exception e) {
-            System.out.println("获取服务器本地IP出错");
-        }
-
-        try {
             osmxb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
             totalPhysicalMemorySize = osmxb.getTotalPhysicalMemorySize();
         } catch (Exception e) {
-            System.out.println("获取系统物理内存失败");
+            throw new RuntimeException("获取系统物理内存失败", e);
+        }
+    }
+
+    /**
+     * 获取主机名称
+     *
+     * @return 主机名称
+     */
+    public static String getHostName() {
+        try {
+            return InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException("获取主机名称地址异常", e);
+        }
+    }
+
+    /**
+     * 获取主机 Mac 地址
+     *
+     * @return 主机 Mac 地址
+     */
+    public static Set<String> getHostMac() {
+        try {
+            Set<String> macSet = new HashSet<>();
+            StringBuilder sb = new StringBuilder();
+            Enumeration<NetworkInterface> enumeration = NetworkInterface.getNetworkInterfaces();
+            NetworkInterface ni;
+            List<InterfaceAddress> interfaceAddresses;
+            while (enumeration.hasMoreElements()) {
+                ni = enumeration.nextElement();
+                interfaceAddresses = ni.getInterfaceAddresses();
+                for (InterfaceAddress addr : interfaceAddresses) {
+                    InetAddress ip = addr.getAddress();
+                    NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+                    if (network == null) {
+                        continue;
+                    }
+                    byte[] mac = network.getHardwareAddress();
+                    if (mac == null) {
+                        continue;
+                    }
+                    sb.delete(0, sb.length());
+                    for (int i = 0; i < mac.length; i++) {
+                        sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+                    }
+                    macSet.add(sb.toString());
+                }
+            }
+            return macSet;
+        } catch (SocketException e) {
+            throw new RuntimeException("获取主机 MAC 地址异常", e);
+        }
+    }
+
+    /**
+     * 获取主机 IP，排除回文地址、虚拟地址
+     *
+     * @return 主机所有网卡 IP
+     */
+    public static List<String> getHostIP() {
+        try {
+            List<String> ips = new ArrayList<>();
+            Enumeration<NetworkInterface> enumeration = NetworkInterface.getNetworkInterfaces();
+            NetworkInterface networkInterface;
+            while (enumeration.hasMoreElements()) {
+                networkInterface = enumeration.nextElement();
+                if (networkInterface.isLoopback() || networkInterface.isVirtual()) {
+                    continue;
+                }
+                Enumeration<InetAddress> inets = networkInterface.getInetAddresses();
+                while (inets.hasMoreElements()) {
+                    InetAddress addr = inets.nextElement();
+                    if (addr.isLoopbackAddress() || !addr.isSiteLocalAddress() || addr.isAnyLocalAddress()) {
+                        continue;
+                    }
+                    ips.add(addr.getHostAddress());
+                }
+            }
+            return ips;
+        } catch (SocketException e) {
+            throw new RuntimeException("获取主机 IP 异常", e);
         }
     }
 

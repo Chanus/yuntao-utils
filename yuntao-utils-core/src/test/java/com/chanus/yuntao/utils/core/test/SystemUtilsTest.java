@@ -18,6 +18,9 @@ package com.chanus.yuntao.utils.core.test;
 import com.chanus.yuntao.utils.core.SystemUtils;
 import org.junit.Test;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * SystemUtils 测试类
  *
@@ -33,9 +36,6 @@ public class SystemUtilsTest {
         System.out.println("操作系统名称: " + SystemUtils.OS_NAME);
         System.out.println("操作系统版本: " + SystemUtils.OS_VERSION);
         System.out.println("主机架构: " + SystemUtils.OS_ARCH);
-        System.out.println("主机名: " + SystemUtils.HOST_NAME);
-        System.out.println("主机mac地址: " + SystemUtils.HOST_MAC);
-        System.out.println("主机本地IP: " + SystemUtils.HOST_IP);
         System.out.println("当前用户: " + SystemUtils.CURRENT_USER);
         System.out.println("当前用户的家目录: " + SystemUtils.CURRENT_USER_HOME);
         System.out.println("系统总的物理内存: " + SystemUtils.totalPhysicalMemorySize);
@@ -49,5 +49,24 @@ public class SystemUtilsTest {
         System.out.println("JVM空闲的内存空间: " + SystemUtils.getFreeJVMMemorySize());
         System.out.println("JVM已用的内存空间: " + SystemUtils.getUsedJVMMemorySize());
         System.out.println("JVM最大的内存空间: " + SystemUtils.getMaxJVMMemorySize());
+    }
+
+    @Test
+    public void getHostNameTest() {
+        System.out.println(SystemUtils.getHostName());
+    }
+
+    @Test
+    public void getHostMacTest() {
+        Set<String> macSet = SystemUtils.getHostMac();
+        macSet.forEach(System.out::println);
+
+        System.out.println(macSet.contains("AC-DE-48-00-11-22"));
+    }
+
+    @Test
+    public void getHostIPTest() {
+        List<String> ips = SystemUtils.getHostIP();
+        ips.forEach(System.out::println);
     }
 }
