@@ -39,12 +39,21 @@ public class DateUtilsTest {
         System.out.println(DateUtils.format(date, "yyyy-MM-dd HH:mm:ss"));
         System.out.println(DateUtils.format(date, "yyyy-MM-dd"));
         System.out.println(DateUtils.format(date, "HH:mm:ss"));
+    }
 
-        System.out.println(DateUtils.formatDateTime(date));
+    @Test
+    public void formatDateTimeTest() {
+        System.out.println(DateUtils.formatDateTime(new Date()));
+    }
 
-        System.out.println(DateUtils.formatDate(date));
+    @Test
+    public void formatDateTest() {
+        System.out.println(DateUtils.formatDate(new Date()));
+    }
 
-        System.out.println(DateUtils.formatTime(date));
+    @Test
+    public void formatTimeTest() {
+        System.out.println(DateUtils.formatTime(new Date()));
     }
 
     @Test
@@ -54,11 +63,20 @@ public class DateUtilsTest {
         System.out.println(DateUtils.parse("2019-06-13 22:47:33", "yyyy-MM-dd HH:mm:ss"));
         System.out.println(DateUtils.parse("2019-06-13", "yyyy-MM-dd"));
         System.out.println(DateUtils.parse("22:47:33", "HH:mm:ss"));
+    }
 
+    @Test
+    public void parseDateTimeTest() {
         System.out.println(DateUtils.parseDateTime("2019-06-13 22:47:33"));
+    }
 
+    @Test
+    public void parseDateTest() {
         System.out.println(DateUtils.parseDate("2019-06-13"));
+    }
 
+    @Test
+    public void parseTimeTest() {
         System.out.println(DateUtils.parseTime("23:07:35"));
     }
 
@@ -172,21 +190,25 @@ public class DateUtilsTest {
     @Test
     public void diffMillisTest() {
         System.out.println(DateUtils.diffMillis(DateUtils.parseDateTime("2019-06-13 22:48:33"), DateUtils.parseDateTime("2019-06-13 22:47:33")));
+        System.out.println(DateUtils.diffMillis(DateUtils.parseDateTime("2019-06-13 22:47:33"), DateUtils.parseDateTime("2019-06-13 22:48:33")));
     }
 
     @Test
     public void diffYearsTest() {
         System.out.println(DateUtils.diffYears(DateUtils.parseDateTime("2020-06-13 22:47:33"), DateUtils.parseDateTime("2019-06-13 22:47:33")));
+        System.out.println(DateUtils.diffYears(DateUtils.parseDateTime("2019-06-13 22:47:33"), DateUtils.parseDateTime("2020-06-13 22:47:33")));
     }
 
     @Test
     public void diffMonthsTest() {
         System.out.println(DateUtils.diffMonths(DateUtils.parseDateTime("2020-06-13 22:47:33"), DateUtils.parseDateTime("2019-06-13 22:47:33")));
+        System.out.println(DateUtils.diffMonths(DateUtils.parseDateTime("2019-06-13 22:47:33"), DateUtils.parseDateTime("2020-06-13 22:47:33")));
     }
 
     @Test
     public void diffDaysTest() {
         System.out.println(DateUtils.diffDays(DateUtils.parseDateTime("2018-06-13 22:47:33"), DateUtils.parseDateTime("2019-06-13 22:47:33")));
+        System.out.println(DateUtils.diffDays(DateUtils.parseDateTime("2019-06-13 22:47:33"), DateUtils.parseDateTime("2018-06-13 22:47:33")));
     }
 
     @Test
@@ -200,12 +222,15 @@ public class DateUtilsTest {
         System.out.println(DateUtils.compare("2019-06-13 22:47:33", "2019-06-13 22:47:33", "yyyy-MM-dd HH:mm:ss"));
 
         System.out.println(DateUtils.compare("2019-06-13 12:47:33", "2019-06-13 22:47:33", "yyyy-MM-dd"));
-        System.out.println(DateUtils.compare("2019-06-13 23:47:33", "2019-06-13 22:47:33", "yyyy-MM-dd"));
-        System.out.println(DateUtils.compare("2019-06-13 22:47:33", "2019-06-13 22:47:33", "yyyy-MM-dd"));
+        System.out.println(DateUtils.compare("2019-06-14 23:47:33", "2019-06-13 22:47:33", "yyyy-MM-dd"));
+        System.out.println(DateUtils.compare("2019-06-12 22:47:33", "2019-06-13 22:47:33", "yyyy-MM-dd"));
+    }
 
+    @Test
+    public void compareNowTest() {
         System.out.println(DateUtils.compareNow(DateUtils.parseDateTime("2020-05-27 12:47:33")));
         System.out.println(DateUtils.compareNow(new Date()));
-        System.out.println(DateUtils.compareNow(DateUtils.parseDateTime("2020-05-27 22:47:33")));
+        System.out.println(DateUtils.compareNow(DateUtils.parseDateTime("2020-07-27 22:47:33")));
     }
 
     @Test

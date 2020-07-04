@@ -383,24 +383,16 @@ public class DateUtils {
      * @return {@code sourceDate} 和 {@code targetDate} 相差的年数
      */
     public static int diffYears(Date sourceDate, Date targetDate) {
-        Calendar sourceCalendar = Calendar.getInstance();
-        Calendar targetCalendar = Calendar.getInstance();
-        if (compare(sourceDate, targetDate) >= 0) {
-            sourceCalendar.setTime(sourceDate);
-            targetCalendar.setTime(targetDate);
-        } else {
-            sourceCalendar.setTime(targetDate);
-            targetCalendar.setTime(sourceDate);
-        }
+        Calendar[] calendars = getCalendars(sourceDate, targetDate);
 
-        int n = sourceCalendar.get(Calendar.YEAR) - targetCalendar.get(Calendar.YEAR);
+        int n = calendars[0].get(Calendar.YEAR) - calendars[1].get(Calendar.YEAR);
         if (n == 0)
             return n;
 
-        int sourceMonth = sourceCalendar.get(Calendar.MONTH);
-        int sourceDay = sourceCalendar.get(Calendar.DAY_OF_MONTH);
-        int targetMonth = targetCalendar.get(Calendar.MONTH);
-        int targetDay = targetCalendar.get(Calendar.DAY_OF_MONTH);
+        int sourceMonth = calendars[0].get(Calendar.MONTH);
+        int sourceDay = calendars[0].get(Calendar.DAY_OF_MONTH);
+        int targetMonth = calendars[1].get(Calendar.MONTH);
+        int targetDay = calendars[1].get(Calendar.DAY_OF_MONTH);
 
         return (sourceMonth > targetMonth || (sourceMonth == targetMonth && sourceDay >= targetDay)) ? n : (n - 1);
     }
@@ -413,19 +405,11 @@ public class DateUtils {
      * @return {@code sourceDate} 和 {@code targetDate} 相差的月数
      */
     public static int diffMonths(Date sourceDate, Date targetDate) {
-        Calendar sourceCalendar = Calendar.getInstance();
-        Calendar targetCalendar = Calendar.getInstance();
-        if (compare(sourceDate, targetDate) >= 0) {
-            sourceCalendar.setTime(sourceDate);
-            targetCalendar.setTime(targetDate);
-        } else {
-            sourceCalendar.setTime(targetDate);
-            targetCalendar.setTime(sourceDate);
-        }
+        Calendar[] calendars = getCalendars(sourceDate, targetDate);
 
-        int n = (sourceCalendar.get(Calendar.YEAR) - targetCalendar.get(Calendar.YEAR)) * 12 + sourceCalendar.get(Calendar.MONTH) - targetCalendar.get(Calendar.MONTH);
+        int n = (calendars[0].get(Calendar.YEAR) - calendars[1].get(Calendar.YEAR)) * 12 + calendars[0].get(Calendar.MONTH) - calendars[1].get(Calendar.MONTH);
 
-        return sourceCalendar.get(Calendar.DAY_OF_MONTH) >= targetCalendar.get(Calendar.DAY_OF_MONTH) ? n : (n - 1);
+        return calendars[0].get(Calendar.DAY_OF_MONTH) >= calendars[1].get(Calendar.DAY_OF_MONTH) ? n : (n - 1);
     }
 
     /**
@@ -436,19 +420,11 @@ public class DateUtils {
      * @return {@code sourceDate} 和 {@code targetDate} 相差的天数
      */
     public static int diffDays(Date sourceDate, Date targetDate) {
-        Calendar sourceCalendar = Calendar.getInstance();
-        Calendar targetCalendar = Calendar.getInstance();
-        if (compare(sourceDate, targetDate) >= 0) {
-            sourceCalendar.setTime(sourceDate);
-            targetCalendar.setTime(targetDate);
-        } else {
-            sourceCalendar.setTime(targetDate);
-            targetCalendar.setTime(sourceDate);
-        }
+        Calendar[] calendars = getCalendars(sourceDate, targetDate);
 
         int n = 0;
-        while (sourceCalendar.get(Calendar.YEAR) != targetCalendar.get(Calendar.YEAR) || sourceCalendar.get(Calendar.MONTH) != targetCalendar.get(Calendar.MONTH) || sourceCalendar.get(Calendar.DAY_OF_MONTH) != targetCalendar.get(Calendar.DAY_OF_MONTH)) {
-            targetCalendar.add(Calendar.DATE, 1);
+        while (calendars[0].get(Calendar.YEAR) != calendars[1].get(Calendar.YEAR) || calendars[0].get(Calendar.MONTH) != calendars[1].get(Calendar.MONTH) || calendars[0].get(Calendar.DAY_OF_MONTH) != calendars[1].get(Calendar.DAY_OF_MONTH)) {
+            calendars[1].add(Calendar.DATE, 1);
             n++;
         }
 
@@ -615,5 +591,19 @@ public class DateUtils {
      */
     public static int dayOfCycle(int cycle, String beginDateStr) {
         return dayOfCycle(new Date(), cycle, DateUtils.parseDate(beginDateStr));
+    }
+
+    private static Calendar[] getCalendars(Date sourceDate, Date targetDate) {
+        Calendar sourceCalendar = Calendar.getInstance();
+        Calendar targetCalendar = Calendar.getInstance();
+        if (compare(sourceDate, targetDate) >= 0) {
+            sourceCalendar.setTime(sourceDate);
+            targetCalendar.setTime(targetDate);
+        } else {
+            sourceCalendar.setTime(targetDate);
+            targetCalendar.setTime(sourceDate);
+        }
+
+        return new Calendar[] {sourceCalendar, targetCalendar};
     }
 }

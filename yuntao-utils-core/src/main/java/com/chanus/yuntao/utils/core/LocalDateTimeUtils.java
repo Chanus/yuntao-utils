@@ -412,16 +412,6 @@ public class LocalDateTimeUtils {
     }
 
     /**
-     * {@code Date} 转 {@code LocalDate}
-     *
-     * @param date {@code Date} 对象
-     * @return {@code LocalDate} 对象
-     */
-    public static LocalDate convertToLocalDateFromDate(Date date) {
-        return date == null ? null : LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()).toLocalDate();
-    }
-
-    /**
      * 时间戳转 {@code LocalDateTime}
      *
      * @param timestamp 时间戳
@@ -429,6 +419,16 @@ public class LocalDateTimeUtils {
      */
     public static LocalDateTime convertToLocalDateTimeFromTimestamp(long timestamp) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
+    }
+
+    /**
+     * {@code Date} 转 {@code LocalDate}
+     *
+     * @param date {@code Date} 对象
+     * @return {@code LocalDate} 对象
+     */
+    public static LocalDate convertToLocalDateFromDate(Date date) {
+        return date == null ? null : LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()).toLocalDate();
     }
 
     /**
@@ -462,117 +462,117 @@ public class LocalDateTimeUtils {
     }
 
     /**
-     * 获取某一天的开始时间
+     * 获取某一天的开始时间字符串
      *
      * @param localDateTime 日期时间
-     * @return 某一天的 00:00:00.000000000 时刻
+     * @return 某一天的 00:00:00 时刻
      */
-    public static LocalDateTime getDayStartTime(LocalDateTime localDateTime) {
-        return localDateTime == null ? null : localDateTime.with(LocalTime.MIN);
+    public static String getDayStartTime(LocalDateTime localDateTime) {
+        return localDateTime == null ? null : formatDateTime(localDateTime.with(LocalTime.MIN));
     }
 
     /**
-     * 获取某一天的结束时间
+     * 获取某一天的结束时间字符串
      *
      * @param localDateTime 日期时间
-     * @return 某一天的 23:59:59.999999999 时刻
+     * @return 某一天的 23:59:59 时刻
      */
-    public static LocalDateTime getDayEndTime(LocalDateTime localDateTime) {
-        return localDateTime == null ? null : localDateTime.with(LocalTime.MAX);
+    public static String getDayEndTime(LocalDateTime localDateTime) {
+        return localDateTime == null ? null : formatDateTime(localDateTime.with(LocalTime.MAX));
     }
 
     /**
-     * 获取当天的开始时间
+     * 获取当天的开始时间字符串
      *
-     * @return 当天的 00:00:00.000000000 时刻
+     * @return 当天的 00:00:00 时刻
      */
-    public static LocalDateTime getTodayStartTime() {
-        return LocalDateTime.now().with(LocalTime.MIN);
+    public static String getTodayStartTime() {
+        return formatDateTime(LocalDateTime.now().with(LocalTime.MIN));
     }
 
     /**
-     * 获取当天的结束时间
+     * 获取当天的结束时间字符串
      *
-     * @return 当天的 23:59:59.999999999 时刻
+     * @return 当天的 23:59:59 时刻
      */
-    public static LocalDateTime getTodayEndTime() {
-        return LocalDateTime.now().with(LocalTime.MAX);
+    public static String getTodayEndTime() {
+        return formatDateTime(LocalDateTime.now().with(LocalTime.MAX));
     }
 
     /**
-     * 获取某月的开始时间
-     *
-     * @param localDateTime 日期时间
-     * @return 某月的 00:00:00.000000000 时刻
-     */
-    public static LocalDateTime getMonthStartTime(LocalDateTime localDateTime) {
-        return localDateTime == null ? null : localDateTime.with(TemporalAdjusters.firstDayOfMonth()).with(LocalTime.MIN);
-    }
-
-    /**
-     * 获取某月的结束时间
+     * 获取某月的开始时间字符串
      *
      * @param localDateTime 日期时间
-     * @return 某月的 23:59:59.999999999 时刻
+     * @return 某月第一天的 00:00:00 时刻
      */
-    public static LocalDateTime getMonthEndTime(LocalDateTime localDateTime) {
-        return localDateTime == null ? null : localDateTime.with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX);
+    public static String getMonthStartTime(LocalDateTime localDateTime) {
+        return localDateTime == null ? null : formatDateTime(localDateTime.with(TemporalAdjusters.firstDayOfMonth()).with(LocalTime.MIN));
     }
 
     /**
-     * 获取当月的开始时间
-     *
-     * @return 当月的 00:00:00.000000000 时刻
-     */
-    public static LocalDateTime getThisMonthStartTime() {
-        return LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth()).with(LocalTime.MIN);
-    }
-
-    /**
-     * 获取当月的结束时间
-     *
-     * @return 当月的 23:59:59.999999999 时刻
-     */
-    public static LocalDateTime getThisMonthEndTime() {
-        return LocalDateTime.now().with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX);
-    }
-
-    /**
-     * 获取某年的开始时间
+     * 获取某月的结束时间字符串
      *
      * @param localDateTime 日期时间
-     * @return 某年的 00:00:00.000000000 时刻
+     * @return 某月最后一天的 23:59:59 时刻
      */
-    public static LocalDateTime getYearStartTime(LocalDateTime localDateTime) {
-        return localDateTime == null ? null : localDateTime.with(TemporalAdjusters.firstDayOfYear()).with(LocalTime.MIN);
+    public static String getMonthEndTime(LocalDateTime localDateTime) {
+        return localDateTime == null ? null : formatDateTime(localDateTime.with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX));
     }
 
     /**
-     * 获取某年的结束时间
+     * 获取当月的开始时间字符串
+     *
+     * @return 当月第一天的 00:00:00 时刻
+     */
+    public static String getThisMonthStartTime() {
+        return formatDateTime(LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth()).with(LocalTime.MIN));
+    }
+
+    /**
+     * 获取当月的结束时间字符串
+     *
+     * @return 当月最后一天的 23:59:59 时刻
+     */
+    public static String getThisMonthEndTime() {
+        return formatDateTime(LocalDateTime.now().with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX));
+    }
+
+    /**
+     * 获取某年的开始时间字符串
      *
      * @param localDateTime 日期时间
-     * @return 某年的 23:59:59.999999999 时刻
+     * @return 某年第一天的 00:00:00 时刻
      */
-    public static LocalDateTime getYearEndTime(LocalDateTime localDateTime) {
-        return localDateTime == null ? null : localDateTime.with(TemporalAdjusters.lastDayOfYear()).with(LocalTime.MAX);
+    public static String getYearStartTime(LocalDateTime localDateTime) {
+        return localDateTime == null ? null : formatDateTime(localDateTime.with(TemporalAdjusters.firstDayOfYear()).with(LocalTime.MIN));
     }
 
     /**
-     * 获取当年的开始时间
+     * 获取某年的结束时间字符串
      *
-     * @return 当年的 00:00:00.000000000 时刻
+     * @param localDateTime 日期时间
+     * @return 某年最后一天的 23:59:59 时刻
      */
-    public static LocalDateTime getThisYearStartTime() {
-        return LocalDateTime.now().with(TemporalAdjusters.firstDayOfYear()).with(LocalTime.MIN);
+    public static String getYearEndTime(LocalDateTime localDateTime) {
+        return localDateTime == null ? null : formatDateTime(localDateTime.with(TemporalAdjusters.lastDayOfYear()).with(LocalTime.MAX));
     }
 
     /**
-     * 获取当年的结束时间
+     * 获取当年的开始时间字符串
      *
-     * @return 当年的 23:59:59.999999999 时刻
+     * @return 当年第一天的 00:00:00 时刻
      */
-    public static LocalDateTime getThisYearEndTime() {
-        return LocalDateTime.now().with(TemporalAdjusters.lastDayOfYear()).with(LocalTime.MAX);
+    public static String getThisYearStartTime() {
+        return formatDateTime(LocalDateTime.now().with(TemporalAdjusters.firstDayOfYear()).with(LocalTime.MIN));
+    }
+
+    /**
+     * 获取当年的结束时间字符串
+     *
+     * @return 当年最后一天的 23:59:59 时刻
+     */
+    public static String getThisYearEndTime() {
+        return formatDateTime(LocalDateTime.now().with(TemporalAdjusters.lastDayOfYear()).with(LocalTime.MAX));
     }
 
     /**

@@ -54,7 +54,7 @@ public class CharsetUtils {
     public static final Charset CHARSET_GBK;
 
     static {
-        // 避免不支持 GBK 的系统中运行报错 issue#731
+        // 避免不支持 GBK 的系统中运行报错
         Charset _CHARSET_GBK = null;
         try {
             _CHARSET_GBK = Charset.forName(GBK);
@@ -65,7 +65,7 @@ public class CharsetUtils {
     }
 
     /**
-     * 转换为 Charset 对象
+     * 解析字符串编码为 Charset 对象
      *
      * @param charsetName 字符集，为空则返回默认字符集
      * @return Charset
@@ -88,8 +88,8 @@ public class CharsetUtils {
     /**
      * 解析字符串编码为 Charset 对象，解析失败返回默认编码
      *
-     * @param charsetName    字符集，为空则返回默认字符集
-     * @param defaultCharset 解析失败使用的默认编码
+     * @param charsetName    字符集，为空则返回默认编码
+     * @param defaultCharset 默认编码
      * @return Charset
      */
     public static Charset parse(String charsetName, Charset defaultCharset) {

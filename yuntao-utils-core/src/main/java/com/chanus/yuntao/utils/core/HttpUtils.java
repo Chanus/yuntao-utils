@@ -20,6 +20,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Http 请求工具类
@@ -33,6 +36,18 @@ public class HttpUtils {
      * 请求超时时间60s
      */
     private static final int TIMEOUT_IN_MILLIONS = 60000;
+    /**
+     * 文件上传分割线必须多两道线
+     */
+    private static final String TWO_HYPHENS = "--";
+    /**
+     * 文件上传边界
+     */
+    private static final String BOUNDARY = "*****";
+    /**
+     * 文件上传结尾
+     */
+    private static final String END = "\r\n";
 
     /**
      * 异步请求回调接口
@@ -51,19 +66,8 @@ public class HttpUtils {
         StringBuilder result = new StringBuilder();// 返回的结果
         BufferedReader bufferedReader = null;
         try {
-            // 创建URL对象
-            URL connURL = new URL(url);
-            // 打开URL连接
-            HttpURLConnection connection = (HttpURLConnection) connURL.openConnection();
-            // 设置通用属性
-            connection.setRequestProperty("Accept", "*/*");
-            connection.setRequestProperty("Connection", "Keep-Alive");
-            connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)");
-            connection.setRequestMethod("GET");
-            connection.setReadTimeout(TIMEOUT_IN_MILLIONS);
-            connection.setConnectTimeout(TIMEOUT_IN_MILLIONS);
-            // 建立实际的连接
-            connection.connect();
+            // 打开 URL 连接
+            HttpURLConnection connection = getGetConnection(url);
             // 响应头部获取
             // Map<String, List<String>> headers = httpConn.getHeaderFields();
 
@@ -105,7 +109,8 @@ public class HttpUtils {
      * @param callBack 回调方法
      */
     public static void getAsyn(final String url, final CallBack callBack) {
-        new Thread(() -> {
+        ExecutorService pool = Executors.newCachedThreadPool();
+        pool.execute(() -> {
             try {
                 String result = get(url);
                 if (callBack != null) {
@@ -114,7 +119,16 @@ public class HttpUtils {
             } catch (Exception e) {
                 throw new RuntimeException("Asynchronous request exception", e);
             }
-        }).start();
+        });
+
+        pool.shutdown();
+        try {
+            if (!pool.awaitTermination(10000, TimeUnit.MILLISECONDS)) {
+                pool.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            pool.shutdownNow();
+        }
     }
 
     /**
@@ -125,7 +139,8 @@ public class HttpUtils {
      * @param callBack   回调方法
      */
     public static void getAsyn(final String url, final Map<String, Object> parameters, final CallBack callBack) {
-        new Thread(() -> {
+        ExecutorService pool = Executors.newCachedThreadPool();
+        pool.execute(() -> {
             try {
                 String result = get(url, parameters);
                 if (callBack != null) {
@@ -134,7 +149,16 @@ public class HttpUtils {
             } catch (Exception e) {
                 throw new RuntimeException("Asynchronous request exception", e);
             }
-        }).start();
+        });
+
+        pool.shutdown();
+        try {
+            if (!pool.awaitTermination(10000, TimeUnit.MILLISECONDS)) {
+                pool.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            pool.shutdownNow();
+        }
     }
 
     /**
@@ -149,29 +173,10 @@ public class HttpUtils {
         BufferedReader bufferedReader = null;// 读取响应输入流
         BufferedWriter bufferedWriter = null;// 写入参数输出流
         try {
-            // 创建URL对象
-            URL connURL = new URL(url);
-            // 打开URL连接
-            HttpURLConnection connection = (HttpURLConnection) connURL.openConnection();
-            // 设置通用属性，请求头信息
-            connection.setRequestProperty("Accept", "*/*");
-            connection.setRequestProperty("Connection", "Keep-Alive");
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-            // 设定请求的方法，默认是GET
-            connection.setRequestMethod("POST");
-            // 设置是否向 connection 输出
-            connection.setDoOutput(true);
-            // 设置是否从 connection 读入，默认情况下是true
-            connection.setDoInput(true);
-            // POST 请求不能使用缓存
-            connection.setUseCaches(false);
-            connection.setInstanceFollowRedirects(true);
-            connection.setReadTimeout(TIMEOUT_IN_MILLIONS);
-            connection.setConnectTimeout(TIMEOUT_IN_MILLIONS);
-            // 建立实际的连接
-            connection.connect();
+            // 打开 URL 连接
+            HttpURLConnection connection = getPostConnection(url, false);
 
-            // POST请求参数
+            // POST 请求参数
             if (StringUtils.isNotBlank(params)) {
                 bufferedWriter = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8));
                 bufferedWriter.write(params);
@@ -179,7 +184,7 @@ public class HttpUtils {
             }
 
             // 读取响应
-            // 定义BufferedReader输入流来读取URL的响应，并设置编码方式
+            // 定义 BufferedReader 输入流来读取URL的响应，并设置编码方式
             bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
             String line;
             // 读取返回的内容
@@ -226,7 +231,8 @@ public class HttpUtils {
      * @param callBack 回调方法
      */
     public static void postAsyn(final String url, final String params, final CallBack callBack) {
-        new Thread(() -> {
+        ExecutorService pool = Executors.newCachedThreadPool();
+        pool.execute(() -> {
             try {
                 String result = post(url, params);
                 if (callBack != null) {
@@ -235,7 +241,16 @@ public class HttpUtils {
             } catch (Exception e) {
                 throw new RuntimeException("Asynchronous request exception", e);
             }
-        }).start();
+        });
+
+        pool.shutdown();
+        try {
+            if (!pool.awaitTermination(10000, TimeUnit.MILLISECONDS)) {
+                pool.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            pool.shutdownNow();
+        }
     }
 
     /**
@@ -245,7 +260,8 @@ public class HttpUtils {
      * @param callBack 回调方法
      */
     public static void postAsyn(final String url, final CallBack callBack) {
-        new Thread(() -> {
+        ExecutorService pool = Executors.newCachedThreadPool();
+        pool.execute(() -> {
             try {
                 String result = post(url);
                 if (callBack != null) {
@@ -254,7 +270,16 @@ public class HttpUtils {
             } catch (Exception e) {
                 throw new RuntimeException("Asynchronous request exception", e);
             }
-        }).start();
+        });
+
+        pool.shutdown();
+        try {
+            if (!pool.awaitTermination(10000, TimeUnit.MILLISECONDS)) {
+                pool.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            pool.shutdownNow();
+        }
     }
 
     /**
@@ -265,7 +290,8 @@ public class HttpUtils {
      * @param callBack   回调方法
      */
     public static void postAsyn(final String url, final Map<String, Object> parameters, final CallBack callBack) {
-        new Thread(() -> {
+        ExecutorService pool = Executors.newCachedThreadPool();
+        pool.execute(() -> {
             try {
                 String result = post(url, parameters);
                 if (callBack != null) {
@@ -274,62 +300,45 @@ public class HttpUtils {
             } catch (Exception e) {
                 throw new RuntimeException("Asynchronous request exception", e);
             }
-        }).start();
+        });
+
+        pool.shutdown();
+        try {
+            if (!pool.awaitTermination(10000, TimeUnit.MILLISECONDS)) {
+                pool.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            pool.shutdownNow();
+        }
     }
 
     /**
      * 文件上传
      *
-     * @param url    发送请求的 URL
-     * @param params 请求参数
-     * @param file   需要上传的文件
+     * @param url      发送请求的 URL
+     * @param file     需要上传的文件
+     * @param formName 表单名称，若为空则默认为 file
      * @return 远程资源的响应结果
      */
-    public static String upload(final String url, final String params, File file) {
+    public static String upload(final String url, File file, String formName) {
+        if (StringUtils.isBlank(formName))
+            formName = "file";
         StringBuilder result = new StringBuilder();// 返回的结果
         DataOutputStream dataOutputStream = null;
         BufferedReader bufferedReader = null;// 读取响应输入流
 
-        // 必须多两道线
-        String twoHyphens = "--";
-        // 边界
-        String boundary = "*****";
-        // 结尾
-        String end = "\r\n";
         try {
-            // 创建URL对象
-            URL connURL = new URL(url);
-            // 打开URL连接
-            HttpURLConnection connection = (HttpURLConnection) connURL.openConnection();
-            // 设置通用属性，请求头信息
-            connection.setRequestProperty("Accept", "*/*");
-            connection.setRequestProperty("Connection", "Keep-Alive");
-            connection.setRequestProperty("Charset", "UTF-8");
-            connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-            // 设定请求的方法，默认是GET
-            connection.setRequestMethod("POST");
-            // 设置是否向 connection 输出
-            connection.setDoOutput(true);
-            // 设置是否从 connection 读入，默认情况下是true
-            connection.setDoInput(true);
-            // POST 请求不能使用缓存
-            connection.setUseCaches(false);
-            connection.setInstanceFollowRedirects(true);
-            connection.setReadTimeout(TIMEOUT_IN_MILLIONS);
-            connection.setConnectTimeout(TIMEOUT_IN_MILLIONS);
-            // 建立实际的连接
-            connection.connect();
+            // 打开 URL 连接
+            HttpURLConnection connection = getPostConnection(url, true);
 
             // 获得输出流
             dataOutputStream = new DataOutputStream(connection.getOutputStream());
             // 输出表头
-            String head = twoHyphens + boundary + end +
-                    // 上传头像
-                    "Content-Disposition: form-data;name=\"media\";filename=\"" + file.getName() + "\"" + end +
-                    // 上传多媒体
-                    // "Content-Disposition: form-data;name=\"file\";filename=\""+ file.getName() + "\"" + end +
+            String head = TWO_HYPHENS + BOUNDARY + END +
+                    // 上传文件表单
+                    "Content-Disposition: form-data;name=\"" + formName + "\";filename=\"" + file.getName() + "\"" + END +
                     // 获取文件类型设置成请求头
-                    "Content-Type: application/octet-stream" + end + end;
+                    "Content-Type: application/octet-stream" + END + END;
             dataOutputStream.write(head.getBytes(StandardCharsets.UTF_8));
             // 把文件以流文件的方式推入到 url 中
             DataInputStream dataInputStream = new DataInputStream(new FileInputStream(file));
@@ -340,16 +349,8 @@ public class HttpUtils {
             }
             dataInputStream.close();
 
-            if (StringUtils.isNotBlank(params)) {
-                String paramData = end + twoHyphens + boundary + end +
-                        "Content-Disposition: form-data;name=\"description\";" +
-                        "Content-Type: application/octet-stream" + end + end;
-                dataOutputStream.write(paramData.getBytes(StandardCharsets.UTF_8));
-                dataOutputStream.write(params.getBytes(StandardCharsets.UTF_8));
-            }
-
             // 定义数据分隔线
-            String foot = end + twoHyphens + boundary + twoHyphens + end;
+            String foot = END + TWO_HYPHENS + BOUNDARY + TWO_HYPHENS + END;
             dataOutputStream.write(foot.getBytes(StandardCharsets.UTF_8));
             dataOutputStream.flush();
 
@@ -364,8 +365,7 @@ public class HttpUtils {
         } catch (Exception e) {
             throw new RuntimeException("Request exception", e);
         } finally {
-            IOUtils.close(dataOutputStream);
-            IOUtils.close(bufferedReader);
+            IOUtils.close(dataOutputStream, bufferedReader);
         }
         return result.toString();
     }
@@ -378,7 +378,7 @@ public class HttpUtils {
      * @return 远程资源的响应结果
      */
     public static String upload(final String url, File file) {
-        return upload(url, null, file);
+        return upload(url, file, null);
     }
 
     /**
@@ -387,35 +387,21 @@ public class HttpUtils {
      * @param url      发送请求的 URL
      * @param params   请求参数
      * @param savePath 下载文件保存路径
+     * @param fileName 下载文件名称
      * @return 下载的文件
      */
-    public static File downloadPost(final String url, final String params, final String savePath) {
-        File file;
+    public static File downloadPost(final String url, final String params, final String savePath, String fileName) {
+        String path = savePath + File.separatorChar + fileName;
+        File file = new File(path);
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
         BufferedInputStream bufferedInputStream = null;
         OutputStream out = null;
 
         try {
-            // 创建URL对象
-            URL connURL = new URL(url);
             // 打开URL连接
-            HttpURLConnection connection = (HttpURLConnection) connURL.openConnection();
-            // 设置通用属性，请求头信息
-            connection.setRequestProperty("Accept", "*/*");
-            connection.setRequestProperty("Connection", "Keep-Alive");
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-            // 设定请求的方法，默认是GET
-            connection.setRequestMethod("POST");
-            // 设置是否向 connection 输出
-            connection.setDoOutput(true);
-            // 设置是否从 connection 读入，默认情况下是true
-            connection.setDoInput(true);
-            // POST 请求不能使用缓存
-            connection.setUseCaches(false);
-            connection.setInstanceFollowRedirects(true);
-            connection.setReadTimeout(TIMEOUT_IN_MILLIONS);
-            connection.setConnectTimeout(TIMEOUT_IN_MILLIONS);
-            // 建立实际的连接
-            connection.connect();
+            HttpURLConnection connection = getPostConnection(url, false);
 
             // 请求参数
             if (StringUtils.isNotBlank(params)) {
@@ -423,19 +409,6 @@ public class HttpUtils {
                 outputStream.write(params.getBytes(StandardCharsets.UTF_8));
                 outputStream.flush();
                 IOUtils.closeQuietly(outputStream);
-            }
-
-            // 文件大小
-            // int fileLength = connection.getContentLength();
-            // 文件路径
-            String filePath = connection.getURL().getFile();
-            // 文件名
-            String fileFullName = filePath.substring(filePath.lastIndexOf(File.separatorChar) + 1);
-
-            String path = savePath + File.separatorChar + fileFullName;
-            file = new File(path);
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
             }
 
             // 获得输出流
@@ -450,8 +423,7 @@ public class HttpUtils {
         } catch (Exception e) {
             throw new RuntimeException("Request exception", e);
         } finally {
-            IOUtils.close(out);
-            IOUtils.close(bufferedInputStream);
+            IOUtils.close(out, bufferedInputStream);
         }
         return file;
     }
@@ -461,10 +433,11 @@ public class HttpUtils {
      *
      * @param url      发送请求的 URL
      * @param savePath 下载文件保存路径
+     * @param fileName 下载文件名称
      * @return 下载的文件
      */
-    public static File downloadPostFile(final String url, final String savePath) {
-        return downloadPost(url, null, savePath);
+    public static File downloadPost(final String url, final String savePath, String fileName) {
+        return downloadPost(url, null, savePath, fileName);
     }
 
     /**
@@ -476,27 +449,8 @@ public class HttpUtils {
      */
     public static BufferedInputStream downloadPost(final String url, final String params) {
         try {
-            // 创建URL对象
-            URL connURL = new URL(url);
             // 打开URL连接
-            HttpURLConnection connection = (HttpURLConnection) connURL.openConnection();
-            // 设置通用属性，请求头信息
-            connection.setRequestProperty("Accept", "*/*");
-            connection.setRequestProperty("Connection", "Keep-Alive");
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-            // 设定请求的方法，默认是GET
-            connection.setRequestMethod("POST");
-            // 设置是否向 connection 输出
-            connection.setDoOutput(true);
-            // 设置是否从 connection 读入，默认情况下是true
-            connection.setDoInput(true);
-            // POST 请求不能使用缓存
-            connection.setUseCaches(false);
-            connection.setInstanceFollowRedirects(true);
-            connection.setReadTimeout(TIMEOUT_IN_MILLIONS);
-            connection.setConnectTimeout(TIMEOUT_IN_MILLIONS);
-            // 建立实际的连接
-            connection.connect();
+            HttpURLConnection connection = getPostConnection(url, false);
 
             // 请求参数
             if (StringUtils.isNotBlank(params)) {
@@ -506,16 +460,8 @@ public class HttpUtils {
                 IOUtils.closeQuietly(outputStream);
             }
 
-            // 文件大小
-            // int fileLength = connection.getContentLength();
-            // 文件路径
-            String filePath = connection.getURL().getFile();
-            // 文件名
-            String fileFullName = filePath.substring(filePath.lastIndexOf(File.separatorChar) + 1);
-
             // 获得输入流
             return new BufferedInputStream(connection.getInputStream());
-
         } catch (Exception e) {
             throw new RuntimeException("Request exception", e);
         }
@@ -536,6 +482,40 @@ public class HttpUtils {
      *
      * @param url      发送请求的 URL
      * @param savePath 下载文件保存路径
+     * @param fileName 下载文件名称
+     * @return 下载的文件
+     */
+    public static File downloadGet(final String url, final String savePath, final String fileName) {
+        String path = savePath + File.separatorChar + fileName;
+        File file = new File(path);
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+
+        BufferedInputStream bufferedInputStream = downloadGet(url);
+        OutputStream out = null;
+        try {
+            // 获得输出流
+            out = new FileOutputStream(file);
+            int size;
+            byte[] buffer = new byte[1024];
+            while ((size = bufferedInputStream.read(buffer)) != -1) {
+                out.write(buffer, 0, size);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Request exception", e);
+        } finally {
+            IOUtils.close(out);
+            IOUtils.close(bufferedInputStream);
+        }
+        return file;
+    }
+
+    /**
+     * 文件下载，请求方式为 GET
+     *
+     * @param url      发送请求的 URL
+     * @param savePath 下载文件保存路径
      * @return 下载的文件
      */
     public static File downloadGet(final String url, final String savePath) {
@@ -544,24 +524,14 @@ public class HttpUtils {
         OutputStream out = null;
 
         try {
-            // 创建URL对象
-            URL connURL = new URL(url);
             // 打开URL连接
-            HttpURLConnection connection = (HttpURLConnection) connURL.openConnection();
-            // 设置通用属性
-            connection.setRequestProperty("Accept", "*/*");
-            connection.setRequestProperty("Connection", "Keep-Alive");
-            connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)");
-            connection.setRequestMethod("GET");
-            connection.setReadTimeout(TIMEOUT_IN_MILLIONS);
-            connection.setConnectTimeout(TIMEOUT_IN_MILLIONS);
-            // 建立实际的连接
-            connection.connect();
+            HttpURLConnection connection = getGetConnection(url);
 
             // 文件路径
             String filePath = connection.getURL().getFile();
+            filePath = filePath.replace(File.separatorChar, '/');
             // 文件名
-            String fileFullName = filePath.substring(filePath.lastIndexOf(File.separatorChar) + 1);
+            String fileFullName = filePath.substring(filePath.lastIndexOf('/') + 1);
 
             String path = savePath + File.separatorChar + fileFullName;
             file = new File(path);
@@ -581,8 +551,7 @@ public class HttpUtils {
         } catch (Exception e) {
             throw new RuntimeException("Request exception", e);
         } finally {
-            IOUtils.close(out);
-            IOUtils.close(bufferedInputStream);
+            IOUtils.close(out, bufferedInputStream);
         }
         return file;
     }
@@ -595,10 +564,30 @@ public class HttpUtils {
      */
     public static BufferedInputStream downloadGet(final String url) {
         try {
-            // 创建URL对象
-            URL connURL = new URL(url);
             // 打开URL连接
-            HttpURLConnection connection = (HttpURLConnection) connURL.openConnection();
+            HttpURLConnection connection = getGetConnection(url);
+
+            // 获得输入流
+            return new BufferedInputStream(connection.getInputStream());
+        } catch (Exception e) {
+            throw new RuntimeException("Request exception", e);
+        }
+    }
+
+    /**
+     * 获取 GET 请求连接
+     *
+     * @param url 发送请求的 URL
+     * @return {@link HttpURLConnection}
+     */
+    private static HttpURLConnection getGetConnection(final String url) {
+        // 创建URL对象
+        URL connURL;
+        // 打开URL连接
+        HttpURLConnection connection;
+        try {
+            connURL = new URL(url);
+            connection = (HttpURLConnection) connURL.openConnection();
             // 设置通用属性
             connection.setRequestProperty("Accept", "*/*");
             connection.setRequestProperty("Connection", "Keep-Alive");
@@ -608,11 +597,52 @@ public class HttpUtils {
             connection.setConnectTimeout(TIMEOUT_IN_MILLIONS);
             // 建立实际的连接
             connection.connect();
-
-            // 获得输入流
-            return new BufferedInputStream(connection.getInputStream());
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new RuntimeException("Request exception", e);
         }
+
+        return connection;
+    }
+
+    /**
+     * 获取 POST 请求连接
+     *
+     * @param url      发送请求的 URL
+     * @param isUpload 是否是文件上传，{@code true} 是，{@code false} 否
+     * @return {@link HttpURLConnection}
+     */
+    private static HttpURLConnection getPostConnection(final String url, boolean isUpload) {
+        // 创建 URL 对象
+        URL connURL;
+        // 打开 URL 连接
+        HttpURLConnection connection;
+        try {
+            connURL = new URL(url);
+            connection = (HttpURLConnection) connURL.openConnection();
+            // 设置通用属性，请求头信息
+            connection.setRequestProperty("Accept", "*/*");
+            connection.setRequestProperty("Connection", "Keep-Alive");
+            if (isUpload)
+                connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
+            else
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+            // 设定请求的方法，默认是 GET
+            connection.setRequestMethod("POST");
+            // 设置是否向 connection 输出
+            connection.setDoOutput(true);
+            // 设置是否从 connection 读入，默认情况下是 true
+            connection.setDoInput(true);
+            // POST 请求不能使用缓存
+            connection.setUseCaches(false);
+            connection.setInstanceFollowRedirects(true);
+            connection.setReadTimeout(TIMEOUT_IN_MILLIONS);
+            connection.setConnectTimeout(TIMEOUT_IN_MILLIONS);
+            // 建立实际的连接
+            connection.connect();
+        } catch (IOException e) {
+            throw new RuntimeException("Request exception", e);
+        }
+
+        return connection;
     }
 }

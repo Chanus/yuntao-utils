@@ -65,9 +65,13 @@ public class CollectionUtils {
         if (isEmpty(map))
             return null;
 
-        return new TreeMap<String, Object>(Comparator.naturalOrder()) {{
-            putAll(map);
-        }};
+        return new TreeMap<String, Object>(Comparator.naturalOrder()) {
+            private static final long serialVersionUID = -4667640843828612221L;
+
+            {
+                putAll(map);
+            }
+        };
     }
 
     /**

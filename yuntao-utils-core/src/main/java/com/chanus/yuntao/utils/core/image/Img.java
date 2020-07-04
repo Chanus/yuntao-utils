@@ -213,9 +213,9 @@ public class Img implements Serializable {
         } else {
             final String scaleStr = Float.toString(scale);
             // 缩放后的图片宽
-            int width = NumberUtils.mul(Integer.toString(srcImg.getWidth(null)), scaleStr).intValue();
+            int width = NumberUtils.multiply(Integer.toString(srcImg.getWidth(null)), scaleStr).intValue();
             // 缩放后的图片高
-            int height = NumberUtils.mul(Integer.toString(srcImg.getHeight(null)), scaleStr).intValue();
+            int height = NumberUtils.multiply(Integer.toString(srcImg.getHeight(null)), scaleStr).intValue();
             scale(width, height);
         }
         return this;
@@ -246,8 +246,8 @@ public class Img implements Serializable {
             scaleType = Image.SCALE_DEFAULT;
         }
 
-        double sx = NumberUtils.div(width, srcWidth);
-        double sy = NumberUtils.div(height, srcHeight);
+        double sx = NumberUtils.divide(width, srcWidth);
+        double sy = NumberUtils.divide(height, srcHeight);
 
         if (ImageUtils.IMAGE_TYPE_PNG.equals(this.targetImageType)) {
             final AffineTransformOp op = new AffineTransformOp(AffineTransform.getScaleInstance(sx, sy), null);
@@ -271,8 +271,8 @@ public class Img implements Serializable {
         Image srcImage = getValidSrcImg();
         int srcHeight = srcImage.getHeight(null);
         int srcWidth = srcImage.getWidth(null);
-        double heightRatio = NumberUtils.div(height, srcHeight);
-        double widthRatio = NumberUtils.div(width, srcWidth);
+        double heightRatio = NumberUtils.divide(height, srcHeight);
+        double widthRatio = NumberUtils.divide(width, srcWidth);
 
         if (widthRatio == heightRatio) {
             // 长宽都按照相同比例缩放时，返回缩放后的图片
@@ -375,7 +375,7 @@ public class Img implements Serializable {
         final int height = srcImage.getHeight(null);
 
         // 通过弧度占比计算弧度
-        arc = NumberUtils.mul(arc, Math.min(width, height));
+        arc = NumberUtils.multiply(arc, Math.min(width, height));
 
         final BufferedImage targetImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g2 = targetImage.createGraphics();
@@ -452,7 +452,7 @@ public class Img implements Serializable {
     /**
      * 给图片添加图片水印
      *
-     * @param pressImg 水印图片，可以使用 {@link ImageIO#read(File)} 方法读取文件
+     * @param pressImg 水印图片，可以使用 {@link javax.imageio.ImageIO#read(File)} 方法读取文件
      * @param x        修正值。 默认在中间，偏移量相对于中间偏移
      * @param y        修正值。 默认在中间，偏移量相对于中间偏移
      * @param alpha    透明度：alpha 必须是范围 [0.0, 1.0] 之内（包含边界值）的一个浮点数字
@@ -468,7 +468,7 @@ public class Img implements Serializable {
     /**
      * 给图片添加图片水印
      *
-     * @param pressImg  水印图片，可以使用 {@link ImageIO#read(File)} 方法读取文件
+     * @param pressImg  水印图片，可以使用 {@link javax.imageio.ImageIO#read(File)} 方法读取文件
      * @param rectangle 矩形对象，表示矩形区域的 x，y，width，height，x,y 从背景图片中心计算
      * @param alpha     透明度：alpha 必须是范围 [0.0, 1.0] 之内（包含边界值）的一个浮点数字
      * @return this

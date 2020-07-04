@@ -82,59 +82,10 @@ public class IpUtils {
     }
 
     /**
-     * 获取 {@code ip} 对应的物理地址信息
-     *
-     * @param ip IP 地址
-     * @return {@code ip} 对应的物理地址信息
-     */
-    /*public static IpAddress getIpPhysicalAddress(String ip) {
-        String url = "http://api.pi.do/api/v1/queryip" + "?ip=" + ip;
-        IpAddress ipAddress = new IpAddress();
-        ipAddress.setIp(ip);
-        try {
-            String result = HttpUtils.get(url);
-            JSONObject json = JSON.parseObject(result);
-            int code = json.getInteger("statuscode");
-            if (code == 0) {
-                JSONObject data = json.getJSONObject("data");
-                JSONObject ipInfo = data.getJSONObject("ipInfo");
-                ipAddress.setCode(0);
-                ipAddress.setCountry(ipInfo.getString("Country"));
-                ipAddress.setProvince(ipInfo.getString("Province"));
-                ipAddress.setCity(ipInfo.getString("City"));
-                ipAddress.setIsp(ipInfo.getString("ISP"));
-            } else
-                ipAddress.setCode(-1);
-        } catch (Exception e) {
-            ipAddress.setCode(-1);
-        }
-
-        return ipAddress;
-    }*/
-
-    /**
-     * 获取 {@code ip} 对应的物理地址信息，若 IP 为内网 IP 或是外网 IP 则对应的国家、省、市和运营商为空
-     *
-     * @param ip IP 地址
-     * @return {@code ip} 对应的物理地址信息
-     */
-    /*public static IpAddress getIpPhysicalAddressReal(String ip) {
-        IpAddress ipAddress = getIpPhysicalAddress(ip);
-        if ("0".equals(ipAddress.getCountry()))
-            ipAddress.setCountry(null);
-        if ("0".equals(ipAddress.getProvince()))
-            ipAddress.setProvince(null);
-        if ("0".equals(ipAddress.getCity()) || "内网IP".equals(ipAddress.getCity()))
-            ipAddress.setCity(null);
-        if ("0".equals(ipAddress.getIsp()) || "内网IP".equals(ipAddress.getIsp()))
-            ipAddress.setIsp(null);
-
-        return ipAddress;
-    }*/
-
-    /**
      * IP 物理地址
+     * 由于没有找到稳定的免费的获取 IP 物理地址的接口，所以废弃掉该类
      */
+    @Deprecated
     public static class IpAddress implements Serializable {
         private static final long serialVersionUID = -1L;
 
