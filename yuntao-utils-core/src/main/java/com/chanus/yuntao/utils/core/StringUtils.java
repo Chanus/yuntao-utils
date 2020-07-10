@@ -32,21 +32,6 @@ import java.util.zip.GZIPOutputStream;
  * @since 1.0.0
  */
 public class StringUtils {
-    public static final char C_SPACE = CharUtils.SPACE;
-    public static final char C_TAB = CharUtils.TAB;
-    public static final char C_DOT = CharUtils.DOT;
-    public static final char C_SLASH = CharUtils.SLASH;
-    public static final char C_BACKSLASH = CharUtils.BACKSLASH;
-    public static final char C_CR = CharUtils.CR;
-    public static final char C_LF = CharUtils.LF;
-    public static final char C_UNDERLINE = CharUtils.UNDERLINE;
-    public static final char C_COMMA = CharUtils.COMMA;
-    public static final char C_DELIM_START = CharUtils.DELIM_START;
-    public static final char C_DELIM_END = CharUtils.DELIM_END;
-    public static final char C_BRACKET_START = CharUtils.BRACKET_START;
-    public static final char C_BRACKET_END = CharUtils.BRACKET_END;
-    public static final char C_COLON = CharUtils.COLON;
-
     public static final String SPACE = " ";
     public static final String TAB = "	";
     public static final String DOT = ".";
@@ -75,11 +60,6 @@ public class StringUtils {
     public static final String HTML_GT = "&gt;";
 
     public static final String EMPTY_JSON = "{}";
-
-    /**
-     * 字符串编码格式
-     */
-    public static final String CHARSET_UTF8 = "UTF-8";
 
     /**
      * 判断字符串是否为空或空白，空白的定义如下：
@@ -260,7 +240,7 @@ public class StringUtils {
      * @return {@code true} 字符串是纯数字；{@code false} 字符串不是纯数字
      */
     public static boolean isNumeric(final String s) {
-        return isNotBlank(s) && Pattern.compile("[0-9]*").matcher(s).matches();
+        return isNotBlank(s) && Pattern.compile("[0-9]+").matcher(s).matches();
     }
 
     /**
@@ -437,7 +417,7 @@ public class StringUtils {
      * @return 编码后的字节码
      */
     public static byte[] utf8Bytes(CharSequence str) {
-        return bytes(str, CHARSET_UTF8);
+        return bytes(str, CharsetUtils.UTF_8);
     }
 
     /**

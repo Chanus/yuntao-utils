@@ -15,8 +15,8 @@
  */
 package com.chanus.yuntao.utils.core.test;
 
+import com.chanus.yuntao.utils.core.CharsetUtils;
 import com.chanus.yuntao.utils.core.FileUtils;
-import com.chanus.yuntao.utils.core.StringUtils;
 import org.junit.Test;
 
 import java.io.File;
@@ -39,9 +39,9 @@ public class FileUtilsTest {
     @Test
     public void readTest() {
         File file = new File(path);
-        String s1 = FileUtils.read(file, StringUtils.CHARSET_UTF8);
+        String s1 = FileUtils.read(file, CharsetUtils.UTF_8);
         System.out.println(s1);
-        String s2 = FileUtils.read(path, StringUtils.CHARSET_UTF8);
+        String s2 = FileUtils.read(path, CharsetUtils.UTF_8);
         System.out.println(s2);
     }
 
@@ -49,10 +49,14 @@ public class FileUtilsTest {
     public void writeTest() {
         FileUtils.write(path, "abcdefg", false);
         FileUtils.write(path, "\r\nhijklmn\r\n", true);
-        List<String> content = new ArrayList<String>() {{
-            add("opq rst");
-            add("uvw xyz");
-        }};
+        List<String> content = new ArrayList<String>() {
+            private static final long serialVersionUID = -7265293864991894455L;
+
+            {
+                add("opq rst");
+                add("uvw xyz");
+            }
+        };
         FileUtils.write(path, content, true);
 
         FileInputStream fis;

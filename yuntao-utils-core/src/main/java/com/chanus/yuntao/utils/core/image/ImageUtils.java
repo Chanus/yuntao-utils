@@ -348,6 +348,8 @@ public class ImageUtils {
         int srcHeight = srcImage.getHeight(null); // 源图高度
 
         try {
+            FileUtils.mkdirs(descDir);
+
             if (srcWidth > destWidth && srcHeight > destHeight) {
                 int cols; // 切片横向数量
                 int rows; // 切片纵向数量
@@ -404,12 +406,7 @@ public class ImageUtils {
      * @param cols     目标切片列数。默认2，必须是范围 [1, 20] 之内
      */
     public static void sliceByRowsAndCols(Image srcImage, File destDir, int rows, int cols) {
-        if (!destDir.exists()) {
-            FileUtils.mkdirs(destDir);
-        } else if (!destDir.isDirectory()) {
-            throw new IllegalArgumentException("Destination Dir must be a Directory !");
-        }
-
+        FileUtils.mkdirs(destDir);
         try {
             if (rows <= 0 || rows > 20) {
                 rows = 2; // 切片行数

@@ -155,6 +155,6 @@ public class StreamUtils {
      * @return 字节流
      */
     public static ByteArrayInputStream toUtf8Stream(String content) {
-        return toStream(content, StringUtils.CHARSET_UTF8);
+        return toStream(content, CharsetUtils.UTF_8);
     }
 }

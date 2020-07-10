@@ -16,10 +16,8 @@
 package com.chanus.yuntao.utils.core;
 
 import java.io.*;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.net.URL;
+import java.util.*;
 
 /**
  * 属性文件操作工具类
@@ -167,9 +165,13 @@ public class PropertiesUtils {
         InputStream is = null;
         OutputStream os = null;
         try {
-            is = new FileInputStream(PROPERTIES_NAME);
+            URL url = PropertiesUtils.class.getClassLoader().getResource(PROPERTIES_NAME);
+            if (url == null)
+                throw new RuntimeException("default properties file is not exist");
+            String propertiesFile = PropertiesUtils.class.getClassLoader().getResource(PROPERTIES_NAME).getFile();
+            is = new FileInputStream(propertiesFile);
             properties.load(is);
-            os = new FileOutputStream(PropertiesUtils.class.getClassLoader().getResource(PROPERTIES_NAME).getFile());
+            os = new FileOutputStream(propertiesFile);
             properties.setProperty(key, value);
             properties.store(os, "Update '" + key + "' value");
         } catch (IOException e) {

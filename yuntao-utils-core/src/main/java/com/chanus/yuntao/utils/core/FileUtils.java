@@ -428,14 +428,16 @@ public class FileUtils {
      *
      * @param file 文件
      */
-    public static void createFile(File file) {
+    public static File createFile(File file) {
         if (file == null)
-            return;
+            return null;
 
         file.getParentFile().mkdirs();
         try {
             if (!file.exists() || !file.isFile())
                 file.createNewFile();
+
+            return file;
         } catch (IOException e) {
             throw new RuntimeException("IOException occurred.", e);
         }
@@ -446,11 +448,11 @@ public class FileUtils {
      *
      * @param path 文件路径
      */
-    public static void createFile(String path) {
+    public static File createFile(String path) {
         if (StringUtils.isBlank(path))
-            return;
+            return null;
 
-        createFile(new File(path));
+        return createFile(new File(path));
     }
 
     /**

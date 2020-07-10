@@ -32,7 +32,7 @@ public class AESUtilsTest {
     String text = "测试AES加密！";
 
     @Test
-    public void createKeyTest() {
+    public void generateKeyTest() {
         String seed = "yuntao";
         String key1 = AESUtils.generateKey(seed);
         String key2 = AESUtils.generateKey(seed);

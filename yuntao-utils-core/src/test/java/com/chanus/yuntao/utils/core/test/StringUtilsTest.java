@@ -15,9 +15,11 @@
  */
 package com.chanus.yuntao.utils.core.test;
 
+import com.chanus.yuntao.utils.core.CharsetUtils;
 import com.chanus.yuntao.utils.core.StringUtils;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -224,6 +226,9 @@ public class StringUtilsTest {
         System.out.println(StringUtils.isNumber("  "));// false
         System.out.println(StringUtils.isNumber("+0"));// true
         System.out.println(StringUtils.isNumber("-0"));// true
+        System.out.println(StringUtils.isNumber("-0.00"));// true
+        System.out.println(StringUtils.isNumber("-000.000"));// false
+        System.out.println(StringUtils.isNumber("-010.001"));// false
         System.out.println(StringUtils.isNumber(" 12 "));// false
         System.out.println(StringUtils.isNumber(" -12 "));// false
         System.out.println(StringUtils.isNumber("+1"));// true
@@ -245,8 +250,13 @@ public class StringUtilsTest {
     public void compressTest() {
         String s = "test";
         byte[] b = StringUtils.compress(s);
-       String s2 = new String(Objects.requireNonNull(StringUtils.decompress(b)));
+        String s2 = new String(Objects.requireNonNull(StringUtils.decompress(b)));
         System.out.println(s2);
+    }
+
+    @Test
+    public void repeatTest() {
+        System.out.println(StringUtils.repeat("abc", 5));
     }
 
     @Test
@@ -273,5 +283,21 @@ public class StringUtilsTest {
     @Test
     public void unicode2StringTest() {
         System.out.println(StringUtils.unicode2String("\\u6d4b\\u8bd5"));
+    }
+
+    @Test
+    public void utf8BytesTest() {
+        String s = "测试";
+        byte[] b = StringUtils.utf8Bytes(s);
+        System.out.println(Arrays.toString(b));// [-26, -75, -117, -24, -81, -107]
+    }
+
+    @Test
+    public void bytesTest() {
+        String s = "测试";
+        byte[] b = StringUtils.bytes(s);
+        System.out.println(Arrays.toString(b));// [-26, -75, -117, -24, -81, -107]
+        b = StringUtils.bytes(s, CharsetUtils.CHARSET_GBK);
+        System.out.println(Arrays.toString(b));// [-78, -30, -54, -44]
     }
 }

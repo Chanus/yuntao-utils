@@ -15,6 +15,7 @@
  */
 package com.chanus.yuntao.utils.core.codec;
 
+import com.chanus.yuntao.utils.core.CharsetUtils;
 import com.chanus.yuntao.utils.core.StringUtils;
 
 import java.nio.charset.Charset;
@@ -93,7 +94,7 @@ public class Base32 {
      * @return 被加密后的字符串
      */
     public static String encode(String source) {
-        return encode(source, StringUtils.CHARSET_UTF8);
+        return encode(source, CharsetUtils.UTF_8);
     }
 
     /**
@@ -175,7 +176,7 @@ public class Base32 {
      * @return 解码后的的字符串
      */
     public static String decode(String source) {
-        return decode(source, StringUtils.CHARSET_UTF8);
+        return decode(source, CharsetUtils.UTF_8);
     }
 
     /**

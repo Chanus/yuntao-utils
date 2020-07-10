@@ -15,11 +15,11 @@
  */
 package com.chanus.yuntao.utils.core.test.encrypt;
 
+import com.chanus.yuntao.utils.core.StringUtils;
 import com.chanus.yuntao.utils.core.encrypt.RSAUtils;
 import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.Map;
 
 /**
@@ -40,30 +40,35 @@ public class RSAUtilsTest {
     }
 
     @Test
-    public void RSATest() {
-        String text = "我是明文，请加密我！";
-
+    public void encryptByPublicKeyTest() {
         // 公钥加密的密文每次都不一样
-        String cipher1 = Base64.getEncoder().encodeToString(RSAUtils.encryptByPublicKey(text.getBytes(StandardCharsets.UTF_8), publicKey));
-        String cipher1_1 = RSAUtils.encryptByPublicKey(text, publicKey);
-        System.out.println("公钥加密：" + cipher1);
-        System.out.println("公钥加密：" + cipher1_1);
+        String text = "我是明文，请加密我！";
+        byte[] b = RSAUtils.encryptByPublicKey(StringUtils.utf8Bytes(text), publicKey);
+        String cipher1 = com.chanus.yuntao.utils.core.codec.Base64.encode(b);
+        System.out.println(cipher1);
+        String cipher2 = RSAUtils.encryptByPublicKey(text, publicKey);
+        System.out.println(cipher2);
 
-        // 私钥加密的密文每次都一样
-        String cipher2 = Base64.getEncoder().encodeToString(RSAUtils.encryptByPrivateKey(text.getBytes(StandardCharsets.UTF_8), privateKey));
-        String cipher2_1 = RSAUtils.encryptByPrivateKey(text, privateKey);
-        System.out.println("私钥加密：" + cipher2);
-        System.out.println("私钥加密：" + cipher2_1);
-
-        String text1 = new String(RSAUtils.decryptByPublicKey(Base64.getDecoder().decode(cipher2), publicKey), StandardCharsets.UTF_8);
-        String text1_1 = RSAUtils.decryptByPublicKey(cipher2_1, publicKey);
+        String text1 = new String(RSAUtils.decryptByPrivateKey(b, privateKey), StandardCharsets.UTF_8);
+        String text2 = RSAUtils.decryptByPrivateKey(cipher2, privateKey);
         System.out.println("公钥解密私钥加密密文：" + text1);
-        System.out.println("公钥解密私钥加密密文：" + text1_1);
+        System.out.println("公钥解密私钥加密密文：" + text2);
+    }
 
-        String text2 = new String(RSAUtils.decryptByPrivateKey(Base64.getDecoder().decode(cipher1), privateKey), StandardCharsets.UTF_8);
-        String text2_1 = RSAUtils.decryptByPrivateKey(cipher1_1, privateKey);
+    @Test
+    public void encryptByPrivateKeyTest() {
+        // 私钥加密的密文每次都一样
+        String text = "我是明文，请加密我！";
+        byte[] b = RSAUtils.encryptByPrivateKey(StringUtils.utf8Bytes(text), privateKey);
+        String cipher1 = com.chanus.yuntao.utils.core.codec.Base64.encode(b);
+        System.out.println(cipher1);
+        String cipher2 = RSAUtils.encryptByPrivateKey(text, privateKey);
+        System.out.println(cipher2);
+
+        String text1 = new String(RSAUtils.decryptByPublicKey(b, publicKey), StandardCharsets.UTF_8);
+        String text2 = RSAUtils.decryptByPublicKey(cipher2, publicKey);
+        System.out.println("私钥解密公钥加密密文：" + text1);
         System.out.println("私钥解密公钥加密密文：" + text2);
-        System.out.println("私钥解密公钥加密密文：" + text2_1);
     }
 
     @Test
@@ -74,9 +79,15 @@ public class RSAUtilsTest {
         String signature2 = RSAUtils.sign(text, privateKey);
         System.out.println("数字签名：" + signature1);
         System.out.println("数字签名：" + signature2);
+    }
 
-        boolean b1 = RSAUtils.verify(text.getBytes(), signature1, publicKey);
-        boolean b2 = RSAUtils.verify(text, signature2, publicKey);
+    @Test
+    public void verifyTest() {
+        String text = "我是一个字符串，请对我进行数字签名。";
+        String signature = "LK2unNh1ctIyZLaGhITnv1r5NgzDqEsHP/dKKvW3iDXIC8XQZNtX7VNEY7CjdWhY/dJ93IGjmmt8FGbU9540L8EV6uFCN8VyuhJpUDmQf17twB/88uyxAKIZcSx7IFJCv8yFfgfS3yCVA7kdho8aUKZegzKDVHMLalLTC+wSZzo=";
+
+        boolean b1 = RSAUtils.verify(text.getBytes(), signature, publicKey);
+        boolean b2 = RSAUtils.verify(text, signature, publicKey);
         System.out.println("验签结果：" + b1);
         System.out.println("验签结果：" + b2);
     }

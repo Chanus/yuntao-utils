@@ -32,16 +32,9 @@ import java.util.concurrent.TimeUnit;
 public class RandomUtilsTest {
     @Test
     public void getRandomIntTest() {
-        for (int i = 0; i < 10; i++) {
-            System.out.println(RandomUtils.getRandomInt(10));
-        }
-        int i1 = RandomUtils.getRandomInt();
-        int i2 = RandomUtils.getRandomInt(100);
-        int i3 = RandomUtils.getRandomInt(100, 1000);
-
-        System.out.println("随机int数值：" + i1);
-        System.out.println("0-100之间的随机int数值：" + i2);
-        System.out.println("100-1000之间的随机int数值：" + i3);
+        System.out.println("随机 int 数值：" + RandomUtils.getRandomInt());
+        System.out.println("0-100之间的随机 int 数值：" + RandomUtils.getRandomInt(100));
+        System.out.println("100-1000之间的随机 int 数值：" + RandomUtils.getRandomInt(100, 1000));
     }
 
     @Test
@@ -63,24 +56,16 @@ public class RandomUtilsTest {
 
     @Test
     public void getRandomLongTest() {
-        long l1 = RandomUtils.getRandomLong();
-        long l2 = RandomUtils.getRandomLong(100L);
-        long l3 = RandomUtils.getRandomLong(100L, 1000L);
-
-        System.out.println("随机long数值：" + l1);
-        System.out.println("0-100之间的随机long数值：" + l2);
-        System.out.println("100-1000之间的随机long数值：" + l3);
+        System.out.println("随机 long 数值：" + RandomUtils.getRandomLong());
+        System.out.println("0-100之间的随机 long 数值：" + RandomUtils.getRandomLong(100L));
+        System.out.println("100-1000之间的随机 long 数值：" + RandomUtils.getRandomLong(100L, 1000L));
     }
 
     @Test
     public void getRandomDoubleTest() {
-        double d1 = RandomUtils.getRandomDouble();
-        double d2 = RandomUtils.getRandomDouble(100.0D);
-        double d3 = RandomUtils.getRandomDouble(100.0D, 1000.0D);
-
-        System.out.println("随机double数值：" + d1);
-        System.out.println("0-100之间的随机double数值：" + d2);
-        System.out.println("100-1000之间的随机double数值：" + d3);
+        System.out.println("随机 double 数值：" + RandomUtils.getRandomDouble());
+        System.out.println("0-100之间的随机 double 数值：" + RandomUtils.getRandomDouble(100.0D));
+        System.out.println("100-1000之间的随机 double 数值：" + RandomUtils.getRandomDouble(100.0D, 1000.0D));
     }
 
     @Test
@@ -126,5 +111,10 @@ public class RandomUtilsTest {
     @Test
     public void getUppercaseUUIDTest() {
         System.out.println(RandomUtils.getUppercaseUUID());
+    }
+
+    @Test
+    public void getRandomColorTest() {
+        System.out.println(RandomUtils.getRandomColor());
     }
 }
