@@ -171,7 +171,8 @@ public class RSAUtils {
     public static byte[] encryptByPublicKey(byte[] data, String publicKey) {
         try {
             RSAPublicKey rsaPublicKey = getPublicKey(publicKey);
-            return encrypt(data, rsaPublicKey, rsaPublicKey.getModulus().bitLength());
+            int maxBlock = getMaxBlock(Cipher.ENCRYPT_MODE, rsaPublicKey.getModulus().bitLength());
+            return encrypt(data, rsaPublicKey, maxBlock);
         } catch (Exception e) {
             throw new RuntimeException("encrypt by public key error.", e);
         }
@@ -198,7 +199,8 @@ public class RSAUtils {
     public static byte[] encryptByPrivateKey(byte[] data, String privateKey) {
         try {
             RSAPrivateKey rsaPrivateKey = getPrivateKey(privateKey);
-            return encrypt(data, rsaPrivateKey, rsaPrivateKey.getModulus().bitLength());
+            int maxBlock = getMaxBlock(Cipher.ENCRYPT_MODE, rsaPrivateKey.getModulus().bitLength());
+            return encrypt(data, rsaPrivateKey, maxBlock);
         } catch (Exception e) {
             throw new RuntimeException("encrypt by private key error.", e);
         }
@@ -225,7 +227,8 @@ public class RSAUtils {
     public static byte[] decryptByPublicKey(byte[] data, String publicKey) {
         try {
             RSAPublicKey rsaPublicKey = getPublicKey(publicKey);
-            return decrypt(data, rsaPublicKey, rsaPublicKey.getModulus().bitLength());
+            int maxBlock = getMaxBlock(Cipher.DECRYPT_MODE, rsaPublicKey.getModulus().bitLength());
+            return decrypt(data, rsaPublicKey, maxBlock);
         } catch (Exception e) {
             throw new RuntimeException("decrypt by public key error.", e);
         }
@@ -252,7 +255,8 @@ public class RSAUtils {
     public static byte[] decryptByPrivateKey(byte[] data, String privateKey) {
         try {
             RSAPrivateKey rsaPrivateKey = getPrivateKey(privateKey);
-            return decrypt(data, rsaPrivateKey, rsaPrivateKey.getModulus().bitLength());
+            int maxBlock = getMaxBlock(Cipher.DECRYPT_MODE, rsaPrivateKey.getModulus().bitLength());
+            return decrypt(data, rsaPrivateKey, maxBlock);
         } catch (Exception e) {
             throw new RuntimeException("decrypt by private key error.", e);
         }
@@ -278,12 +282,9 @@ public class RSAUtils {
      */
     public static String sign(byte[] data, String privateKey) {
         try {
-            byte[] keyBytes = Base64.getDecoder().decode(privateKey);
-            PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(keyBytes);
-            KeyFactory keyFactory = KeyFactory.getInstance(RSA_ALGORITHM);
-            PrivateKey key = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
+            PrivateKey rsaPrivateKey = getPrivateKey(privateKey);
             Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
-            signature.initSign(key);
+            signature.initSign(rsaPrivateKey);
             signature.update(data);
             return new String(Base64.getEncoder().encode(signature.sign()));
         } catch (Exception e) {
@@ -312,12 +313,9 @@ public class RSAUtils {
      */
     public static boolean verify(byte[] data, String sign, String publicKey) {
         try {
-            byte[] keyBytes = Base64.getDecoder().decode(publicKey);
-            X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(keyBytes);
-            KeyFactory keyFactory = KeyFactory.getInstance(RSA_ALGORITHM);
-            PublicKey key = keyFactory.generatePublic(x509EncodedKeySpec);
+            PublicKey rsaPublicKey = getPublicKey(publicKey);
             Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
-            signature.initVerify(key);
+            signature.initVerify(rsaPublicKey);
             signature.update(data);
             return signature.verify(Base64.getDecoder().decode(sign));
         } catch (Exception e) {
