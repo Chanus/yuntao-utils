@@ -126,7 +126,7 @@ public class VerifyCodeUtils {
             // 得到随机产生的验证码数字。
             randomChar = codeSequence[RandomUtils.getRandomInt(codeSequence.length)];
             // 用随机产生的颜色将验证码绘制到图像中。
-            g.setColor(getRandomColor());
+            g.setColor(RandomUtils.getRandomColor());
             g.drawString(String.valueOf(randomChar), i * codeWidth + x, y);
             // 将产生的四个随机数组合在一起。
             randomCode.append(randomChar);
@@ -136,17 +136,5 @@ public class VerifyCodeUtils {
         map.put("randomCode", randomCode);
         map.put("buffImg", buffImg);
         return map;
-    }
-
-    /**
-     * 获取随机颜色
-     *
-     * @return 随机颜色
-     */
-    private Color getRandomColor() {
-        int r = RandomUtils.getRandomInt(0, 255);
-        int g = RandomUtils.getRandomInt(0, 255);
-        int b = RandomUtils.getRandomInt(0, 255);
-        return new Color(r, g, b);
     }
 }
