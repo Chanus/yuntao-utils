@@ -33,7 +33,7 @@ public class ZipUtils {
      * @param srcRootDir 压缩文件夹根目录的子路径
      * @param file       当前递归压缩的文件或目录对象
      * @param zos        压缩文件存储对象
-     * @throws IOException
+     * @throws IOException {@link IOException}
      */
     private static void compress(String srcRootDir, File file, ZipOutputStream zos) throws IOException {
         if (file == null)
@@ -93,15 +93,13 @@ public class ZipUtils {
 
             // 判断压缩文件保存的路径是否存在，如果不存在，则创建目录
             File zipDir = new File(zipPath);
-            if (!zipDir.exists() || !zipDir.isDirectory()) {
-                zipDir.mkdirs();
-            }
+            if (!zipDir.exists() || !zipDir.isDirectory()) zipDir.mkdirs();
 
             // 创建压缩文件保存的文件对象
             String zipFilePath = zipPath + File.separator + zipFileName;
             File zipFile = new File(zipFilePath);
             if (zipFile.exists()) {
-                // 检测文件是否允许删除，如果不允许删除，将会抛出SecurityException
+                // 检测文件是否允许删除，如果不允许删除，将会抛出 SecurityException
                 SecurityManager securityManager = new SecurityManager();
                 securityManager.checkDelete(zipFilePath);
                 // 删除已存在的目标文件
@@ -125,8 +123,7 @@ public class ZipUtils {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            IOUtils.close(zos);
-            IOUtils.close(cos);
+            IOUtils.close(zos, cos);
         }
     }
 
@@ -154,9 +151,7 @@ public class ZipUtils {
 
         // 创建解压缩文件保存的路径
         File decompressFileDir = new File(decompressFilePath);
-        if (!decompressFileDir.exists() || !decompressFileDir.isDirectory()) {
-            decompressFileDir.mkdirs();
-        }
+        if (!decompressFileDir.exists() || !decompressFileDir.isDirectory()) decompressFileDir.mkdirs();
 
         // 开始解压
         ZipEntry entry;
@@ -185,18 +180,16 @@ public class ZipUtils {
                 }
                 entryDir = new File(entryDirPath);
                 // 如果文件夹路径不存在，则创建文件夹
-                if (!entryDir.exists() || !entryDir.isDirectory()) {
-                    entryDir.mkdirs();
-                }
+                if (!entryDir.exists() || !entryDir.isDirectory()) entryDir.mkdirs();
 
                 // 创建解压文件
                 entryFile = new File(entryFilePath);
                 if (entryFile.exists()) {
-                    // 检测文件是否允许删除，如果不允许删除，将会抛出SecurityException
+                    // 检测文件是否允许删除，如果不允许删除，将会抛出 SecurityException
                     SecurityManager securityManager = new SecurityManager();
                     securityManager.checkDelete(entryFilePath);
                     // 删除已存在的目标文件
-                    entryFile.delete();
+                    boolean b = entryFile.delete();
                 }
 
                 // 写入文件
@@ -215,9 +208,7 @@ public class ZipUtils {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            IOUtils.close(bos);
-            IOUtils.close(bis);
-            IOUtils.close(zip);
+            IOUtils.close(bos, bis, zip);
         }
     }
 }
