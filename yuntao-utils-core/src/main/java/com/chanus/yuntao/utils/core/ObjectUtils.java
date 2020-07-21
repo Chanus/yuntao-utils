@@ -16,6 +16,8 @@
 package com.chanus.yuntao.utils.core;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -38,7 +40,7 @@ public class ObjectUtils {
      * @return {@code true} 相等，{@code false} 不相等
      * @see Objects#equals(Object, Object)
      */
-    public static boolean equal(Object obj1, Object obj2) {
+    public static boolean equals(Object obj1, Object obj2) {
         return Objects.equals(obj1, obj2);
     }
 
@@ -49,8 +51,8 @@ public class ObjectUtils {
      * @param obj2 对象2
      * @return {@code true} 不相等，{@code false} 相等
      */
-    public static boolean notEqual(Object obj1, Object obj2) {
-        return !equal(obj1, obj2);
+    public static boolean notEquals(Object obj1, Object obj2) {
+        return !equals(obj1, obj2);
     }
 
     /**
@@ -142,7 +144,7 @@ public class ObjectUtils {
             Iterator<?> iter = (Iterator<?>) obj;
             while (iter.hasNext()) {
                 Object o = iter.next();
-                if (equal(o, element)) {
+                if (equals(o, element)) {
                     return true;
                 }
             }
@@ -152,7 +154,7 @@ public class ObjectUtils {
             Enumeration<?> enumeration = (Enumeration<?>) obj;
             while (enumeration.hasMoreElements()) {
                 Object o = enumeration.nextElement();
-                if (equal(o, element)) {
+                if (equals(o, element)) {
                     return true;
                 }
             }
@@ -162,7 +164,7 @@ public class ObjectUtils {
             int len = Array.getLength(obj);
             for (int i = 0; i < len; i++) {
                 Object o = Array.get(obj, i);
-                if (equal(o, element)) {
+                if (equals(o, element)) {
                     return true;
                 }
             }
@@ -280,5 +282,82 @@ public class ObjectUtils {
      */
     public static <T extends CharSequence> T defaultIfBlank(final T str, final T defaultValue) {
         return StringUtils.isBlank(str) ? defaultValue : str;
+    }
+
+    /**
+     * 对象转 Map，不包含空属性
+     *
+     * @param object 待转换的对象
+     * @param <T>    对象类型
+     * @return 对象转换后的 Map
+     * @since 1.1.0
+     */
+    public static <T> Map<String, Object> toMap(T object) {
+        Map<String, Object> map = new HashMap<>();
+        Object o;
+        for (Field field : object.getClass().getDeclaredFields()) {
+            try {
+                field.setAccessible(true);
+                o = field.get(object);
+                if (o != null) {
+                    map.put(field.getName(), o);
+                }
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return map;
+    }
+
+    /**
+     * 对象转 Map，包含空属性
+     *
+     * @param object 待转换的对象
+     * @param <T>    对象类型
+     * @return 对象转换后的 Map
+     * @since 1.1.0
+     */
+    public static <T> Map<String, Object> toMapWithNull(T object) {
+        Map<String, Object> map = new HashMap<>();
+        for (Field field : object.getClass().getDeclaredFields()) {
+            try {
+                field.setAccessible(true);
+                map.put(field.getName(), field.get(object));
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return map;
+    }
+
+    /**
+     * Map 转对象
+     *
+     * @param map   待转换的 Map
+     * @param clazz 对象 class
+     * @param <T>   对象类型
+     * @return Map 转换后的对象
+     * @since 1.1.0
+     */
+    public static <T> T mapToObject(Map<String, Object> map, Class<T> clazz) {
+        if (CollectionUtils.isEmpty(map))
+            return null;
+
+        T object = null;
+        try {
+            object = clazz.newInstance();
+            Field[] fields = object.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                int mod = field.getModifiers();
+                if (Modifier.isStatic(mod) || Modifier.isFinal(mod)) {
+                    continue;
+                }
+                field.setAccessible(true);
+                field.set(object, map.get(field.getName()));
+            }
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return object;
     }
 }

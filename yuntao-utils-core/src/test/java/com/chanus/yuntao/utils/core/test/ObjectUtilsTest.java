@@ -18,9 +18,11 @@ package com.chanus.yuntao.utils.core.test;
 import com.chanus.yuntao.utils.core.ObjectUtils;
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ObjectUtils 测试类
@@ -32,24 +34,24 @@ import java.util.HashMap;
 public class ObjectUtilsTest {
     @Test
     public void equalTest() {
-        System.out.println(ObjectUtils.equal(null, null));// true
-        System.out.println(ObjectUtils.equal("", ""));// true
-        System.out.println(ObjectUtils.equal("  ", ""));// false
-        System.out.println(ObjectUtils.equal("1", ""));// false
-        System.out.println(ObjectUtils.equal("123", "123"));// true
-        System.out.println(ObjectUtils.equal(111, 111));// true
-        System.out.println(ObjectUtils.equal(0.0, 0));// false
+        System.out.println(ObjectUtils.equals(null, null));// true
+        System.out.println(ObjectUtils.equals("", ""));// true
+        System.out.println(ObjectUtils.equals("  ", ""));// false
+        System.out.println(ObjectUtils.equals("1", ""));// false
+        System.out.println(ObjectUtils.equals("123", "123"));// true
+        System.out.println(ObjectUtils.equals(111, 111));// true
+        System.out.println(ObjectUtils.equals(0.0, 0));// false
     }
 
     @Test
     public void notEqualTest() {
-        System.out.println(ObjectUtils.notEqual(null, null));// false
-        System.out.println(ObjectUtils.notEqual("", ""));// true
-        System.out.println(ObjectUtils.notEqual("  ", ""));// true
-        System.out.println(ObjectUtils.notEqual("1", ""));// true
-        System.out.println(ObjectUtils.notEqual("123", "123"));// false
-        System.out.println(ObjectUtils.notEqual(111, 111));// false
-        System.out.println(ObjectUtils.notEqual(0.0, 0));// true
+        System.out.println(ObjectUtils.notEquals(null, null));// false
+        System.out.println(ObjectUtils.notEquals("", ""));// true
+        System.out.println(ObjectUtils.notEquals("  ", ""));// true
+        System.out.println(ObjectUtils.notEquals("1", ""));// true
+        System.out.println(ObjectUtils.notEquals("123", "123"));// false
+        System.out.println(ObjectUtils.notEquals(111, 111));// false
+        System.out.println(ObjectUtils.notEquals(0.0, 0));// true
     }
 
     @Test
@@ -193,5 +195,114 @@ public class ObjectUtilsTest {
         System.out.println(ObjectUtils.defaultIfBlank("", "zz"));
         System.out.println(ObjectUtils.defaultIfBlank(" ", "zz"));
         System.out.println(ObjectUtils.defaultIfBlank("abc", "zz"));
+    }
+
+    @Test
+    public void toMapTest() {
+        Student student = new Student();
+        student.setId(1);
+        student.setStudentNo("1001");
+        student.setStudentName("Tom");
+        student.setSex("M");
+        student.setBirthday(LocalDate.now());
+
+        Map<String, Object> map = ObjectUtils.toMap(student);
+        map.forEach((k, v) -> System.out.println(k + "===" + v));
+    }
+
+    @Test
+    public void toMapWithNullTest() {
+        Student student = new Student();
+        student.setId(1);
+        student.setStudentNo("1001");
+        student.setStudentName("Tom");
+        student.setSex("M");
+        student.setBirthday(LocalDate.now());
+
+        Map<String, Object> map = ObjectUtils.toMapWithNull(student);
+        map.forEach((k, v) -> System.out.println(k + "===" + v));
+    }
+
+    @Test
+    public void mapToObjectTest() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", 1);
+        map.put("studentNo", "1001");
+        map.put("studentName", "Tom");
+        map.put("sex", "M");
+        map.put("birthday", LocalDate.now());
+
+        Student student = ObjectUtils.mapToObject(map, Student.class);
+        assert student != null;
+        System.out.println(student.toString());
+    }
+
+    public static class Student {
+        private Integer id;
+        private String studentNo;
+        private String studentName;
+        private Integer age;
+        private String sex;
+        private LocalDate birthday;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public String getStudentNo() {
+            return studentNo;
+        }
+
+        public void setStudentNo(String studentNo) {
+            this.studentNo = studentNo;
+        }
+
+        public String getStudentName() {
+            return studentName;
+        }
+
+        public void setStudentName(String studentName) {
+            this.studentName = studentName;
+        }
+
+        public Integer getAge() {
+            return age;
+        }
+
+        public void setAge(Integer age) {
+            this.age = age;
+        }
+
+        public String getSex() {
+            return sex;
+        }
+
+        public void setSex(String sex) {
+            this.sex = sex;
+        }
+
+        public LocalDate getBirthday() {
+            return birthday;
+        }
+
+        public void setBirthday(LocalDate birthday) {
+            this.birthday = birthday;
+        }
+
+        @Override
+        public String toString() {
+            return "Student{" +
+                    "id=" + id +
+                    ", studentNo=" + studentNo +
+                    ", studentName=" + studentName +
+                    ", age=" + age +
+                    ", sex=" + sex +
+                    ", birthday=" + birthday +
+                    '}';
+        }
     }
 }
