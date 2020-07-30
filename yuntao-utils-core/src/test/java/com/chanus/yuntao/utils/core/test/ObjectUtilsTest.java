@@ -180,24 +180,6 @@ public class ObjectUtilsTest {
     }
 
     @Test
-    public void defaultIfEmptyTest() {
-        System.out.println(ObjectUtils.defaultIfEmpty(null, null));
-        System.out.println(ObjectUtils.defaultIfEmpty(null, ""));
-        System.out.println(ObjectUtils.defaultIfEmpty("", "zz"));
-        System.out.println(ObjectUtils.defaultIfEmpty(" ", "zz"));
-        System.out.println(ObjectUtils.defaultIfEmpty("abc", "zz"));
-    }
-
-    @Test
-    public void defaultIfBlankTest() {
-        System.out.println(ObjectUtils.defaultIfBlank(null, null));
-        System.out.println(ObjectUtils.defaultIfBlank(null, ""));
-        System.out.println(ObjectUtils.defaultIfBlank("", "zz"));
-        System.out.println(ObjectUtils.defaultIfBlank(" ", "zz"));
-        System.out.println(ObjectUtils.defaultIfBlank("abc", "zz"));
-    }
-
-    @Test
     public void toMapTest() {
         Student student = new Student();
         student.setId(1);

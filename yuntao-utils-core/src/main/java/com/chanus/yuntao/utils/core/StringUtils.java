@@ -105,6 +105,42 @@ public class StringUtils {
     }
 
     /**
+     * 判断字符串是否全为空或空白
+     *
+     * @param strs 字符串
+     * @return {@code true} 字符串全为空或空白；{@code false} 字符串不全为空或空白
+     * @since 1.1.0
+     */
+    public static boolean isAllBlank(String... strs) {
+        if (strs == null)
+            return true;
+
+        for (String str : strs) {
+            if (isNotBlank(str))
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * 判断字符串是否全为空或空白
+     *
+     * @param strs 字符串
+     * @return {@code true} 字符串全为空或空白；{@code false} 字符串不全为空或空白
+     * @since 1.1.0
+     */
+    public static boolean isAllBlank(CharSequence... strs) {
+        if (strs == null)
+            return true;
+
+        for (CharSequence str : strs) {
+            if (isNotBlank(str))
+                return false;
+        }
+        return true;
+    }
+
+    /**
      * 判断字符串是否为非空或非空白，空白的定义如下：
      * <pre>
      *     1、为null
@@ -132,6 +168,42 @@ public class StringUtils {
      */
     public static boolean isNotBlank(CharSequence s) {
         return !isBlank(s);
+    }
+
+    /**
+     * 判断字符串是否全不为空或空白
+     *
+     * @param strs 字符串
+     * @return {@code true} 字符串全不为空或空白；{@code false} 字符串存在空或空白
+     * @since 1.1.0
+     */
+    public static boolean isAllNotBlank(String... strs) {
+        if (strs == null)
+            return false;
+
+        for (String str : strs) {
+            if (isBlank(str))
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * 判断字符串是否全不为空或空白
+     *
+     * @param strs 字符串
+     * @return {@code true} 字符串全不为空或空白；{@code false} 字符串存在空或空白
+     * @since 1.1.0
+     */
+    public static boolean isAllNotBlank(CharSequence... strs) {
+        if (strs == null)
+            return false;
+
+        for (CharSequence str : strs) {
+            if (isBlank(str))
+                return false;
+        }
+        return true;
     }
 
     /**
@@ -163,6 +235,42 @@ public class StringUtils {
     }
 
     /**
+     * 判断字符串是否全为空
+     *
+     * @param strs 字符串
+     * @return {@code true} 字符串全为空；{@code false} 字符串不全为空
+     * @since 1.1.0
+     */
+    public static boolean isAllEmpty(String... strs) {
+        if (strs == null)
+            return true;
+
+        for (String str : strs) {
+            if (isNotEmpty(str))
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * 判断字符串是否全为空
+     *
+     * @param strs 字符串
+     * @return {@code true} 字符串全为空；{@code false} 字符串不全为空
+     * @since 1.1.0
+     */
+    public static boolean isAllEmpty(CharSequence... strs) {
+        if (strs == null)
+            return true;
+
+        for (CharSequence str : strs) {
+            if (isNotEmpty(str))
+                return false;
+        }
+        return true;
+    }
+
+    /**
      * 字符串是否不为空，空的定义如下：
      * <pre>
      *     1、为null
@@ -191,13 +299,85 @@ public class StringUtils {
     }
 
     /**
-     * 去除字符串首尾的空格
+     * 判断字符串是否全不为空
+     *
+     * @param strs 字符串
+     * @return {@code true} 字符串全不为空；{@code false} 字符串存在空
+     * @since 1.1.0
+     */
+    public static boolean isAllNotEmpty(String... strs) {
+        if (strs == null)
+            return false;
+
+        for (String str : strs) {
+            if (isEmpty(str))
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * 判断字符串是否全不为空
+     *
+     * @param strs 字符串
+     * @return {@code true} 字符串全不为空；{@code false} 字符串存在空
+     * @since 1.1.0
+     */
+    public static boolean isAllNotEmpty(CharSequence... strs) {
+        if (strs == null)
+            return false;
+
+        for (CharSequence str : strs) {
+            if (isEmpty(str))
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * 去除字符串首尾的空格，如果为空白字符串则返回 null
      *
      * @param s 字符串
      * @return 去除首尾空格后的字符串
      */
     public static String trim(final String s) {
         return isBlank(s) ? null : s.trim();
+    }
+
+    /**
+     * 如果字符串是 null 或空白则返回默认字符串，否则返回本身
+     *
+     * @param str        字符串
+     * @param defaultStr 默认字符串
+     * @return 字符串
+     * @since 1.1.0
+     */
+    public static String defaultIfBlank(CharSequence str, String defaultStr) {
+        return isBlank(str) ? defaultStr : str.toString();
+    }
+
+    /**
+     * 如果字符串是 null 或 "" 则返回默认字符串，否则返回本身
+     *
+     * @param str        字符串
+     * @param defaultStr 默认字符串
+     * @return 字符串
+     * @since 1.1.0
+     */
+    public static String defaultIfEmpty(CharSequence str, String defaultStr) {
+        return isEmpty(str) ? defaultStr : str.toString();
+    }
+
+    /**
+     * 如果字符串是 null 则返回默认字符串，否则返回本身
+     *
+     * @param str        字符串
+     * @param defaultStr 默认字符串
+     * @return 字符串
+     * @since 1.1.0
+     */
+    public static String defaultIfNull(CharSequence str, String defaultStr) {
+        return str == null ? defaultStr : str.toString();
     }
 
     /**
@@ -223,6 +403,24 @@ public class StringUtils {
     }
 
     /**
+     * 判断字符串列表中是否包含指定字符串
+     *
+     * @param s    待比较字符串
+     * @param strs 字符串列表
+     * @return {@code true} 包含；{@code false} 不包含
+     * @since 1.1.0
+     */
+    public static boolean equalsAny(final String s, final String... strs) {
+        if (strs == null)
+            return false;
+
+        for (String str : strs) {
+            if (Objects.equals(s, str)) return true;
+        }
+        return false;
+    }
+
+    /**
      * 安全的比较两个字符串是否相等，忽略大小写
      *
      * @param s 字符串1
@@ -231,6 +429,24 @@ public class StringUtils {
      */
     public static boolean equalsIgnoreCase(final String s, final String t) {
         return s == null ? t == null : s.equalsIgnoreCase(t);
+    }
+
+    /**
+     * 判断字符串列表中是否包含指定字符串，忽略大小写
+     *
+     * @param s    待比较字符串
+     * @param strs 字符串列表
+     * @return {@code true} 包含；{@code false} 不包含
+     * @since 1.1.0
+     */
+    public static boolean equalsAnyIgnoreCase(final String s, final String... strs) {
+        if (strs == null)
+            return false;
+
+        for (String str : strs) {
+            if (equalsIgnoreCase(s, str)) return true;
+        }
+        return false;
     }
 
     /**
@@ -327,7 +543,41 @@ public class StringUtils {
      * @return 返回已生成的重复字符串
      */
     public static String repeat(final String s, final int num) {
+        if (s == null) return null;
+        if (num <= 0) return EMPTY;
+        if (num == 1) return s;
+
         StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < num; i++)
+            sb.append(s);
+        return sb.toString();
+    }
+
+    /**
+     * 将源字符串重复生成 {@code num} 次，并用分隔符 {@code separator} 连接，组成新的字符串
+     *
+     * @param s         源字符串
+     * @param num       重复生成次数
+     * @param separator 分隔符
+     * @return 返回已生成的重复字符串
+     */
+    public static String repeatWithSeparator(String s, int num, String separator) {
+        if (s == null) return null;
+        if (num <= 0) return EMPTY;
+        if (num == 1) return s;
+
+        boolean join = true, isFirst = true;
+        if (isEmpty(separator))
+            join = false;
+
+        StringBuilder sb = new StringBuilder();
+        while (num-- > 0) {
+            if (isFirst)
+                isFirst = false;
+            else if (join)
+                sb.append(separator);
+            sb.append(s);
+        }
         for (int i = 0; i < num; i++)
             sb.append(s);
         return sb.toString();
@@ -453,5 +703,267 @@ public class StringUtils {
             return null;
 
         return charset == null ? str.toString().getBytes() : str.toString().getBytes(charset);
+    }
+
+    /**
+     * 将 byte 数组转为 UTF-8 格式的字符串
+     *
+     * @param bytes byte 数组
+     * @return 字符串
+     * @since 1.1.0
+     */
+    public static String toUtf8String(byte[] bytes) {
+        return toString(bytes, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 将 byte 数组转为字符串
+     *
+     * @param bytes   byte 数组
+     * @param charset 字符集，如果为空，则使用平台默认字符集
+     * @return 字符串
+     * @since 1.1.0
+     */
+    public static String toString(byte[] bytes, String charset) {
+        return toString(bytes, isBlank(charset) ? Charset.defaultCharset() : Charset.forName(charset));
+    }
+
+    /**
+     * 将 byte 数组转为字符串
+     *
+     * @param data    byte 数组
+     * @param charset 字符集，如果为空，则使用平台默认字符集
+     * @return 字符串
+     * @since 1.1.0
+     */
+    public static String toString(byte[] data, Charset charset) {
+        if (data == null)
+            return null;
+
+        return charset == null ? new String(data) : new String(data, charset);
+    }
+
+    /**
+     * 获取字符串的长度，如果为 null 返回0
+     *
+     * @param str 字符串
+     * @return 字符串的长度
+     * @since 1.1.0
+     */
+    public static int length(CharSequence str) {
+        return str == null ? 0 : str.length();
+    }
+
+    /**
+     * 连接多个字符串
+     *
+     * @param isNullToEmpty 是否将 null 转为 ""
+     * @param strs          字符串数组
+     * @return 连接后的字符串
+     * @since 1.1.0
+     */
+    public static String concat(boolean isNullToEmpty, CharSequence... strs) {
+        final StringBuilder sb = new StringBuilder();
+        for (CharSequence str : strs) {
+            sb.append(isNullToEmpty ? defaultIfNull(str, EMPTY) : str);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 字符串去除指定前缀
+     *
+     * @param s      字符串
+     * @param prefix 前缀
+     * @return 去除指定前缀后的字符串，若前缀不是 {@code prefix}，返回原字符串
+     * @since 1.1.0
+     */
+    public static String removePrefix(String s, String prefix) {
+        if (isEmpty(s) || isEmpty(prefix))
+            return s;
+
+        if (s.startsWith(prefix)) {
+            return s.substring(prefix.length());
+        }
+        return s;
+    }
+
+    /**
+     * 字符串去除指定前缀，忽略大小写
+     *
+     * @param s      字符串
+     * @param prefix 前缀
+     * @return 去除指定前缀后的字符串，若前缀不是 {@code prefix}，返回原字符串
+     * @since 1.1.0
+     */
+    public static String removePrefixIgnoreCase(String s, String prefix) {
+        if (isEmpty(s) || isEmpty(prefix))
+            return s;
+
+        if (s.toLowerCase().startsWith(prefix.toLowerCase())) {
+            return s.substring(prefix.length());
+        }
+        return s;
+    }
+
+    /**
+     * 字符串去除指定后缀
+     *
+     * @param s      字符串
+     * @param suffix 后缀
+     * @return 去除指定后缀后的字符串，若后缀不是 {@code suffix}，返回原字符串
+     * @since 1.1.0
+     */
+    public static String removeSuffix(String s, String suffix) {
+        if (isEmpty(s) || isEmpty(suffix))
+            return s;
+
+        if (s.endsWith(suffix)) {
+            return s.substring(0, s.length() - suffix.length());
+        }
+        return s;
+    }
+
+    /**
+     * 字符串去除指定后缀，忽略大小写
+     *
+     * @param s      字符串
+     * @param suffix 后缀
+     * @return 去除指定后缀后的字符串，若后缀不是 {@code suffix}，返回原字符串
+     * @since 1.1.0
+     */
+    public static String removeSuffixIgnoreCase(String s, String suffix) {
+        if (isEmpty(s) || isEmpty(suffix))
+            return s;
+
+        if (s.toLowerCase().endsWith(suffix.toLowerCase())) {
+            return s.substring(0, s.length() - suffix.length());
+        }
+        return s;
+    }
+
+    /**
+     * 将驼峰式命名的字符串转换为下划线方式
+     *
+     * @param s 驼峰式命名的字符串
+     * @return 下划线连接方式命名的字符串
+     * @since 1.1.0
+     */
+    public static String toUnderlineCase(String s) {
+        if (s == null)
+            return null;
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            final char c = s.charAt(i);
+            final Character preChar = i > 0 ? s.charAt(i - 1) : null;
+            if (Character.isUpperCase(c)) {
+                if (preChar != null && preChar != CharUtils.UNDERLINE)
+                    sb.append(UNDERLINE);
+
+                sb.append(Character.toLowerCase(c));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 将下划线方式命名的字符串转换为驼峰式命名的字符串
+     *
+     * @param s 下划线方式命名的字符串
+     * @return 驼峰式命名的字符串
+     * @since 1.1.0
+     */
+    public static String toCamelCase(String s) {
+        if (s == null)
+            return null;
+
+        if (s.contains(UNDERLINE)) {
+            final StringBuilder sb = new StringBuilder(s.length());
+            boolean upperCase = false;
+            for (int i = 0; i < s.length(); i++) {
+                char c = s.charAt(i);
+
+                if (c == CharUtils.UNDERLINE) {
+                    upperCase = true;
+                } else if (upperCase) {
+                    sb.append(Character.toUpperCase(c));
+                    upperCase = false;
+                } else {
+                    sb.append(Character.toLowerCase(c));
+                }
+            }
+            return sb.toString();
+        } else {
+            return s;
+        }
+    }
+
+    /**
+     * 在字符串前面将字符串填充到指定长度，如果字符串超过指定长度则返回原字符串
+     *
+     * @param s         被填充的字符串
+     * @param filledStr 填充的字符
+     * @param minLength 填充长度
+     * @return 填充后的字符串
+     * @since 1.1.0
+     */
+    public static String fillBefore(String s, String filledStr, int minLength) {
+        return fill(s, filledStr, minLength, true);
+    }
+
+    /**
+     * 在字符串后面将字符串填充到指定长度，如果字符串超过指定长度则返回原字符串
+     *
+     * @param s         被填充的字符串
+     * @param filledStr 填充的字符
+     * @param minLength 填充长度
+     * @return 填充后的字符串
+     * @since 1.1.0
+     */
+    public static String fillAfter(String s, String filledStr, int minLength) {
+        return fill(s, filledStr, minLength, false);
+    }
+
+    /**
+     * 将字符串填充到指定长度，如果字符串超过指定长度则返回原字符串
+     *
+     * @param s         被填充的字符串
+     * @param filledStr 填充的字符
+     * @param minLength 填充长度
+     * @param isPre     是否填充在前
+     * @return 填充后的字符串
+     * @since 1.1.0
+     */
+    public static String fill(String s, String filledStr, int minLength, boolean isPre) {
+        final int length = s.length();
+        if (length > minLength)
+            return s;
+
+        String filled = repeat(filledStr, minLength - length);
+        return isPre ? filled.concat(s) : s.concat(filled);
+    }
+
+    /**
+     * 反转字符串
+     *
+     * @param s 被反转的字符串
+     * @return 反转后的字符串
+     * @since 1.1.0
+     */
+    public static String reverse(String s) {
+        if (s == null)
+            return null;
+
+        char[] chars = s.toCharArray();
+        int length = chars.length;
+        char[] chars1 = new char[length];
+        for (int i = length - 1; i >= 0; i--) {
+            chars1[length - 1 - i] = chars[i];
+        }
+
+        return new String(chars1);
     }
 }

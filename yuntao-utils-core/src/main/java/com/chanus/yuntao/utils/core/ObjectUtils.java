@@ -245,46 +245,6 @@ public class ObjectUtils {
     }
 
     /**
-     * 如果给定对象为 {@code null} 或者 "" 返回默认值
-     *
-     * <pre>
-     *     ObjectUtil.defaultIfEmpty(null, null)      = null
-     *     ObjectUtil.defaultIfEmpty(null, "")        = ""
-     *     ObjectUtil.defaultIfEmpty("", "zz")      = "zz"
-     *     ObjectUtil.defaultIfEmpty(" ", "zz")      = " "
-     *     ObjectUtil.defaultIfEmpty("abc", *)        = "abc"
-     * </pre>
-     *
-     * @param <T>          对象类型（必须实现CharSequence接口）
-     * @param str          被检查对象，可能为{@code null}
-     * @param defaultValue 被检查对象为{@code null}或者 ""返回的默认值，可以为{@code null}或者 ""
-     * @return 被检查对象为{@code null}或者 ""返回默认值，否则返回原值
-     */
-    public static <T extends CharSequence> T defaultIfEmpty(final T str, final T defaultValue) {
-        return StringUtils.isEmpty(str) ? defaultValue : str;
-    }
-
-    /**
-     * 如果给定对象为 {@code null} 或者 "" 或者空白符返回默认值
-     *
-     * <pre>
-     *     ObjectUtil.defaultIfEmpty(null, null) = null
-     *     ObjectUtil.defaultIfEmpty(null, "") = ""
-     *     ObjectUtil.defaultIfEmpty("", "zz") = "zz"
-     *     ObjectUtil.defaultIfEmpty(" ", "zz") = "zz"
-     *     ObjectUtil.defaultIfEmpty("abc", *) = "abc"
-     * </pre>
-     *
-     * @param <T>          对象类型（必须实现 CharSequence 接口）
-     * @param str          被检查对象，可能为 {@code null}
-     * @param defaultValue 被检查对象为 {@code null} 或者 "" 或者空白符返回的默认值，可以为 {@code null} 或者 "" 或者空白符
-     * @return 被检查对象为 {@code null} 或者 "" 或者空白符返回默认值，否则返回原值
-     */
-    public static <T extends CharSequence> T defaultIfBlank(final T str, final T defaultValue) {
-        return StringUtils.isBlank(str) ? defaultValue : str;
-    }
-
-    /**
      * 对象转 Map，不包含空属性
      *
      * @param object 待转换的对象

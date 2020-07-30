@@ -218,11 +218,30 @@ public class SystemUtils {
     }
 
     /**
+     * 获取 JVM 最大可用内存
+     *
+     * @return JVM 最大可用内存
+     */
+    public static long getUsableJVMMemorySize() {
+        return getMaxJVMMemorySize() - getTotalJVMMemorySize() + getFreeJVMMemorySize();
+    }
+
+    /**
      * 获取 JVM 最大的内存空间
      *
      * @return JVM 最大的内存空间
      */
     public static long getMaxJVMMemorySize() {
         return Runtime.getRuntime().maxMemory();
+    }
+
+    /**
+     * 获取 JVM 可用的处理器数量（一般为 CPU 核心数）
+     *
+     * @return 可用的处理器数量
+     * @since 1.1.0
+     */
+    public static int getProcessorCount() {
+        return Runtime.getRuntime().availableProcessors();
     }
 }

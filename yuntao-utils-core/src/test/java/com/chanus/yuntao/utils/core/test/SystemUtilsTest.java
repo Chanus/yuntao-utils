@@ -49,6 +49,7 @@ public class SystemUtilsTest {
         System.out.println("JVM空闲的内存空间: " + SystemUtils.getFreeJVMMemorySize());
         System.out.println("JVM已用的内存空间: " + SystemUtils.getUsedJVMMemorySize());
         System.out.println("JVM最大的内存空间: " + SystemUtils.getMaxJVMMemorySize());
+        System.out.println("JVM最大可用内存: " + SystemUtils.getUsableJVMMemorySize());
     }
 
     @Test
@@ -68,5 +69,10 @@ public class SystemUtilsTest {
     public void getHostIPTest() {
         List<String> ips = SystemUtils.getHostIP();
         ips.forEach(System.out::println);
+    }
+
+    @Test
+    public void getProcessorCountTest() {
+        System.out.println("JVM 可用的处理器数量：" + SystemUtils.getProcessorCount());
     }
 }

@@ -61,6 +61,22 @@ public class StringUtilsTest {
     }
 
     @Test
+    public void isAllBlankTest() {
+        System.out.println("================= isAllBlank(String... strs) =================");
+        System.out.println(StringUtils.isAllBlank("", null, "  "));// true
+        System.out.println(StringUtils.isAllBlank(" ", null, "123"));// false
+        System.out.println(StringUtils.isAllBlank());// true
+
+        System.out.println("================= isAllBlank(CharSequence... strs) =================");
+        CharSequence s1 = "";
+        CharSequence s2 = " ";
+        CharSequence s3 = "\n";
+        CharSequence s4 = "a";
+        System.out.println(StringUtils.isAllBlank(s1, s2, s3));// true
+        System.out.println(StringUtils.isAllBlank(s1, s2, s4));// false
+    }
+
+    @Test
     public void isNotBlankTest() {
         System.out.println("================= isNotBlank(final String s) =================");
         System.out.println(StringUtils.isNotBlank(""));// false
@@ -88,6 +104,24 @@ public class StringUtilsTest {
         System.out.println(StringUtils.isNotBlank(stringBuffer));// false
         stringBuffer.append("a").append(1);
         System.out.println(StringUtils.isNotBlank(stringBuffer));// true
+    }
+
+    @Test
+    public void isAllNotBlankTest() {
+        System.out.println("================= isAllNotBlank(String... strs) =================");
+        System.out.println(StringUtils.isAllNotBlank("", null, "  "));// false
+        System.out.println(StringUtils.isAllNotBlank(" ", null, "123"));// false
+        System.out.println(StringUtils.isAllNotBlank("a", "b", "123"));// true
+
+        System.out.println("================= isAllNotBlank(CharSequence... strs) =================");
+        CharSequence s1 = "";
+        CharSequence s2 = " ";
+        CharSequence s3 = "\n";
+        CharSequence s4 = "a";
+        CharSequence s5 = "b";
+        System.out.println(StringUtils.isAllNotBlank(s1, s2, s3));// false
+        System.out.println(StringUtils.isAllNotBlank(s1, s2, s4));// false
+        System.out.println(StringUtils.isAllNotBlank(s4, s5));// true
     }
 
     @Test
@@ -121,6 +155,23 @@ public class StringUtilsTest {
     }
 
     @Test
+    public void isAllEmptyTest() {
+        System.out.println("================= isAllEmpty(String... strs) =================");
+        System.out.println(StringUtils.isAllEmpty("", null, ""));// true
+        System.out.println(StringUtils.isAllEmpty("", null, "  "));// false
+        System.out.println(StringUtils.isAllEmpty(" ", null, "123"));// false
+
+        System.out.println("================= isAllEmpty(CharSequence... strs) =================");
+        CharSequence s1 = "";
+        CharSequence s2 = " ";
+        CharSequence s3 = "\n";
+        CharSequence s4 = "a";
+        System.out.println(StringUtils.isAllEmpty(s1, null));// true
+        System.out.println(StringUtils.isAllEmpty(s1, s2, s3));// false
+        System.out.println(StringUtils.isAllEmpty(s1, s2, s4));// false
+    }
+
+    @Test
     public void isNotEmptyTest() {
         System.out.println("================= isNotBlank(final String s) =================");
         System.out.println(StringUtils.isNotEmpty(""));// false
@@ -151,6 +202,24 @@ public class StringUtilsTest {
     }
 
     @Test
+    public void isAllNotEmptyTest() {
+        System.out.println("================= isAllNotEmpty(String... strs) =================");
+        System.out.println(StringUtils.isAllNotEmpty("", null, ""));// false
+        System.out.println(StringUtils.isAllNotEmpty(" ", null, "123"));// false
+        System.out.println(StringUtils.isAllNotEmpty("a", "b", "123"));// true
+
+        System.out.println("================= isAllNotEmpty(CharSequence... strs) =================");
+        CharSequence s1 = "";
+        CharSequence s2 = " ";
+        CharSequence s3 = "\n";
+        CharSequence s4 = "a";
+        CharSequence s5 = "b";
+        System.out.println(StringUtils.isAllNotEmpty(s1, s2, s3));// false
+        System.out.println(StringUtils.isAllNotEmpty(s1, s2, s4));// false
+        System.out.println(StringUtils.isAllNotEmpty(s4, s5));// true
+    }
+
+    @Test
     public void trimTest() {
         System.out.println(StringUtils.trim(""));// null
         System.out.println(StringUtils.trim(" "));// null
@@ -161,6 +230,43 @@ public class StringUtilsTest {
         System.out.println(StringUtils.trim("   aaa   "));// aaa
         System.out.println(StringUtils.trim("a   b"));// a   b
         System.out.println(StringUtils.trim(null));// null
+    }
+
+    @Test
+    public void defaultIfBlankTest() {
+        System.out.println(StringUtils.defaultIfBlank("", "123"));// 123
+        System.out.println(StringUtils.defaultIfBlank(" ", "123"));// 123
+        System.out.println(StringUtils.defaultIfBlank("\n", "123"));// 123
+        System.out.println(StringUtils.defaultIfBlank("\t", "123"));// 123
+        System.out.println(StringUtils.defaultIfBlank("\r", "123"));// 123
+        System.out.println(StringUtils.defaultIfBlank("    ", "123"));// 123
+        System.out.println(StringUtils.defaultIfBlank("   aaa   ", "123"));//    aaa
+        System.out.println(StringUtils.defaultIfBlank("a   b", "123"));// a   b
+        System.out.println(StringUtils.defaultIfBlank(null, "123"));// 123
+    }
+
+    @Test
+    public void defaultIfEmptyTest() {
+        System.out.println(StringUtils.defaultIfEmpty("", "123"));// 123
+        System.out.println(StringUtils.defaultIfEmpty(" ", "123"));//
+        System.out.println(StringUtils.defaultIfEmpty("\n", "123"));// 换行
+        System.out.println(StringUtils.defaultIfEmpty("\t", "123"));// 制表符
+        System.out.println(StringUtils.defaultIfEmpty("\r", "123"));// 回车
+        System.out.println(StringUtils.defaultIfEmpty("    ", "123"));//
+        System.out.println(StringUtils.defaultIfEmpty("   aaa   ", "123"));//    aaa
+        System.out.println(StringUtils.defaultIfEmpty("a   b", "123"));// a   b
+        System.out.println(StringUtils.defaultIfEmpty(null, "123"));// 123
+    }
+
+    @Test
+    public void defaultIfNullTest() {
+        System.out.println(StringUtils.defaultIfNull("", "123"));// ""
+        System.out.println(StringUtils.defaultIfNull(" ", "123"));// 空格
+        System.out.println(StringUtils.defaultIfNull("\n", "123"));// 换行
+        System.out.println(StringUtils.defaultIfNull("\t", "123"));// 制表符
+        System.out.println(StringUtils.defaultIfNull("\r", "123"));// 回车
+        System.out.println(StringUtils.defaultIfNull("a   b", "123"));// a   b
+        System.out.println(StringUtils.defaultIfNull(null, "123"));// 123
     }
 
     @Test
@@ -191,6 +297,16 @@ public class StringUtilsTest {
     }
 
     @Test
+    public void equalsAnyTest() {
+        System.out.println(StringUtils.equalsAny("abc"));// false
+        System.out.println(StringUtils.equalsAny("abc", "123", "a", "bc", "abcd"));// false
+        System.out.println(StringUtils.equalsAny("abc", "123", "a", "Abc", "abcd"));// false
+        System.out.println(StringUtils.equalsAny("abc", "123", "a", "abc", "abcd"));// true
+        System.out.println(StringUtils.equalsAny("", "123", null, "abc", "abcd"));// false
+        System.out.println(StringUtils.equalsAny(null, "123", null, "abc", "abcd"));// true
+    }
+
+    @Test
     public void equalsIgnoreCaseTest() {
         System.out.println(StringUtils.equalsIgnoreCase("", ""));// true
         System.out.println(StringUtils.equalsIgnoreCase("", null));// false
@@ -201,6 +317,16 @@ public class StringUtilsTest {
         System.out.println(StringUtils.equalsIgnoreCase("aa", "AA"));// true
         System.out.println(StringUtils.equalsIgnoreCase("bb", "cc"));// false
         System.out.println(StringUtils.equalsIgnoreCase("dd", "dd"));// true
+    }
+
+    @Test
+    public void equalsAnyIgnoreCaseTest() {
+        System.out.println(StringUtils.equalsAnyIgnoreCase("abc"));// false
+        System.out.println(StringUtils.equalsAnyIgnoreCase("abc", "123", "a", "bc", "abcd"));// false
+        System.out.println(StringUtils.equalsAnyIgnoreCase("abc", "123", "a", "Abc", "abcd"));// true
+        System.out.println(StringUtils.equalsAnyIgnoreCase("abc", "123", "a", "abc", "abcd"));// true
+        System.out.println(StringUtils.equalsAnyIgnoreCase("", "123", null, "abc", "abcd"));// false
+        System.out.println(StringUtils.equalsAnyIgnoreCase(null, "123", null, "abc", "abcd"));// true
     }
 
     @Test
@@ -260,6 +386,13 @@ public class StringUtilsTest {
     }
 
     @Test
+    public void repeatWithSeparatorTest() {
+        System.out.println(StringUtils.repeatWithSeparator("a", 10, "-"));
+        System.out.println(StringUtils.repeatWithSeparator("a", 10, null));
+        System.out.println(StringUtils.repeatWithSeparator("", 10, "-"));
+    }
+
+    @Test
     public void replaceTest() {
         System.out.println(StringUtils.replace("13378653645", "*", 3, 7, 4));
         System.out.println(StringUtils.replace("13378653645", 3, 7));
@@ -299,5 +432,97 @@ public class StringUtilsTest {
         System.out.println(Arrays.toString(b));// [-26, -75, -117, -24, -81, -107]
         b = StringUtils.bytes(s, CharsetUtils.CHARSET_GBK);
         System.out.println(Arrays.toString(b));// [-78, -30, -54, -44]
+    }
+
+    @Test
+    public void toUtf8StringTest() {
+        byte[] b = {-26, -75, -117, -24, -81, -107};
+        System.out.println(StringUtils.toUtf8String(b));// 测试
+    }
+
+    @Test
+    public void toStringTest() {
+        byte[] b = {-26, -75, -117, -24, -81, -107};
+        System.out.println(StringUtils.toString(b, CharsetUtils.UTF_8));// 测试
+        byte[] b2 = {-78, -30, -54, -44};
+        System.out.println(StringUtils.toString(b2, CharsetUtils.CHARSET_GBK));// 测试
+    }
+
+    @Test
+    public void lengthTest() {
+        System.out.println(StringUtils.length(""));// 0
+        System.out.println(StringUtils.length(null));// 0
+        System.out.println(StringUtils.length("123"));// 3
+        System.out.println(StringUtils.length(new StringBuilder("abc")));// 3
+    }
+
+    @Test
+    public void concatTest() {
+        System.out.println(StringUtils.concat(true, "", "a", "b", null, "c"));// abc
+        System.out.println(StringUtils.concat(false, "", "a", "b", null, "c"));// abnullc
+    }
+
+    @Test
+    public void removePrefixTest() {
+        System.out.println(StringUtils.removePrefix("abcdefghijklmn", "abc"));// defghijklmn
+        System.out.println(StringUtils.removePrefix("Abcdefghijklmn", "abc"));// Abcdefghijklmn
+    }
+
+    @Test
+    public void removePrefixIgnoreCaseTest() {
+        System.out.println(StringUtils.removePrefixIgnoreCase("abcdefghijklmn", "abc"));// defghijklmn
+        System.out.println(StringUtils.removePrefixIgnoreCase("Abcdefghijklmn", "abc"));// defghijklmn
+    }
+
+    @Test
+    public void removeSuffixTest() {
+        System.out.println(StringUtils.removeSuffix("abcdefghijklmn", "lmn"));// abcdefghijk
+        System.out.println(StringUtils.removeSuffix("AbcdefghijkLmN", "lmn"));// AbcdefghijkLmN
+    }
+
+    @Test
+    public void removeSuffixIgnoreCaseTest() {
+        System.out.println(StringUtils.removeSuffixIgnoreCase("abcdefghijklmn", "lmn"));// abcdefghijk
+        System.out.println(StringUtils.removeSuffixIgnoreCase("AbcdefghijkLmN", "lmn"));// Abcdefghijk
+    }
+
+    @Test
+    public void toUnderlineCaseTest() {
+        System.out.println(StringUtils.toUnderlineCase("helloWorld"));// hello_world
+        System.out.println(StringUtils.toUnderlineCase("AbCdEfG"));// ab_cd_ef_g
+        System.out.println(StringUtils.toUnderlineCase("abc_0_DefG"));// abc_0_def_g
+    }
+
+    @Test
+    public void toCamelCaseTest() {
+        System.out.println(StringUtils.toCamelCase("hello_world"));// helloWorld
+        System.out.println(StringUtils.toCamelCase("helloWorld"));// helloWorld
+        System.out.println(StringUtils.toCamelCase("Hello_World"));// helloWorld
+    }
+
+    @Test
+    public void fillBeforeTest() {
+        System.out.println(StringUtils.fillBefore("1", "0", 5));// 00001
+        System.out.println(StringUtils.fillBefore("0000001", "0", 5));// 0000001
+    }
+
+    @Test
+    public void fillAfterTest() {
+        System.out.println(StringUtils.fillAfter("1", "0", 5));// 10000
+        System.out.println(StringUtils.fillAfter("1000000", "0", 5));// 1000000
+    }
+
+    @Test
+    public void fillTest() {
+        System.out.println(StringUtils.fill("1", "0", 5, true));// 00001
+        System.out.println(StringUtils.fill("0000001", "0", 5, true));// 0000001
+        System.out.println(StringUtils.fill("1", "0", 5, false));// 10000
+        System.out.println(StringUtils.fill("1000000", "0", 5, false));// 1000000
+    }
+
+    @Test
+    public void reverseTest() {
+        System.out.println(StringUtils.reverse("abcdefg"));// gfedcba
+        System.out.println(StringUtils.reverse("Hello World"));// dlroW olleH
     }
 }
