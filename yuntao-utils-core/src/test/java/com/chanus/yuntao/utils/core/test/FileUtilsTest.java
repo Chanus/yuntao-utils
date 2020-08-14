@@ -22,6 +22,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +36,44 @@ import java.util.List;
 public class FileUtilsTest {
     public static final String ROOT = "F:/test";
     public static final String path = ROOT + "/test.txt";
+
+    @Test
+    public void isWindowsTest() {
+        System.out.println(FileUtils.isWindows());
+    }
+
+    @Test
+    public void lsTest() {
+        File[] files = FileUtils.ls("F:\\test");
+        for (File file : files) {
+            System.out.println(file.getPath());
+        }
+    }
+
+    @Test
+    public void isEmptyTest() {
+        System.out.println(FileUtils.isEmpty(new File("F:\\test")));
+        System.out.println(FileUtils.isEmpty(new File("F:\\test\\test11")));
+        System.out.println(FileUtils.isEmpty(new File("F:\\test\\1.jpg")));
+        System.out.println(FileUtils.isEmpty(new File("F:\\test\\test.txt")));
+    }
+
+    @Test
+    public void isNotEmptyTest() {
+        System.out.println(FileUtils.isNotEmpty(new File("F:\\test")));
+        System.out.println(FileUtils.isNotEmpty(new File("F:\\test\\test11")));
+        System.out.println(FileUtils.isNotEmpty(new File("F:\\test\\1.jpg")));
+        System.out.println(FileUtils.isNotEmpty(new File("F:\\test\\test.txt")));
+    }
+
+    @Test
+    public void loopFilesTest() {
+        List<File> files = FileUtils.loopFiles("F:\\test");
+        files.forEach(file -> System.out.println(file.getPath()));
+
+        List<File> files2 = FileUtils.loopFiles(new File("F:\\test"));
+        files2.forEach(file -> System.out.println(file.getPath()));
+    }
 
     @Test
     public void readTest() {
@@ -63,9 +102,9 @@ public class FileUtilsTest {
         String path2 = ROOT + "/test2.txt";
         try {
             fis = new FileInputStream(path2);
-            FileUtils.write(new File(path), fis, true);
+            FileUtils.writeFromStream(new File(path), fis, true);
             fis = new FileInputStream(path2);
-            FileUtils.write(path, fis, true);
+            FileUtils.writeFromStream(path, fis, true);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -270,11 +309,14 @@ public class FileUtilsTest {
 
     @Test
     public void createFileTest() {
-        FileUtils.createFile(new File("F:\\test1\\test5"));
-        FileUtils.createFile(new File("F:\\test1\\test5.txt"));
+        FileUtils.createFile(new File("F:\\test1\\test2"));
+        FileUtils.createFile(new File("F:\\test1\\test2.txt"));
 
-        FileUtils.createFile("F:\\test1\\test6");
-        FileUtils.createFile("F:\\test1\\test6.txt");
+        FileUtils.createFile("F:\\test1\\test3");
+        FileUtils.createFile("F:\\test1\\test3.txt");
+
+        FileUtils.createFile("F:\\test1", "test4");
+        FileUtils.createFile("F:\\test1", "test4.txt");
     }
 
     @Test
@@ -296,6 +338,18 @@ public class FileUtilsTest {
     }
 
     @Test
+    public void equalsTest() {
+        System.out.println(FileUtils.equals(new File("F:\\test\\test1\\test2"), new File("F:\\test\\test1")));// false
+        System.out.println(FileUtils.equals(new File("F:\\test\\test1\\test2"), new File("F:\\test\\test1\\test2")));// true
+    }
+
+    @Test
+    public void pathEqualsTest() {
+        System.out.println(FileUtils.pathEquals(new File("F:\\test\\test1\\test2"), new File("F:\\test\\test1")));// false
+        System.out.println(FileUtils.pathEquals(new File("F:\\test\\test1\\test2"), new File("F:\\test\\test1\\test2")));// true
+    }
+
+    @Test
     public void deleteTest() {
         FileUtils.delete(new File("F:\\test\\test3"));
         FileUtils.delete("F:\\test\\test3.txt", "F:\\test\\test4", "F:\\test\\test5.txt");
@@ -310,23 +364,81 @@ public class FileUtilsTest {
 
     @Test
     public void copyFileTest() {
-        FileUtils.copyFile(new File("F:\\test\\test.txt"), new File("F:\\test1\\test3.txt"));
-
-        FileUtils.copyFile("F:\\test\\test.txt", "F:\\test1\\test4.txt");
+        // 源为文件，目标为已存在目录，则拷贝到目录下，文件名不变
+        // 覆盖
+        FileUtils.copyFile(new File("F:\\test\\1.jpg"), new File("F:\\test\\test2"));
+        FileUtils.copyFile("F:\\test\\test.txt", "F:\\test\\test2");
+        // 不覆盖
+        FileUtils.copyFile(new File("F:\\test\\1.jpg"), new File("F:\\test\\test3"), false);
+        FileUtils.copyFile("F:\\test\\test.txt", "F:\\test\\test3", false);
+        // 源为文件，目标为不存在路径，则目标以文件对待（自动创建父级目录）比如：/dest/aaa，如果aaa不存在，则aaa被当作文件名
+        // 覆盖
+        FileUtils.copyFile(new File("F:\\test\\1.jpg"), new File("F:\\test\\test2\\aaa"));
+        FileUtils.copyFile("F:\\test\\test.txt", "F:\\test\\test2\\ccc");
+        // 不覆盖
+        FileUtils.copyFile(new File("F:\\test\\1.jpg"), new File("F:\\test\\test3\\bbb"), false);
+        FileUtils.copyFile("F:\\test\\test.txt", "F:\\test\\test2\\ccc", false);
+        // 源为文件，目标是一个已存在的文件
+        // 覆盖
+        FileUtils.copyFile(new File("F:\\test\\1.jpg"), new File("F:\\test\\test2\\2.jpg"));
+        FileUtils.copyFile("F:\\test\\test.txt", "F:\\test\\test2\\test.txt");
+        // 不覆盖
+        FileUtils.copyFile(new File("F:\\test\\1.jpg"), new File("F:\\test\\test3\\2.jpg"), false);
+        FileUtils.copyFile("F:\\test\\test.txt", "F:\\test\\test2\\test.txt", false);
     }
 
     @Test
     public void copyDirTest() {
-        FileUtils.copyDir(new File("F:\\test"), new File("F:\\test1"));
-
-        FileUtils.copyDir("F:\\test", "F:\\test2");
+        // 允许覆盖，只拷贝文件，将源目录下的内容拷贝到目标目录下
+        FileUtils.copyDir("F:\\test", "F:\\test1", true, true, true);
+        // 允许覆盖，只拷贝文件，将源目录拷贝到目标目录下
+        FileUtils.copyDir("F:\\test", "F:\\test2", true, true, false);
+        // 允许覆盖，拷贝文件和子目录，将源目录下的内容拷贝到目标目录下
+        FileUtils.copyDir("F:\\test", "F:\\test3", true, false, true);
+        // 允许覆盖，拷贝文件和子目录，将源目录下的内容拷贝到目标目录下
+        FileUtils.copyDir("F:\\test", "F:\\test4", true, false, false);
+        // 允许覆盖，拷贝文件和子目录，将源目录下的内容拷贝到目标目录下
+        FileUtils.copyDir("F:\\test", "F:\\test5");
     }
 
     @Test
-    public void moveTest() {
-        FileUtils.move(new File("F:\\test"), new File("F:\\test1"));
+    public void copyTest() throws IOException {
+        // 源为文件，目标为已存在目录，则拷贝到目录下，文件名不变
+        // 覆盖
+        FileUtils.copy(new File("F:\\test\\1.jpg"), new File("F:\\test\\test2"), true, true, true);
+        // 不覆盖
+        FileUtils.copy(new File("F:\\test\\1.jpg"), new File("F:\\test\\test3"), false, true, true);
+        // 源为文件，目标为不存在路径，则目标以文件对待（自动创建父级目录）比如：/dest/aaa，如果aaa不存在，则aaa被当作文件名
+        // 覆盖
+        FileUtils.copy(new File("F:\\test\\1.jpg"), new File("F:\\test\\test2\\aaa"), true, true, true);
+        // 不覆盖
+        FileUtils.copy(new File("F:\\test\\1.jpg"), new File("F:\\test\\test3\\bbb"), false, true, true);
+        // 源为文件，目标是一个已存在的文件
+        // 覆盖
+        FileUtils.copy(new File("F:\\test\\1.jpg"), new File("F:\\test\\test2\\2.jpg"), true, true, true);
+        // 不覆盖
+        FileUtils.copy(new File("F:\\test\\1.jpg"), new File("F:\\test\\test3\\2.jpg"), false, true, true);
+        FileUtils.copy(new File("F:\\test\\1.jpg"), new File("F:\\test\\test3\\3.jpg"), false);
+    }
+
+    @Test
+    public void moveTest() throws IOException {
+        // 移动文件到文件
+        FileUtils.move(new File("F:\\test2\\1.jpg"), new File("F:\\test2\\2.jpg"), true);
+        // 移动文件到目录
+        FileUtils.move(new File("F:\\test2\\1.jpg"), new File("F:\\test3"), true);
+        // 移动目录中的内容到目录
+        FileUtils.move(new File("F:\\test2"), new File("F:\\test4"), false);
+
+        FileUtils.move(new File("F:\\test2\\1.jpg"), new File("F:\\test3\\1.jpg"));
 
         FileUtils.move("F:\\test1\\test.txt", "F:\\test2\\test.txt");
+    }
+
+    @Test
+    public void renameTest() {
+        FileUtils.rename(new File("F:\\test\\1.jpg"), "2", true);
+        FileUtils.rename(new File("F:\\test\\test.txt"), "test2.txt");
     }
 
     @Test
@@ -334,5 +446,11 @@ public class FileUtilsTest {
         FileUtils.clean(new File("F:\\test\\test2.txt"));
 
         FileUtils.clean("F:\\test\\test3.txt");
+    }
+
+    @Test
+    public void isSubTest() {
+        System.out.println(FileUtils.isSub(new File("F:\\test\\test1\\test2"), new File("F:\\test\\test1")));// false
+        System.out.println(FileUtils.isSub(new File("F:\\test\\test1"), new File("F:\\test\\test1\\test2")));// true
     }
 }

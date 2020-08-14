@@ -16,6 +16,8 @@
 package com.chanus.yuntao.utils.core;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.zip.*;
 
@@ -163,7 +165,7 @@ public class ZipUtils {
         BufferedOutputStream bos = null;
         ZipFile zip = null;
         try {
-            zip = new ZipFile(zipFile);
+            zip = getZipFile(zipFile);
             Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zip.entries();
 
             // 循环对压缩包里的每一个文件进行解压
@@ -189,7 +191,7 @@ public class ZipUtils {
                     SecurityManager securityManager = new SecurityManager();
                     securityManager.checkDelete(entryFilePath);
                     // 删除已存在的目标文件
-                    boolean b = entryFile.delete();
+                    entryFile.delete();
                 }
 
                 // 写入文件
@@ -211,4 +213,122 @@ public class ZipUtils {
             IOUtils.close(bos, bis, zip);
         }
     }
+
+    /**
+     * 解压缩 zip 包
+     *
+     * @param zipFilePath        zip 文件的全路径
+     * @param decompressFilePath 解压后文件保存的路径
+     * @param includeZipFileName 解压后文件保存的路径是否包含压缩文件的文件名：{@code true} 包含；{@code false} 不包含
+     * @param isCover            解压后文件是否覆盖已存在的文件：{@code true} 覆盖；{@code false} 不覆盖
+     * @since 1.2.1
+     */
+    @SuppressWarnings("unchecked")
+    public static void decompress(String zipFilePath, String decompressFilePath, boolean includeZipFileName, boolean isCover) {
+        if (StringUtils.isBlank(zipFilePath) || StringUtils.isBlank(decompressFilePath))
+            return;
+
+        File zipFile = new File(zipFilePath);
+        // 如果解压后的文件保存路径包含压缩文件的文件名，则追加该文件名到解压路径
+        if (includeZipFileName) {
+            String fileName = zipFile.getName();
+            if (StringUtils.isNotBlank(fileName)) {
+                fileName = fileName.substring(0, fileName.lastIndexOf("."));
+            }
+            decompressFilePath = decompressFilePath + File.separator + fileName;
+        }
+
+        // 创建解压缩文件保存的路径
+        File decompressFileDir = new File(decompressFilePath);
+        if (!decompressFileDir.exists() || !decompressFileDir.isDirectory()) decompressFileDir.mkdirs();
+
+        // 开始解压
+        ZipEntry entry;
+        String entryFilePath, entryDirPath;
+        File entryFile, entryDir;
+        int index, count, bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+        ZipFile zip = null;
+        try {
+            zip = getZipFile(zipFile);
+            Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zip.entries();
+
+            // 循环对压缩包里的每一个文件进行解压
+            while (entries.hasMoreElements()) {
+                entry = entries.nextElement();
+                // 构建压缩包中一个文件解压后保存的文件全路径
+                entryFilePath = decompressFilePath + File.separator + entry.getName();
+                // 构建解压后保存的文件夹路径
+                index = entryFilePath.lastIndexOf(File.separator);
+                if (index != -1) {
+                    entryDirPath = entryFilePath.substring(0, index);
+                } else {
+                    entryDirPath = StringUtils.EMPTY;
+                }
+                entryDir = new File(entryDirPath);
+                // 如果文件夹路径不存在，则创建文件夹
+                if (!entryDir.exists() || !entryDir.isDirectory()) entryDir.mkdirs();
+
+                // 创建解压文件
+                entryFile = new File(entryFilePath);
+                if (entryFile.exists()) {
+                    if (isCover) {
+                        // 删除已存在的目标文件
+                        entryFile.delete();
+                        // 写入文件
+                        bos = new BufferedOutputStream(new FileOutputStream(entryFile));
+                        bis = new BufferedInputStream(zip.getInputStream(entry));
+                        while ((count = bis.read(buffer, 0, bufferSize)) != -1) {
+                            bos.write(buffer, 0, count);
+                        }
+                    }
+                } else {
+                    // 写入文件
+                    bos = new BufferedOutputStream(new FileOutputStream(entryFile));
+                    bis = new BufferedInputStream(zip.getInputStream(entry));
+                    while ((count = bis.read(buffer, 0, bufferSize)) != -1) {
+                        bos.write(buffer, 0, count);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (bos != null)
+                    bos.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            IOUtils.close(bos, bis, zip);
+        }
+    }
+
+    /**
+     * 获取压缩文件
+     *
+     * @param zipFile 待压缩文件
+     * @return {@link ZipFile}
+     * @throws IOException {@link IOException}
+     * @since 1.2.1
+     */
+    private static ZipFile getZipFile(File zipFile) throws IOException {
+        ZipFile zip = new ZipFile(zipFile, StandardCharsets.UTF_8);
+        Enumeration<?> entries = zip.entries();
+        while (entries.hasMoreElements()) {
+            try {
+                entries.nextElement();
+                zip.close();
+                zip = new ZipFile(zipFile, StandardCharsets.UTF_8);
+                return zip;
+            } catch (Exception e) {
+                zip = new ZipFile(zipFile, Charset.forName("GBK"));
+                return zip;
+            }
+        }
+        return zip;
+    }
+
 }

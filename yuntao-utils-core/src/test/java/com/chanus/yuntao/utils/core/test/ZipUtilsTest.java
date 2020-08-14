@@ -36,10 +36,19 @@ public class ZipUtilsTest {
 
     @Test
     public void decompressTest() {
-        String zipFilePath = "/Users/Chanus/Documents/test/test.zip";
-        String decompressFilePath = "/Users/Chanus/Documents/test";
+        String zipFilePath = "F:\\test2.zip";
+        String decompressFilePath = "F:\\test1";
         ZipUtils.decompress(zipFilePath, decompressFilePath, true);
-        decompressFilePath = "/Users/Chanus/Documents/test1";
+        decompressFilePath = "F:\\test2";
         ZipUtils.decompress(zipFilePath, decompressFilePath, false);
+    }
+
+    @Test
+    public void decompressTest2() {
+        String zipFilePath = "F:\\test2.zip";
+        String decompressFilePath = "F:\\test1";
+        ZipUtils.decompress(zipFilePath, decompressFilePath, false, true);
+        decompressFilePath = "F:\\test2";
+        ZipUtils.decompress(zipFilePath, decompressFilePath, false, false);
     }
 }
