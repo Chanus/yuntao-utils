@@ -15,6 +15,7 @@
  */
 package com.chanus.yuntao.utils.core.test.encrypt;
 
+import com.chanus.yuntao.utils.core.CharsetUtils;
 import com.chanus.yuntao.utils.core.StringUtils;
 import com.chanus.yuntao.utils.core.encrypt.RSAUtils;
 import org.junit.Test;
@@ -53,11 +54,15 @@ public class RSAUtilsTest {
         System.out.println(cipher1);
         String cipher2 = RSAUtils.encryptByPublicKey(text, publicKey);
         System.out.println(cipher2);
+        String cipher3 = RSAUtils.encryptByPublicKey(text, publicKey, CharsetUtils.CHARSET_GBK);
+        System.out.println(cipher3);
 
         String text1 = new String(RSAUtils.decryptByPrivateKey(b, privateKey), StandardCharsets.UTF_8);
         String text2 = RSAUtils.decryptByPrivateKey(cipher2, privateKey);
-        System.out.println("公钥解密私钥加密密文：" + text1);
-        System.out.println("公钥解密私钥加密密文：" + text2);
+        String text3 = RSAUtils.decryptByPrivateKey(cipher3, privateKey, CharsetUtils.CHARSET_GBK);
+        System.out.println("私钥解密公钥加密密文：" + text1);
+        System.out.println("私钥解密公钥加密密文：" + text2);
+        System.out.println("私钥解密公钥加密密文：" + text3);
     }
 
     @Test
@@ -69,11 +74,15 @@ public class RSAUtilsTest {
         System.out.println(cipher1);
         String cipher2 = RSAUtils.encryptByPrivateKey(text, privateKey);
         System.out.println(cipher2);
+        String cipher3 = RSAUtils.encryptByPrivateKey(text, privateKey, CharsetUtils.CHARSET_GBK);
+        System.out.println(cipher3);
 
         String text1 = new String(RSAUtils.decryptByPublicKey(b, publicKey), StandardCharsets.UTF_8);
         String text2 = RSAUtils.decryptByPublicKey(cipher2, publicKey);
-        System.out.println("私钥解密公钥加密密文：" + text1);
-        System.out.println("私钥解密公钥加密密文：" + text2);
+        String text3 = RSAUtils.decryptByPublicKey(cipher3, publicKey, CharsetUtils.CHARSET_GBK);
+        System.out.println("公钥解密私钥加密密文：" + text1);
+        System.out.println("公钥解密私钥加密密文：" + text2);
+        System.out.println("公钥解密私钥加密密文：" + text3);
     }
 
     @Test
@@ -82,19 +91,24 @@ public class RSAUtilsTest {
 
         String signature1 = RSAUtils.sign(text.getBytes(), privateKey);
         String signature2 = RSAUtils.sign(text, privateKey);
+        String signature3 = RSAUtils.sign(text, privateKey, CharsetUtils.CHARSET_GBK);
         System.out.println("数字签名：" + signature1);
         System.out.println("数字签名：" + signature2);
+        System.out.println("数字签名：" + signature3);
     }
 
     @Test
     public void verifyTest() {
         String text = "我是一个字符串，请对我进行数字签名。";
-        String signature = "LK2unNh1ctIyZLaGhITnv1r5NgzDqEsHP/dKKvW3iDXIC8XQZNtX7VNEY7CjdWhY/dJ93IGjmmt8FGbU9540L8EV6uFCN8VyuhJpUDmQf17twB/88uyxAKIZcSx7IFJCv8yFfgfS3yCVA7kdho8aUKZegzKDVHMLalLTC+wSZzo=";
-        //String signature = "J+wDLzxjhj+HGWq6dAU1srneYR+HuJ+1KYRlgo+fid0NFkYc9bugYlfqiHGhD11gCFHJS8mNuH64mqeWPU959UhDREVmbTj1n8DWU1aS3YkPvWFdCQdxaV0/CDCVOTFOivO42Ho/EeQZKU3tV1t1iAmdPEISt3hdX4RX6+HJWdldQKSjKcBgIAaabbZQpbE1TRye/Jj5XrIDVZe3O0l25QsadKS8gyQ7KTYz8BCI3OvfIVd1MpFVZuX9xi9R/dFTPd0dJk16WdkEB2vScvuiaA5+YKDCZAjW3D5Q+EhEFLVXNOmIfMoQcDQV+Wmc0m6lMaonAU/Q5cydoDEDCv8/0Q==";
+        String signature1 = "LK2unNh1ctIyZLaGhITnv1r5NgzDqEsHP/dKKvW3iDXIC8XQZNtX7VNEY7CjdWhY/dJ93IGjmmt8FGbU9540L8EV6uFCN8VyuhJpUDmQf17twB/88uyxAKIZcSx7IFJCv8yFfgfS3yCVA7kdho8aUKZegzKDVHMLalLTC+wSZzo=";
+        String signature2 = "LK2unNh1ctIyZLaGhITnv1r5NgzDqEsHP/dKKvW3iDXIC8XQZNtX7VNEY7CjdWhY/dJ93IGjmmt8FGbU9540L8EV6uFCN8VyuhJpUDmQf17twB/88uyxAKIZcSx7IFJCv8yFfgfS3yCVA7kdho8aUKZegzKDVHMLalLTC+wSZzo=";
+        String signature3 = "NvssnLziPPYoyleXp/NH3B87uHH4sbQaUbr5mEXyKo3dezzCil96O47iXj7tyqf2m3pzquac7IyvhRZ6Lav4W5aD6q7moliW5cPNBHAcFQgkSj6YZshrcl4PxhR4hL9y83uhtgUT3dfkmOmdCNCorU1YSNKu3oR9dxSR5vgHJ7o=";
 
-        boolean b1 = RSAUtils.verify(text.getBytes(), signature, publicKey);
-        boolean b2 = RSAUtils.verify(text, signature, publicKey);
+        boolean b1 = RSAUtils.verify(text.getBytes(), signature1, publicKey);
+        boolean b2 = RSAUtils.verify(text, signature2, publicKey);
+        boolean b3 = RSAUtils.verify(text, signature3, publicKey, CharsetUtils.CHARSET_GBK);
         System.out.println("验签结果：" + b1);
         System.out.println("验签结果：" + b2);
+        System.out.println("验签结果：" + b3);
     }
 }

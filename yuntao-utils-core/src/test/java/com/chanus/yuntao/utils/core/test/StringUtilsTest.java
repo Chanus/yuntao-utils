@@ -15,12 +15,12 @@
  */
 package com.chanus.yuntao.utils.core.test;
 
+import com.chanus.yuntao.utils.core.ArrayUtils;
 import com.chanus.yuntao.utils.core.CharsetUtils;
 import com.chanus.yuntao.utils.core.StringUtils;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * StringUtils 测试类
@@ -524,5 +524,133 @@ public class StringUtilsTest {
     public void reverseTest() {
         System.out.println(StringUtils.reverse("abcdefg"));// gfedcba
         System.out.println(StringUtils.reverse("Hello World"));// dlroW olleH
+    }
+
+    @Test
+    public void indexOfTest() {
+        String s = "Hello World! Java.";
+        System.out.println(StringUtils.indexOf(s, "hello", 0, false));// -1
+        System.out.println(StringUtils.indexOf(s, "Hello", 1, false));// -1
+        System.out.println(StringUtils.indexOf(s, "Hello"));// 0
+        System.out.println(StringUtils.indexOfIgnoreCase(s, "world"));// 6
+        System.out.println(StringUtils.indexOf(s, " ", 0, true));// 5
+        System.out.println(StringUtils.indexOf(s, " ", 6, true));// 12
+    }
+
+    @Test
+    public void substringTest() {
+        String s = "abcdefg";
+        System.out.println(StringUtils.substring(s, 0, 3));// abc
+        System.out.println(StringUtils.substring(s, 0, 7));// abcdefg
+        System.out.println(StringUtils.substring(s, 0, 10));// abcdefg
+        System.out.println(StringUtils.substring(s, 1, 1));// ""
+        System.out.println(StringUtils.substring(s, -1, 10));// g
+        System.out.println(StringUtils.substring(s, 1, -2));// bcde
+        System.out.println(StringUtils.substring(s, 1, -10));// ""
+        System.out.println(StringUtils.substring(s, 5, 4));// e
+        System.out.println(StringUtils.substring(s, 5, -4));// de
+        System.out.println(StringUtils.substring(s, 10, 1));// bcdefg
+    }
+
+    @Test
+    public void leftTest() {
+        String s = "abcdefg";
+        System.out.println(StringUtils.left(s, 3));// abc
+        System.out.println(StringUtils.left(s, 7));// abcdefg
+        System.out.println(StringUtils.left(s, 10));// abcdefg
+        System.out.println(StringUtils.left(s, 0));// ""
+        System.out.println(StringUtils.left(s, -2));// abcde
+        System.out.println(StringUtils.left(s, -10));// ""
+    }
+
+    @Test
+    public void rightTest() {
+        String s = "abcdefg";
+        System.out.println(StringUtils.right(s, 0));// abcdefg
+        System.out.println(StringUtils.right(s, 1));// bcdefg
+        System.out.println(StringUtils.right(s, -1));// g
+        System.out.println(StringUtils.right(s, 10));// ""
+    }
+
+    @Test
+    public void splitTest() {
+        String s = " a1 , b 2 , c3 , d  4 , e5 , f6 ,  ,   g7  , null ";
+        List<String> list1 = StringUtils.split(s, ',', -1, false, false, false);
+        list1.forEach(System.out::println);
+        System.out.println("----------------------------------------------------------------");
+        List<String> list2 = StringUtils.split(s, ',', -1, true, true, false);
+        list2.forEach(System.out::println);
+        System.out.println("----------------------------------------------------------------");
+        List<String> list3 = StringUtils.split(s, ',', 3);
+        list3.forEach(System.out::println);
+        System.out.println("----------------------------------------------------------------");
+        List<String> list4 = StringUtils.split(s, ',');
+        list4.forEach(System.out::println);
+        System.out.println("----------------------------------------------------------------");
+        List<String> list5 = StringUtils.split(s, 3);
+        list5.forEach(System.out::println);
+        System.out.println("----------------------------------------------------------------");
+        List<String> list6 = StringUtils.split(s);
+        list6.forEach(System.out::println);
+    }
+
+    @Test
+    public void splitTest2() {
+        String s = " a1 , b 2 , c3 , d  4 , e5 , f6 ,  ,   g7  , null ";
+        List<String> list1 = StringUtils.split(s, ",", -1, false, false, false);
+        list1.forEach(System.out::println);
+        System.out.println("----------------------------------------------------------------");
+        List<String> list2 = StringUtils.split(s, ",", -1, true, true, false);
+        list2.forEach(System.out::println);
+        System.out.println("----------------------------------------------------------------");
+        List<String> list3 = StringUtils.split(s, ",", 3);
+        list3.forEach(System.out::println);
+        System.out.println("----------------------------------------------------------------");
+        List<String> list4 = StringUtils.split(s, ",");
+        list4.forEach(System.out::println);
+        System.out.println("----------------------------------------------------------------");
+        List<String> list5 = StringUtils.split(s, "");
+        list5.forEach(System.out::println);
+    }
+
+    @Test
+    public void splitToArrayTest() {
+        String s = " a1 @ b 2 @ c3 @ d  4 @ e5 @ f6 @  @   g7  @ null ";
+        String[] array1 = StringUtils.splitToArray(s, '@', -1, false, false, false);
+        System.out.println(ArrayUtils.toString(array1));
+        System.out.println("----------------------------------------------------------------");
+        String[] array2 = StringUtils.splitToArray(s, '@', -1, true, true, false);
+        System.out.println(ArrayUtils.toString(array2));
+        System.out.println("----------------------------------------------------------------");
+        String[] array3 = StringUtils.splitToArray(s, '@', 3);
+        System.out.println(ArrayUtils.toString(array3));
+        System.out.println("----------------------------------------------------------------");
+        String[] array4 = StringUtils.splitToArray(s, '@');
+        System.out.println(ArrayUtils.toString(array4));
+        System.out.println("----------------------------------------------------------------");
+        String[] array5 = StringUtils.splitToArray(s, 3);
+        System.out.println(ArrayUtils.toString(array5));
+        System.out.println("----------------------------------------------------------------");
+        String[] array6 = StringUtils.splitToArray(s);
+        System.out.println(ArrayUtils.toString(array6));
+    }
+
+    @Test
+    public void splitToArrayTest2() {
+        String s = " a1 @ b 2 @ c3 @ d  4 @ e5 @ f6 @  @   g7  @ null ";
+        String[] array1 = StringUtils.splitToArray(s, "@", -1, false, false, false);
+        System.out.println(ArrayUtils.toString(array1));
+        System.out.println("----------------------------------------------------------------");
+        String[] array2 = StringUtils.splitToArray(s, "@", -1, true, true, false);
+        System.out.println(ArrayUtils.toString(array2));
+        System.out.println("----------------------------------------------------------------");
+        String[] array3 = StringUtils.splitToArray(s, "@", 3);
+        System.out.println(ArrayUtils.toString(array3));
+        System.out.println("----------------------------------------------------------------");
+        String[] array4 = StringUtils.splitToArray(s, "@");
+        System.out.println(ArrayUtils.toString(array4));
+        System.out.println("----------------------------------------------------------------");
+        String[] array5 = StringUtils.splitToArray(s, "");
+        System.out.println(ArrayUtils.toString(array5));
     }
 }

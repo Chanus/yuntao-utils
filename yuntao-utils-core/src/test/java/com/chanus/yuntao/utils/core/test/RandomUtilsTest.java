@@ -100,6 +100,7 @@ public class RandomUtilsTest {
 
     @Test
     public void getRandomUniqueNoTest() {
+        System.out.println(RandomUtils.getRandomUniqueNo(10));
         System.out.println(RandomUtils.getRandomUniqueNo());
     }
 

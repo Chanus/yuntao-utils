@@ -293,6 +293,21 @@ public class DateUtils {
     }
 
     /**
+     * 获取当前时间之前或之后的时间
+     *
+     * @param offset 时间偏移量，正数是当前时间之后，负数是当前时间之前
+     * @param unit   时间偏移单位，Calendar.YEAR、Calendar.MONTH、Calendar.DATE 等
+     * @return 当前时间按照 {@code unit} 偏移 {@code offset} 的时间
+     * @since 1.2.2
+     */
+    public static Date offset(int offset, int unit) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(unit, offset);
+
+        return calendar.getTime();
+    }
+
+    /**
      * 获取指定时间之前或之后 {@code year} 年的时间
      *
      * @param date 时间
@@ -302,6 +317,18 @@ public class DateUtils {
      */
     public static Date yearOffset(Date date, int year) {
         return offset(date, year, Calendar.YEAR);
+    }
+
+    /**
+     * 获取当前时间之前或之后 {@code year} 年的时间
+     *
+     * @param year 年数，正数是当前时间之后，负数是当前时间之前
+     * @return 当前时间之前或之后 {@code year} 年的时间
+     * @see DateUtils#offset(int, int)
+     * @since 1.2.2
+     */
+    public static Date yearOffset(int year) {
+        return offset(year, Calendar.YEAR);
     }
 
     /**
@@ -317,6 +344,18 @@ public class DateUtils {
     }
 
     /**
+     * 获取当前时间之前或之后 {@code month} 月的时间
+     *
+     * @param month 月数，正数是当前时间之后，负数是当前时间之前
+     * @return 当前时间之前或之后 {@code month} 月的时间
+     * @see DateUtils#offset(int, int)
+     * @since 1.2.2
+     */
+    public static Date monthOffset(int month) {
+        return offset(month, Calendar.MONTH);
+    }
+
+    /**
      * 获取指定时间之前或之后 {@code day} 天的时间
      *
      * @param date 时间
@@ -326,6 +365,18 @@ public class DateUtils {
      */
     public static Date dayOffset(Date date, int day) {
         return offset(date, day, Calendar.DATE);
+    }
+
+    /**
+     * 获取当前时间之前或之后 {@code day} 天的时间
+     *
+     * @param day 天数，正数是当前时间之后，负数是当前时间之前
+     * @return 当前时间之前或之后 {@code day} 天的时间
+     * @see DateUtils#offset(int, int)
+     * @since 1.2.2
+     */
+    public static Date dayOffset(int day) {
+        return offset(day, Calendar.DATE);
     }
 
     /**
@@ -341,6 +392,18 @@ public class DateUtils {
     }
 
     /**
+     * 获取当前时间之前或之后 {@code hour} 个小时的时间
+     *
+     * @param hour 小时数，正数是当前时间之后，负数是当前时间之前
+     * @return 当前时间之前或之后 {@code hour} 个小时的时间
+     * @see DateUtils#offset(int, int)
+     * @since 1.2.2
+     */
+    public static Date hourOffset(int hour) {
+        return offset(hour, Calendar.HOUR_OF_DAY);
+    }
+
+    /**
      * 获取指定时间之前或之后 {@code minute} 分钟的时间
      *
      * @param date   时间
@@ -353,6 +416,18 @@ public class DateUtils {
     }
 
     /**
+     * 获取当前时间之前或之后 {@code minute} 分钟的时间
+     *
+     * @param minute 分钟数，正数是当前时间之后，负数是当前时间之前
+     * @return 当前时间之前或之后 {@code minute} 分钟的时间
+     * @see DateUtils#offset(int, int)
+     * @since 1.2.2
+     */
+    public static Date minuteOffset(int minute) {
+        return offset(minute, Calendar.MINUTE);
+    }
+
+    /**
      * 获取指定时间之前或之后 {@code second} 秒的时间
      *
      * @param date   时间
@@ -362,6 +437,18 @@ public class DateUtils {
      */
     public static Date secondOffset(Date date, int second) {
         return offset(date, second, Calendar.SECOND);
+    }
+
+    /**
+     * 获取当前时间之前或之后 {@code second} 秒的时间
+     *
+     * @param second 秒数，正数是当前时间之后，负数是当前时间之前
+     * @return 当前时间之前或之后 {@code second} 秒的时间
+     * @see DateUtils#offset(int, int)
+     * @since 1.2.2
+     */
+    public static Date secondOffset(int second) {
+        return offset(second, Calendar.SECOND);
     }
 
     /**
@@ -604,6 +691,6 @@ public class DateUtils {
             targetCalendar.setTime(sourceDate);
         }
 
-        return new Calendar[] {sourceCalendar, targetCalendar};
+        return new Calendar[]{sourceCalendar, targetCalendar};
     }
 }

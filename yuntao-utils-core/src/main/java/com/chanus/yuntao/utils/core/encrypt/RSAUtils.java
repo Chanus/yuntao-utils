@@ -15,8 +15,11 @@
  */
 package com.chanus.yuntao.utils.core.encrypt;
 
+import com.chanus.yuntao.utils.core.CharsetUtils;
+
 import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.Charset;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -183,10 +186,23 @@ public class RSAUtils {
      *
      * @param data      源数据
      * @param publicKey 公钥（BASE64 编码）
+     * @param charset   源数据字符集
+     * @return 公钥加密后的数据
+     * @since 1.2.2
+     */
+    public static String encryptByPublicKey(String data, String publicKey, Charset charset) {
+        return Base64.getEncoder().encodeToString(encryptByPublicKey(data.getBytes(charset), publicKey));
+    }
+
+    /**
+     * 公钥加密，默认使用 UTF-8 字符集
+     *
+     * @param data      源数据
+     * @param publicKey 公钥（BASE64 编码）
      * @return 公钥加密后的数据
      */
     public static String encryptByPublicKey(String data, String publicKey) {
-        return Base64.getEncoder().encodeToString(encryptByPublicKey(data.getBytes(), publicKey));
+        return encryptByPublicKey(data, publicKey, CharsetUtils.CHARSET_UTF_8);
     }
 
     /**
@@ -211,10 +227,23 @@ public class RSAUtils {
      *
      * @param data       源数据
      * @param privateKey 私钥（BASE64 编码）
-     * @return 公钥加密后的数据
+     * @param charset    源数据字符集
+     * @return 私钥加密后的数据
+     * @since 1.2.2
+     */
+    public static String encryptByPrivateKey(String data, String privateKey, Charset charset) {
+        return Base64.getEncoder().encodeToString(encryptByPrivateKey(data.getBytes(charset), privateKey));
+    }
+
+    /**
+     * 私钥加密，默认使用 UTF-8 字符集
+     *
+     * @param data       源数据
+     * @param privateKey 私钥（BASE64 编码）
+     * @return 私钥加密后的数据
      */
     public static String encryptByPrivateKey(String data, String privateKey) {
-        return Base64.getEncoder().encodeToString(encryptByPrivateKey(data.getBytes(), privateKey));
+        return encryptByPrivateKey(data, privateKey, CharsetUtils.CHARSET_UTF_8);
     }
 
     /**
@@ -239,10 +268,23 @@ public class RSAUtils {
      *
      * @param data      已加密数据
      * @param publicKey 公钥（BASE64 编码）
+     * @param charset   字符集
+     * @return 公钥解密后的数据
+     * @since 1.2.2
+     */
+    public static String decryptByPublicKey(String data, String publicKey, Charset charset) {
+        return new String(decryptByPublicKey(Base64.getDecoder().decode(data), publicKey), charset);
+    }
+
+    /**
+     * 公钥解密，默认使用 UTF-8 字符集
+     *
+     * @param data      已加密数据
+     * @param publicKey 公钥（BASE64 编码）
      * @return 公钥解密后的数据
      */
     public static String decryptByPublicKey(String data, String publicKey) {
-        return new String(decryptByPublicKey(Base64.getDecoder().decode(data), publicKey));
+        return decryptByPublicKey(data, publicKey, CharsetUtils.CHARSET_UTF_8);
     }
 
     /**
@@ -267,10 +309,23 @@ public class RSAUtils {
      *
      * @param data       已加密数据
      * @param privateKey 私钥（BASE64 编码）
+     * @param charset    字符集
+     * @return 私钥解密后的数据
+     * @since 1.2.2
+     */
+    public static String decryptByPrivateKey(String data, String privateKey, Charset charset) {
+        return new String(decryptByPrivateKey(Base64.getDecoder().decode(data), privateKey), charset);
+    }
+
+    /**
+     * 私钥解密，默认使用 UTF-8 字符集
+     *
+     * @param data       已加密数据
+     * @param privateKey 私钥（BASE64 编码）
      * @return 私钥解密后的数据
      */
     public static String decryptByPrivateKey(String data, String privateKey) {
-        return new String(decryptByPrivateKey(Base64.getDecoder().decode(data), privateKey));
+        return decryptByPrivateKey(data, privateKey, CharsetUtils.CHARSET_UTF_8);
     }
 
     /**
@@ -297,10 +352,23 @@ public class RSAUtils {
      *
      * @param data       源数据
      * @param privateKey 私钥（BASE64 编码）
+     * @param charset    源数据字符集
+     * @return 数字签名
+     * @since 1.2.2
+     */
+    public static String sign(String data, String privateKey, Charset charset) {
+        return sign(data.getBytes(charset), privateKey);
+    }
+
+    /**
+     * 用私钥对信息生成数字签名
+     *
+     * @param data       源数据
+     * @param privateKey 私钥（BASE64 编码）
      * @return 数字签名
      */
     public static String sign(String data, String privateKey) {
-        return sign(data.getBytes(), privateKey);
+        return sign(data, privateKey, CharsetUtils.CHARSET_UTF_8);
     }
 
     /**
@@ -329,9 +397,23 @@ public class RSAUtils {
      * @param data      源数据
      * @param sign      数字签名
      * @param publicKey 公钥（BASE64 编码）
+     * @param charset   源数据字符集
+     * @return {@code true} 校验数字签名成功；{@code false} 校验数字签名失败
+     * @since 1.2.2
+     */
+    public static boolean verify(String data, String sign, String publicKey, Charset charset) {
+        return verify(data.getBytes(charset), sign, publicKey);
+    }
+
+    /**
+     * 校验数字签名，默认使用 UTF-8 字符集
+     *
+     * @param data      源数据
+     * @param sign      数字签名
+     * @param publicKey 公钥（BASE64 编码）
      * @return {@code true} 校验数字签名成功；{@code false} 校验数字签名失败
      */
     public static boolean verify(String data, String sign, String publicKey) {
-        return verify(data.getBytes(), sign, publicKey);
+        return verify(data, sign, publicKey, CharsetUtils.CHARSET_UTF_8);
     }
 }

@@ -43,6 +43,10 @@ public class HttpUtilsTest {
         params.put("ip", ip);
         String result2 = HttpUtils.get(url, params);
         System.out.println("result2 == " + result2);
+
+        // http://timor.tech/api/holiday
+        String holiday = HttpUtils.get("http://timor.tech/api/holiday/year/2010-10");
+        System.out.println(holiday);
     }
 
     @Test
@@ -102,10 +106,10 @@ public class HttpUtilsTest {
         HttpUtils.downloadPost(url, "F:\\download", "213.jpg");
 
         BufferedInputStream bis = HttpUtils.downloadPost(url, "{\"test\":\"123456\"}");
-        FileUtils.write("F:\\download\\123.jpg", bis, false);
+        FileUtils.writeFromStream("F:\\download\\123.jpg", bis, false);
 
         BufferedInputStream bis2 = HttpUtils.downloadPost(url);
-        FileUtils.write("F:\\download\\132.jpg", bis2, false);
+        FileUtils.writeFromStream("F:\\download\\132.jpg", bis2, false);
     }
 
     @Test
@@ -117,6 +121,6 @@ public class HttpUtilsTest {
         HttpUtils.downloadGet(url2, "F:\\download");
 
         BufferedInputStream bis = HttpUtils.downloadGet(url);
-        FileUtils.write("F:\\download\\123.jpg", bis, false);
+        FileUtils.writeFromStream("F:\\download\\123.jpg", bis, false);
     }
 }

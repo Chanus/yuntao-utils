@@ -19,6 +19,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -60,6 +62,8 @@ public class StringUtils {
     public static final String HTML_GT = "&gt;";
 
     public static final String EMPTY_JSON = "{}";
+
+    public static final int INDEX_NOT_FOUND = -1;
 
     /**
      * 判断字符串是否为空或空白，空白的定义如下：
@@ -965,5 +969,460 @@ public class StringUtils {
         }
 
         return new String(chars1);
+    }
+
+    /**
+     * 指定范围内查找字符串
+     *
+     * @param str        字符串
+     * @param searchStr  需要查找的字符串
+     * @param fromIndex  起始位置
+     * @param ignoreCase 是否忽略大小写
+     * @return 需要查找的字符串的位置，未找到返回 -1
+     * @since 1.2.2
+     */
+    public static int indexOf(final CharSequence str, CharSequence searchStr, int fromIndex, boolean ignoreCase) {
+        if (str == null || searchStr == null)
+            return INDEX_NOT_FOUND;
+
+        if (fromIndex < 0)
+            fromIndex = 0;
+
+        final int endLimit = str.length() - searchStr.length() + 1;
+        if (fromIndex > endLimit)
+            return INDEX_NOT_FOUND;
+
+        if (searchStr.length() == 0)
+            return fromIndex;
+
+        if (!ignoreCase) {
+            return str.toString().indexOf(searchStr.toString(), fromIndex);
+        }
+
+        for (int i = fromIndex; i < endLimit; i++) {
+            if (str.toString().regionMatches(true, i, searchStr.toString(), 0, searchStr.length())) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+
+    /**
+     * 查找字符串，不忽略大小写
+     *
+     * @param str       字符串
+     * @param searchStr 需要查找的字符串
+     * @return 需要查找的字符串的位置，未找到返回 -1
+     * @since 1.2.2
+     */
+    public static int indexOf(final CharSequence str, CharSequence searchStr) {
+        return indexOf(str, searchStr, 0, false);
+    }
+
+    /**
+     * 查找字符串，忽略大小写
+     *
+     * @param str       字符串
+     * @param searchStr 需要查找的字符串
+     * @return 需要查找的字符串的位置，未找到返回 -1
+     * @since 1.2.2
+     */
+    public static int indexOfIgnoreCase(final CharSequence str, CharSequence searchStr) {
+        return indexOf(str, searchStr, 0, true);
+    }
+
+    /**
+     * 截取字符串<br>
+     * 截取规则：<br>
+     * <pre>
+     *     1. beginIndex < 0，beginIndex = s.length() + beginIndex，即 beginIndex 从后向前开始，
+     *     若 s.length() + beginIndex < 0，则 beginIndex 默认为 0
+     *     2. beginIndex > s.length()，则 beginIndex 默认为 s.length()
+     *     3. endIndex > s.length()，则 endIndex 默认为 s.length()
+     *     4. endIndex < 0，则 endIndex = s.length() + endIndex，即 endIndex 从后向前开始，
+     *     若 s.length() + endIndex <= 0，则返回 ""
+     *     5. endIndex < beginIndex，则交换 beginIndex 和 endIndex
+     * </pre>
+     *
+     * @param s          被截取的字符串
+     * @param beginIndex 开始位置
+     * @param endIndex   结束位置
+     * @return 截取后的字符串
+     * @since 1.2.2
+     */
+    public static String substring(String s, int beginIndex, int endIndex) {
+        if (s == null)
+            return null;
+
+        int len = s.length();
+
+        if (beginIndex < 0) {
+            beginIndex = len + beginIndex;
+            if (beginIndex < 0)
+                beginIndex = 0;
+        } else if (beginIndex > len) {
+            beginIndex = len;
+        }
+
+        if (endIndex < 0) {
+            endIndex = len + endIndex;
+            if (endIndex < 0)
+                return EMPTY;
+        } else if (endIndex > len) {
+            endIndex = len;
+        }
+
+        if (endIndex < beginIndex) {
+            int tmp = beginIndex;
+            beginIndex = endIndex;
+            endIndex = tmp;
+        }
+
+        if (beginIndex == endIndex)
+            return EMPTY;
+
+        return s.substring(beginIndex, endIndex);
+    }
+
+    /**
+     * 截取字符串左侧部分<br>
+     * 截取规则：<br>
+     * <pre>
+     *     1. endIndex > s.length()，则 endIndex 默认为 s.length()
+     *     2. endIndex < 0，则 endIndex = s.length() + endIndex，即 endIndex 从后向前开始，
+     *     若 s.length() + endIndex <= 0，则返回 ""
+     * </pre>
+     *
+     * @param s        被截取的字符串
+     * @param endIndex 结束位置
+     * @return 截取后的字符串
+     * @since 1.2.2
+     */
+    public static String left(String s, int endIndex) {
+        return substring(s, 0, endIndex);
+    }
+
+    /**
+     * 截取字符串右侧部分<br>
+     * 截取规则：<br>
+     * <pre>
+     *     1. beginIndex < 0，beginIndex = s.length() + beginIndex，即 beginIndex 从后向前开始，
+     *     若 s.length() + beginIndex < 0，则 beginIndex 默认为 0
+     *     2. beginIndex > s.length()，则返回 ""
+     * </pre>
+     *
+     * @param s          被截取的字符串
+     * @param beginIndex 开始位置
+     * @return 截取后的字符串
+     * @since 1.2.2
+     */
+    public static String right(String s, int beginIndex) {
+        if (s == null)
+            return null;
+        return substring(s, beginIndex, s.length());
+    }
+
+    /**
+     * 切分字符串
+     *
+     * @param s           被切分的字符串
+     * @param separator   分隔符字符
+     * @param limit       限制分片数，-1不限制
+     * @param isTrim      是否去除切分字符串后每个元素两边的空格
+     * @param ignoreEmpty 是否忽略空串
+     * @param ignoreCase  是否忽略大小写
+     * @return 切分后的集合
+     * @since 1.2.2
+     */
+    public static List<String> split(String s, char separator, int limit, boolean isTrim, boolean ignoreEmpty, boolean ignoreCase) {
+        if (isEmpty(s))
+            return new ArrayList<>(0);
+
+        if (limit == 1)
+            return addToList(new ArrayList<>(1), s, isTrim, ignoreEmpty);
+
+        final ArrayList<String> list = new ArrayList<>(limit > 0 ? limit : 16);
+        int len = s.length();
+        int start = 0;// 切分后每个部分的起始
+        for (int i = 0; i < len; i++) {
+            if (CharUtils.equals(separator, s.charAt(i), ignoreCase)) {
+                addToList(list, s.substring(start, i), isTrim, ignoreEmpty);
+                start = i + 1;// i+1同时将 start 与 i 保持一致
+
+                // 检查是否超出范围（最大允许 limit-1 个，剩下一个留给末尾字符串）
+                if (limit > 0 && list.size() > limit - 2) {
+                    break;
+                }
+            }
+        }
+        return addToList(list, s.substring(start, len), isTrim, ignoreEmpty);
+    }
+
+    /**
+     * 切分字符串，去除切分字符串后每个元素两边的空格，忽略空串
+     *
+     * @param s         被切分的字符串
+     * @param separator 分隔符字符
+     * @param limit     限制分片数，-1不限制
+     * @return 切分后的集合
+     * @since 1.2.2
+     */
+    public static List<String> split(String s, char separator, int limit) {
+        return split(s, separator, limit, true, true, false);
+    }
+
+    /**
+     * 切分字符串，去除切分字符串后每个元素两边的空格，忽略空串
+     *
+     * @param s         被切分的字符串
+     * @param separator 分隔符字符
+     * @return 切分后的集合
+     * @since 1.2.2
+     */
+    public static List<String> split(String s, char separator) {
+        return split(s, separator, -1, true, true, false);
+    }
+
+    /**
+     * 使用空白符切分字符串<br>
+     * 切分后的字符串两边不包含空白符，空串或空白符串并不做为元素之一
+     *
+     * @param s     被切分的字符串
+     * @param limit 限制分片数，-1不限制
+     * @return 切分后的集合
+     * @since 1.2.2
+     */
+    public static List<String> split(String s, int limit) {
+        if (isEmpty(s))
+            return new ArrayList<>(0);
+
+        if (limit == 1)
+            return addToList(new ArrayList<>(1), s, true, true);
+
+        final ArrayList<String> list = new ArrayList<>();
+        int len = s.length();
+        int start = 0;// 切分后每个部分的起始
+        for (int i = 0; i < len; i++) {
+            if (CharUtils.isBlank(s.charAt(i))) {
+                addToList(list, s.substring(start, i), true, true);
+                start = i + 1;// i+1 同时将 start 与 i 保持一致
+
+                // 检查是否超出范围（最大允许 limit-1 个，剩下一个留给末尾字符串）
+                if (limit > 0 && list.size() > limit - 2)
+                    break;
+            }
+        }
+        return addToList(list, s.substring(start, len), true, true);
+    }
+
+    /**
+     * 使用空白符切分字符串<br>
+     * 切分后的字符串两边不包含空白符，空串或空白符串并不做为元素之一
+     *
+     * @param s 被切分的字符串
+     * @return 切分后的集合
+     * @since 1.2.2
+     */
+    public static List<String> split(String s) {
+        return split(s, -1);
+    }
+
+    /**
+     * 切分字符串
+     *
+     * @param s           被切分的字符串
+     * @param separator   分隔符字符串
+     * @param limit       限制分片数，-1不限制
+     * @param isTrim      是否去除切分字符串后每个元素两边的空格
+     * @param ignoreEmpty 是否忽略空串
+     * @param ignoreCase  是否忽略大小写
+     * @return 切分后的集合
+     * @since 1.2.2
+     */
+    public static List<String> split(String s, String separator, int limit, boolean isTrim, boolean ignoreEmpty, boolean ignoreCase) {
+        if (isEmpty(s))
+            return new ArrayList<>(0);
+
+        if (limit == 1)
+            return addToList(new ArrayList<>(1), s, isTrim, ignoreEmpty);
+
+        if (isEmpty(separator)) {// 分隔符为空时按照空白符切分
+            return split(s, limit);
+        } else if (separator.length() == 1) {// 分隔符只有一个字符长度时按照单分隔符切分
+            return split(s, separator.charAt(0), limit, isTrim, ignoreEmpty, ignoreCase);
+        }
+
+        final ArrayList<String> list = new ArrayList<>();
+        int len = s.length();
+        int separatorLen = separator.length();
+        int start = 0;
+        int i = 0;
+        while (i < len) {
+            i = indexOf(s, separator, start, ignoreCase);
+            if (i > -1) {
+                addToList(list, s.substring(start, i), isTrim, ignoreEmpty);
+                start = i + separatorLen;
+
+                // 检查是否超出范围（最大允许 limit-1 个，剩下一个留给末尾字符串）
+                if (limit > 0 && list.size() > limit - 2) {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+        return addToList(list, s.substring(start, len), isTrim, ignoreEmpty);
+    }
+
+    /**
+     * 切分字符串，去除切分字符串后每个元素两边的空格，忽略空串
+     *
+     * @param s         被切分的字符串
+     * @param separator 分隔符字符串
+     * @param limit     限制分片数，-1不限制
+     * @return 切分后的集合
+     * @since 1.2.2
+     */
+    public static List<String> split(String s, String separator, int limit) {
+        return split(s, separator, limit, true, true, false);
+    }
+
+    /**
+     * 切分字符串，去除切分字符串后每个元素两边的空格，忽略空串
+     *
+     * @param s         被切分的字符串
+     * @param separator 分隔符字符串
+     * @return 切分后的集合
+     * @since 1.2.2
+     */
+    public static List<String> split(String s, String separator) {
+        return split(s, separator, -1, true, true, false);
+    }
+
+    /**
+     * 切分字符串为字符串数组
+     *
+     * @param s           被切分的字符串
+     * @param separator   分隔符字符
+     * @param limit       限制分片数，-1不限制
+     * @param isTrim      是否去除切分字符串后每个元素两边的空格
+     * @param ignoreEmpty 是否忽略空串
+     * @param ignoreCase  是否忽略大小写
+     * @return 切分后的字符串数组
+     * @since 1.2.2
+     */
+    public static String[] splitToArray(String s, char separator, int limit, boolean isTrim, boolean ignoreEmpty, boolean ignoreCase) {
+        return split(s, separator, limit, isTrim, ignoreEmpty, ignoreCase).toArray(new String[0]);
+    }
+
+    /**
+     * 切分字符串为字符串数组，去除切分字符串后每个元素两边的空格，忽略空串
+     *
+     * @param s         被切分的字符串
+     * @param separator 分隔符字符
+     * @param limit     限制分片数，-1不限制
+     * @return 切分后的字符串数组
+     * @since 1.2.2
+     */
+    public static String[] splitToArray(String s, char separator, int limit) {
+        return splitToArray(s, separator, limit, true, true, false);
+    }
+
+    /**
+     * 切分字符串为字符串数组，去除切分字符串后每个元素两边的空格，忽略空串
+     *
+     * @param s         被切分的字符串
+     * @param separator 分隔符字符
+     * @return 切分后的字符串数组
+     * @since 1.2.2
+     */
+    public static String[] splitToArray(String s, char separator) {
+        return splitToArray(s, separator, -1, true, true, false);
+    }
+
+    /**
+     * 使用空白符切分字符串为字符串数组<br>
+     * 切分后的字符串两边不包含空白符，空串或空白符串并不做为元素之一
+     *
+     * @param s     被切分的字符串
+     * @param limit 限制分片数，-1不限制
+     * @return 切分后的字符串数组
+     * @since 1.2.2
+     */
+    public static String[] splitToArray(String s, int limit) {
+        return split(s, limit).toArray(new String[0]);
+    }
+
+    /**
+     * 使用空白符切分字符串为字符串数组<br>
+     * 切分后的字符串两边不包含空白符，空串或空白符串并不做为元素之一
+     *
+     * @param s 被切分的字符串
+     * @return 切分后的字符串数组
+     * @since 1.2.2
+     */
+    public static String[] splitToArray(String s) {
+        return splitToArray(s, -1);
+    }
+
+    /**
+     * 切分字符串为字符串数组
+     *
+     * @param s           被切分的字符串
+     * @param separator   分隔符字符串
+     * @param limit       限制分片数，-1不限制
+     * @param isTrim      是否去除切分字符串后每个元素两边的空格
+     * @param ignoreEmpty 是否忽略空串
+     * @param ignoreCase  是否忽略大小写
+     * @return 切分后的字符串数组
+     * @since 1.2.2
+     */
+    public static String[] splitToArray(String s, String separator, int limit, boolean isTrim, boolean ignoreEmpty, boolean ignoreCase) {
+        return split(s, separator, limit, isTrim, ignoreEmpty, ignoreCase).toArray(new String[0]);
+    }
+
+    /**
+     * 切分字符串为字符串数组，去除切分字符串后每个元素两边的空格，忽略空串
+     *
+     * @param s         被切分的字符串
+     * @param separator 分隔符字符串
+     * @param limit     限制分片数，-1不限制
+     * @return 切分后的字符串数组
+     * @since 1.2.2
+     */
+    public static String[] splitToArray(String s, String separator, int limit) {
+        return splitToArray(s, separator, limit, true, true, false);
+    }
+
+    /**
+     * 切分字符串为字符串数组，去除切分字符串后每个元素两边的空格，忽略空串
+     *
+     * @param s         被切分的字符串
+     * @param separator 分隔符字符串
+     * @return 切分后的字符串数组
+     * @since 1.2.2
+     */
+    public static String[] splitToArray(String s, String separator) {
+        return splitToArray(s, separator, -1, true, true, false);
+    }
+
+    /**
+     * 将字符串加入 List 列表中
+     *
+     * @param list        列表
+     * @param part        被加入的部分
+     * @param isTrim      是否去除两端空白符
+     * @param ignoreEmpty 是否略过空字符串（空字符串不做为一个元素）
+     * @return 列表
+     * @since 1.2.2
+     */
+    private static List<String> addToList(List<String> list, String part, boolean isTrim, boolean ignoreEmpty) {
+        if (isTrim) {
+            part = trim(part);
+        }
+        if (!ignoreEmpty || isNotEmpty(part)) {
+            list.add(part);
+        }
+        return list;
     }
 }

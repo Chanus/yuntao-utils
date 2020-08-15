@@ -333,6 +333,31 @@ public class LocalDateTimeUtilsTest {
     }
 
     @Test
+    public void plusNowTest() {
+        System.out.println("当前日期时间：" + LocalDateTime.now());
+        System.out.println("当前日期时间加一年：" + LocalDateTimeUtils.plusNowDateTime(1, ChronoUnit.YEARS));
+        System.out.println("当前日期时间加一月：" + LocalDateTimeUtils.plusNowDateTime(1, ChronoUnit.MONTHS));
+        System.out.println("当前日期时间加一天：" + LocalDateTimeUtils.plusNowDateTime(1, ChronoUnit.DAYS));
+        System.out.println("当前日期时间加一小时：" + LocalDateTimeUtils.plusNowDateTime(1, ChronoUnit.HOURS));
+        System.out.println("当前日期时间加一分钟：" + LocalDateTimeUtils.plusNowDateTime(1, ChronoUnit.MINUTES));
+        System.out.println("当前日期时间加一秒钟：" + LocalDateTimeUtils.plusNowDateTime(1, ChronoUnit.SECONDS));
+        System.out.println("当前日期时间加一毫秒：" + LocalDateTimeUtils.plusNowDateTime(1, ChronoUnit.MILLIS));
+        System.out.println("当前日期时间加一星期：" + LocalDateTimeUtils.plusNowDateTime(1, ChronoUnit.WEEKS));
+
+        System.out.println("当前日期：" + LocalDate.now());
+        System.out.println("当前日期加一年：" + LocalDateTimeUtils.plusNowDate(1, ChronoUnit.YEARS));
+        System.out.println("当前日期加一月：" + LocalDateTimeUtils.plusNowDate(1, ChronoUnit.MONTHS));
+        System.out.println("当前日期加一天：" + LocalDateTimeUtils.plusNowDate(1, ChronoUnit.DAYS));
+        System.out.println("当前日期加一星期：" + LocalDateTimeUtils.plusNowDate(1, ChronoUnit.WEEKS));
+
+        System.out.println("当前时间：" + LocalTime.now());
+        System.out.println("当前时间加一小时：" + LocalDateTimeUtils.plusNowTime(1, ChronoUnit.HOURS));
+        System.out.println("当前时间加一分钟：" + LocalDateTimeUtils.plusNowTime(1, ChronoUnit.MINUTES));
+        System.out.println("当前时间加一秒钟：" + LocalDateTimeUtils.plusNowTime(1, ChronoUnit.SECONDS));
+        System.out.println("当前时间加一毫秒：" + LocalDateTimeUtils.plusNowTime(1, ChronoUnit.MILLIS));
+    }
+
+    @Test
     public void minusTest() {
         LocalDateTime nowDateTime = LocalDateTime.now();
         System.out.println("当前日期时间：" + nowDateTime);
@@ -358,6 +383,31 @@ public class LocalDateTimeUtilsTest {
         System.out.println("当前时间减一分钟：" + LocalDateTimeUtils.minus(nowTime, 1, ChronoUnit.MINUTES));
         System.out.println("当前时间减一秒钟：" + LocalDateTimeUtils.minus(nowTime, 1, ChronoUnit.SECONDS));
         System.out.println("当前时间减一毫秒：" + LocalDateTimeUtils.minus(nowTime, 1, ChronoUnit.MILLIS));
+    }
+
+    @Test
+    public void minusNowTest() {
+        System.out.println("当前日期时间：" + LocalDateTime.now());
+        System.out.println("当前日期时间减一年：" + LocalDateTimeUtils.minusNowDateTime(1, ChronoUnit.YEARS));
+        System.out.println("当前日期时间减一月：" + LocalDateTimeUtils.minusNowDateTime(1, ChronoUnit.MONTHS));
+        System.out.println("当前日期时间减一天：" + LocalDateTimeUtils.minusNowDateTime(1, ChronoUnit.DAYS));
+        System.out.println("当前日期时间减一小时：" + LocalDateTimeUtils.minusNowDateTime(1, ChronoUnit.HOURS));
+        System.out.println("当前日期时间减一分钟：" + LocalDateTimeUtils.minusNowDateTime(1, ChronoUnit.MINUTES));
+        System.out.println("当前日期时间减一秒钟：" + LocalDateTimeUtils.minusNowDateTime(1, ChronoUnit.SECONDS));
+        System.out.println("当前日期时间减一毫秒：" + LocalDateTimeUtils.minusNowDateTime(1, ChronoUnit.MILLIS));
+        System.out.println("当前日期时间减一星期：" + LocalDateTimeUtils.minusNowDateTime(1, ChronoUnit.WEEKS));
+
+        System.out.println("当前日期：" + LocalDate.now());
+        System.out.println("当前日期减一年：" + LocalDateTimeUtils.minusNowDate(1, ChronoUnit.YEARS));
+        System.out.println("当前日期减一月：" + LocalDateTimeUtils.minusNowDate(1, ChronoUnit.MONTHS));
+        System.out.println("当前日期减一天：" + LocalDateTimeUtils.minusNowDate(1, ChronoUnit.DAYS));
+        System.out.println("当前日期减一星期：" + LocalDateTimeUtils.minusNowDate(1, ChronoUnit.WEEKS));
+
+        System.out.println("当前时间：" + LocalTime.now());
+        System.out.println("当前时间减一小时：" + LocalDateTimeUtils.minusNowTime(1, ChronoUnit.HOURS));
+        System.out.println("当前时间减一分钟：" + LocalDateTimeUtils.minusNowTime(1, ChronoUnit.MINUTES));
+        System.out.println("当前时间减一秒钟：" + LocalDateTimeUtils.minusNowTime(1, ChronoUnit.SECONDS));
+        System.out.println("当前时间减一毫秒：" + LocalDateTimeUtils.minusNowTime(1, ChronoUnit.MILLIS));
     }
 
     @Test

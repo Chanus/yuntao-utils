@@ -135,8 +135,10 @@ public class DateUtilsTest {
     public void offsetTest() {
         Date date = new Date();
         System.out.println("当前时间：" + date);
-        System.out.println("两周前：" + DateUtils.offset(date, -3, Calendar.WEEK_OF_YEAR));
-        System.out.println("两周后：" + DateUtils.offset(date, 3, Calendar.WEEK_OF_YEAR));
+        System.out.println("两周前：" + DateUtils.offset(date, -2, Calendar.WEEK_OF_YEAR));
+        System.out.println("两周前：" + DateUtils.offset(-2, Calendar.WEEK_OF_YEAR));
+        System.out.println("两周后：" + DateUtils.offset(date, 2, Calendar.WEEK_OF_YEAR));
+        System.out.println("两周后：" + DateUtils.offset(2, Calendar.WEEK_OF_YEAR));
     }
 
     @Test
@@ -144,7 +146,9 @@ public class DateUtilsTest {
         Date date = new Date();
         System.out.println("当前时间：" + date);
         System.out.println("两年前：" + DateUtils.yearOffset(date, -2));
+        System.out.println("两年前：" + DateUtils.yearOffset(-2));
         System.out.println("两年后：" + DateUtils.yearOffset(date, 2));
+        System.out.println("两年后：" + DateUtils.yearOffset(2));
     }
 
     @Test
@@ -152,7 +156,9 @@ public class DateUtilsTest {
         Date date = new Date();
         System.out.println("当前时间：" + date);
         System.out.println("两月前：" + DateUtils.monthOffset(date, -2));
+        System.out.println("两月前：" + DateUtils.monthOffset(-2));
         System.out.println("两月后：" + DateUtils.monthOffset(date, 2));
+        System.out.println("两月后：" + DateUtils.monthOffset(2));
     }
 
     @Test
@@ -160,7 +166,9 @@ public class DateUtilsTest {
         Date date = new Date();
         System.out.println("当前时间：" + date);
         System.out.println("两天前：" + DateUtils.dayOffset(date, -2));
+        System.out.println("两天前：" + DateUtils.dayOffset(-2));
         System.out.println("两天后：" + DateUtils.dayOffset(date, 2));
+        System.out.println("两天后：" + DateUtils.dayOffset(2));
     }
 
     @Test
@@ -168,7 +176,9 @@ public class DateUtilsTest {
         Date date = new Date();
         System.out.println("当前时间：" + date);
         System.out.println("两小时前：" + DateUtils.hourOffset(date, -2));
+        System.out.println("两小时前：" + DateUtils.hourOffset(-2));
         System.out.println("两小时后：" + DateUtils.hourOffset(date, 2));
+        System.out.println("两小时后：" + DateUtils.hourOffset(2));
     }
 
     @Test
@@ -176,7 +186,9 @@ public class DateUtilsTest {
         Date date = new Date();
         System.out.println("当前时间：" + date);
         System.out.println("两分钟前：" + DateUtils.minuteOffset(date, -2));
+        System.out.println("两分钟前：" + DateUtils.minuteOffset(-2));
         System.out.println("两分钟后：" + DateUtils.minuteOffset(date, 2));
+        System.out.println("两分钟后：" + DateUtils.minuteOffset(2));
     }
 
     @Test
@@ -184,7 +196,9 @@ public class DateUtilsTest {
         Date date = new Date();
         System.out.println("当前时间：" + date);
         System.out.println("两秒钟前：" + DateUtils.secondOffset(date, -2));
+        System.out.println("两秒钟前：" + DateUtils.secondOffset(-2));
         System.out.println("两秒钟后：" + DateUtils.secondOffset(date, 2));
+        System.out.println("两秒钟后：" + DateUtils.secondOffset(2));
     }
 
     @Test

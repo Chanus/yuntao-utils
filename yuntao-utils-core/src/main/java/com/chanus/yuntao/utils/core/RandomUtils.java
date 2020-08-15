@@ -215,12 +215,23 @@ public class RandomUtils {
     }
 
     /**
+     * 获取由时间戳和 {@code digitCount} 位随机数字组成的纯数字字符串
+     *
+     * @param digitCount 随机数字个数
+     * @return 时间戳和 {@code digitCount} 位随机数字组成的纯数字字符串
+     * @since 1.2.2
+     */
+    public static String getRandomUniqueNo(int digitCount) {
+        return System.currentTimeMillis() + getRandomDigits(digitCount);
+    }
+
+    /**
      * 获取由时间戳和5位随机数字组成的纯数字字符串
      *
      * @return 18位纯数字字符串
      */
     public static String getRandomUniqueNo() {
-        return System.currentTimeMillis() + String.valueOf((int) ((ThreadLocalRandom.current().nextDouble(1) * 9 + 1) * 10000));
+        return getRandomUniqueNo(5);
     }
 
     /**

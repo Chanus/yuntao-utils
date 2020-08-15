@@ -588,6 +588,18 @@ public class LocalDateTimeUtils {
     }
 
     /**
+     * 当前日期时间根据 {@code field} 加上一个值 {@code number}
+     *
+     * @param number 增加的数值
+     * @param field  操作区域，年、月、日、时、分、秒、毫秒、星期等
+     * @return 当前日期时间根据 {@code field} 加上 {@code number} 后的日期时间
+     * @since 1.2.2
+     */
+    public static LocalDateTime plusNowDateTime(long number, ChronoUnit field) {
+        return LocalDateTime.now().plus(number, field);
+    }
+
+    /**
      * 日期根据 {@code field} 加上一个值 {@code number}
      *
      * @param localDate 日期
@@ -597,6 +609,18 @@ public class LocalDateTimeUtils {
      */
     public static LocalDate plus(LocalDate localDate, long number, ChronoUnit field) {
         return localDate == null ? null : localDate.plus(number, field);
+    }
+
+    /**
+     * 当前日期根据 {@code field} 加上一个值 {@code number}
+     *
+     * @param number 增加的数值
+     * @param field  操作区域，年、月、日、星期等
+     * @return 当前日期根据 {@code field} 加上 {@code number} 后的日期
+     * @since 1.2.2
+     */
+    public static LocalDate plusNowDate(long number, ChronoUnit field) {
+        return LocalDate.now().plus(number, field);
     }
 
     /**
@@ -612,6 +636,18 @@ public class LocalDateTimeUtils {
     }
 
     /**
+     * 当前时间根据 {@code field} 加上一个值 {@code number}
+     *
+     * @param number 增加的数值
+     * @param field  操作区域，时、分、秒、毫秒等
+     * @return 当前时间根据 {@code field} 加上 {@code number} 后的时间
+     * @since 1.2.2
+     */
+    public static LocalTime plusNowTime(long number, ChronoUnit field) {
+        return LocalTime.now().plus(number, field);
+    }
+
+    /**
      * 日期时间根据 {@code field} 减去一个值 {@code number}
      *
      * @param localDateTime 日期时间
@@ -621,6 +657,18 @@ public class LocalDateTimeUtils {
      */
     public static LocalDateTime minus(LocalDateTime localDateTime, long number, ChronoUnit field) {
         return localDateTime == null ? null : localDateTime.minus(number, field);
+    }
+
+    /**
+     * 当前日期时间根据 {@code field} 减去一个值 {@code number}
+     *
+     * @param number 减去的数值
+     * @param field  操作区域，年、月、日、时、分、秒、毫秒、星期等
+     * @return 当前日期时间根据 {@code field} 减去 {@code number} 后的日期时间
+     * @since 1.2.2
+     */
+    public static LocalDateTime minusNowDateTime(long number, ChronoUnit field) {
+        return LocalDateTime.now().minus(number, field);
     }
 
     /**
@@ -636,6 +684,18 @@ public class LocalDateTimeUtils {
     }
 
     /**
+     * 当前日期根据 {@code field} 减去一个值 {@code number}
+     *
+     * @param number 减去的数值
+     * @param field  操作区域，年、月、日、星期等
+     * @return 当前日期根据 {@code field} 减去 {@code number} 后的日期
+     * @since 1.2.2
+     */
+    public static LocalDate minusNowDate(long number, ChronoUnit field) {
+        return LocalDate.now().minus(number, field);
+    }
+
+    /**
      * 时间根据 {@code field} 减去一个值 {@code number}
      *
      * @param localTime 时间
@@ -645,6 +705,18 @@ public class LocalDateTimeUtils {
      */
     public static LocalTime minus(LocalTime localTime, long number, ChronoUnit field) {
         return localTime == null ? null : localTime.minus(number, field);
+    }
+
+    /**
+     * 当前时间根据 {@code field} 减去一个值 {@code number}
+     *
+     * @param number 减去的数值
+     * @param field  操作区域，时、分、秒、毫秒等
+     * @return 当前时间根据 {@code field} 减去 {@code number} 后的时间
+     * @since 1.2.2
+     */
+    public static LocalTime minusNowTime(long number, ChronoUnit field) {
+        return LocalTime.now().minus(number, field);
     }
 
     /**
