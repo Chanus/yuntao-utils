@@ -328,16 +328,45 @@ public class NumberUtilsTest {
         System.out.println(NumberUtils.decimalFormat("#.##%", new BigDecimal("123456789.987654321")));// = 12345678998.77%
         System.out.println(NumberUtils.decimalFormat("#.#####E0", new BigDecimal("123456789.987654321")));// = 1.23457E8
         System.out.println(NumberUtils.decimalFormat("###.##", new BigDecimal("1.1")));// = 1.1
+
+        System.out.println("================== decimalFormat(String pattern, String value) ==================");
+        System.out.println(NumberUtils.decimalFormat("0", "123456789.987654321"));// = 123456790
+        System.out.println(NumberUtils.decimalFormat("0.00", "123456789.987654321"));// = 123456789.99
+        System.out.println(NumberUtils.decimalFormat("0.00000", "123456789.987654321"));// = 123456789.98765
+        System.out.println(NumberUtils.decimalFormat("0.00", "123.1"));// = 123.10
+
+        System.out.println(NumberUtils.decimalFormat("#", "123456789.987654321"));// = 123456790
+        System.out.println(NumberUtils.decimalFormat("#.##", "123456789.987654321"));// = 123456789.99
+        System.out.println(NumberUtils.decimalFormat("#.##%", "123456789.987654321"));// = 12345678998.77%
+        System.out.println(NumberUtils.decimalFormat("#.#####E0", "123456789.987654321"));// = 1.23457E8
+        System.out.println(NumberUtils.decimalFormat("###.##", "1.1"));// = 1.1
     }
 
     @Test
     public void decimalFormatMoneyTest() {
+        System.out.println("================== decimalFormatMoney(double value) ==================");
         System.out.println(NumberUtils.decimalFormatMoney(0));// = 0.00
         System.out.println(NumberUtils.decimalFormatMoney(1));// = 1.00
         System.out.println(NumberUtils.decimalFormatMoney(1.123456));// = 1.12
         System.out.println(NumberUtils.decimalFormatMoney(1.125456));// = 1.13
-        System.out.println(NumberUtils.decimalFormatMoney(123456.123456));// = 1.12
-        System.out.println(NumberUtils.decimalFormatMoney(123456789.123456));// = 1.12
+        System.out.println(NumberUtils.decimalFormatMoney(123456.123456));// = 123,456.12
+        System.out.println(NumberUtils.decimalFormatMoney(123456789.123456));// = 123,456,789.12
+
+        System.out.println("================== decimalFormatMoney(Object value) ==================");
+        System.out.println(NumberUtils.decimalFormatMoney(new BigDecimal("0")));// = 0.00
+        System.out.println(NumberUtils.decimalFormatMoney(new BigDecimal("1")));// = 1.00
+        System.out.println(NumberUtils.decimalFormatMoney(new BigDecimal("1.123456")));// = 1.12
+        System.out.println(NumberUtils.decimalFormatMoney(new BigDecimal("1.125456")));// = 1.13
+        System.out.println(NumberUtils.decimalFormatMoney(new BigDecimal("123456.123456")));// = 123,456.12
+        System.out.println(NumberUtils.decimalFormatMoney(new BigDecimal("123456789.123456")));// = 123,456,789.12
+
+        System.out.println("================== decimalFormatMoney(String value) ==================");
+        System.out.println(NumberUtils.decimalFormatMoney("0"));// = 0.00
+        System.out.println(NumberUtils.decimalFormatMoney("1"));// = 1.00
+        System.out.println(NumberUtils.decimalFormatMoney("1.123456"));// = 1.12
+        System.out.println(NumberUtils.decimalFormatMoney("1.125456"));// = 1.13
+        System.out.println(NumberUtils.decimalFormatMoney("123456.123456"));// = 123,456.12
+        System.out.println(NumberUtils.decimalFormatMoney("123456789.123456"));// = 123,456,789.12
     }
 
     @Test
