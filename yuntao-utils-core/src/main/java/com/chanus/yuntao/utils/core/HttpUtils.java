@@ -48,6 +48,18 @@ public class HttpUtils {
      * 文件上传结尾
      */
     private static final String END = "\r\n";
+    /**
+     * 默认媒体类型（key/value 数据格式）
+     */
+    private static final String CONTENT_TYPE_DEFAULT = "application/x-www-form-urlencoded;charset=UTF-8";
+    /**
+     * JSON 数据格式的媒体类型
+     */
+    private static final String CONTENT_TYPE_JSON = "application/json;charset=UTF-8";
+    /**
+     * 需要在表单中进行文件上传时的媒体类型
+     */
+    private static final String CONTENT_TYPE_UPLOAD = "multipart/form-data; boundary=" + BOUNDARY;
 
     /**
      * 异步请求回调接口
@@ -164,17 +176,19 @@ public class HttpUtils {
     /**
      * 向指定 URL 发送 POST 方法的请求
      *
-     * @param url    发送请求的 URL，可以包含请求参数
-     * @param params 请求参数
+     * @param url         发送请求的 URL，可以包含请求参数
+     * @param params      请求参数
+     * @param contentType 媒体类型
      * @return 远程资源的响应结果
+     * @since 1.2.4
      */
-    public static String post(final String url, final String params) {
+    public static String post(final String url, final String params, String contentType) {
         StringBuilder result = new StringBuilder();// 返回的结果
         BufferedReader bufferedReader = null;// 读取响应输入流
         BufferedWriter bufferedWriter = null;// 写入参数输出流
         try {
             // 打开 URL 连接
-            HttpURLConnection connection = getPostConnection(url, false);
+            HttpURLConnection connection = getPostConnection(url, contentType);
 
             // POST 请求参数
             if (StringUtils.isNotBlank(params)) {
@@ -199,6 +213,29 @@ public class HttpUtils {
             IOUtils.close(bufferedReader);
         }
         return result.toString();
+    }
+
+    /**
+     * 向指定 URL 发送 POST 方法的请求
+     *
+     * @param url    发送请求的 URL，可以包含请求参数
+     * @param params 请求参数
+     * @return 远程资源的响应结果
+     */
+    public static String post(final String url, final String params) {
+        return post(url, params, CONTENT_TYPE_DEFAULT);
+    }
+
+    /**
+     * 向指定 URL 发送 POST 方法的请求
+     *
+     * @param url    发送请求的 URL，可以包含请求参数
+     * @param params json 格式的请求参数
+     * @return 远程资源的响应结果
+     * @since 1.2.4
+     */
+    public static String postJson(final String url, final String params) {
+        return post(url, params, CONTENT_TYPE_JSON);
     }
 
     /**
@@ -329,7 +366,7 @@ public class HttpUtils {
 
         try {
             // 打开 URL 连接
-            HttpURLConnection connection = getPostConnection(url, true);
+            HttpURLConnection connection = getPostConnection(url, CONTENT_TYPE_UPLOAD);
 
             // 获得输出流
             dataOutputStream = new DataOutputStream(connection.getOutputStream());
@@ -401,7 +438,7 @@ public class HttpUtils {
 
         try {
             // 打开URL连接
-            HttpURLConnection connection = getPostConnection(url, false);
+            HttpURLConnection connection = getPostConnection(url, CONTENT_TYPE_DEFAULT);
 
             // 请求参数
             if (StringUtils.isNotBlank(params)) {
@@ -450,7 +487,7 @@ public class HttpUtils {
     public static BufferedInputStream downloadPost(final String url, final String params) {
         try {
             // 打开URL连接
-            HttpURLConnection connection = getPostConnection(url, false);
+            HttpURLConnection connection = getPostConnection(url, CONTENT_TYPE_DEFAULT);
 
             // 请求参数
             if (StringUtils.isNotBlank(params)) {
@@ -607,11 +644,11 @@ public class HttpUtils {
     /**
      * 获取 POST 请求连接
      *
-     * @param url      发送请求的 URL
-     * @param isUpload 是否是文件上传，{@code true} 是，{@code false} 否
+     * @param url         发送请求的 URL
+     * @param contentType 媒体类型
      * @return {@link HttpURLConnection}
      */
-    private static HttpURLConnection getPostConnection(final String url, boolean isUpload) {
+    private static HttpURLConnection getPostConnection(final String url, String contentType) {
         // 创建 URL 对象
         URL connURL;
         // 打开 URL 连接
@@ -622,10 +659,7 @@ public class HttpUtils {
             // 设置通用属性，请求头信息
             connection.setRequestProperty("Accept", "*/*");
             connection.setRequestProperty("Connection", "Keep-Alive");
-            if (isUpload)
-                connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
-            else
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+            connection.setRequestProperty("Content-Type", contentType);
             // 设定请求的方法，默认是 GET
             connection.setRequestMethod("POST");
             // 设置是否向 connection 输出

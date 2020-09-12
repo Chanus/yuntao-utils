@@ -25,6 +25,7 @@ import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -1243,6 +1244,92 @@ public class FileUtils {
             return false;
 
         return sub.toPath().startsWith(parent.toPath());
+    }
+
+    /**
+     * 文件转换成 Base64 字符串
+     *
+     * @param inputStream 文件流
+     * @return Base64 编码的字符串
+     * @since 1.2.4
+     */
+    public static String toBase64(InputStream inputStream) {
+        // 读取图片字节数组
+        try {
+            byte[] data = new byte[inputStream.available()];
+            inputStream.read(data);
+
+            // 对字节数组进行 Base64 编码，得到 Base64 编码的字符串
+            return Base64.getEncoder().encodeToString(data);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            IOUtils.close(inputStream);
+        }
+    }
+
+    /**
+     * 文件转换成 Base64 字符串
+     *
+     * @param file 文件
+     * @return Base64 编码的字符串
+     * @since 1.2.4
+     */
+    public static String toBase64(File file) {
+        try {
+            return toBase64(new FileInputStream(file));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 在线文件转换成 Base64 字符串
+     *
+     * @param fileURL 在线文件路径
+     * @return Base64 编码的字符串
+     * @since 1.2.4
+     */
+    public static String toBase64Online(String fileURL) {
+        BufferedInputStream bis = HttpUtils.downloadGet(fileURL);
+        byte[] data = StreamUtils.read2Byte(bis);
+        // 对字节数组进行 Base64 编码，得到 Base64 编码的字符串
+        return Base64.getEncoder().encodeToString(data);
+    }
+
+    /**
+     * 将 Base64 编码的字符串生成文件
+     *
+     * @param base64String Base64 编码的字符串
+     * @param filePath     文件路径
+     * @param fileName     文件名
+     * @return Base64 编码的字符串生成的文件
+     * @since 1.2.4
+     */
+    public static File base64ToFile(String base64String, String filePath, String fileName) {
+        byte[] data = Base64.getDecoder().decode(base64String);
+
+        File file = createFile(filePath + File.separator + fileName);
+        write(file, data, false);
+
+        return file;
+    }
+
+    /**
+     * 将 Base64 编码的字符串生成文件
+     *
+     * @param base64String Base64 编码的字符串
+     * @param filePath     文件全路径
+     * @return Base64 编码的字符串生成的文件
+     * @since 1.2.4
+     */
+    public static File base64ToFile(String base64String, String filePath) {
+        byte[] data = Base64.getDecoder().decode(base64String);
+
+        File file = createFile(filePath);
+        write(file, data, false);
+
+        return file;
     }
 
     /**

@@ -510,7 +510,9 @@ public class DateUtils {
         Calendar[] calendars = getCalendars(sourceDate, targetDate);
 
         int n = 0;
-        while (calendars[0].get(Calendar.YEAR) != calendars[1].get(Calendar.YEAR) || calendars[0].get(Calendar.MONTH) != calendars[1].get(Calendar.MONTH) || calendars[0].get(Calendar.DAY_OF_MONTH) != calendars[1].get(Calendar.DAY_OF_MONTH)) {
+        while (calendars[0].get(Calendar.YEAR) != calendars[1].get(Calendar.YEAR)
+                || calendars[0].get(Calendar.MONTH) != calendars[1].get(Calendar.MONTH)
+                || calendars[0].get(Calendar.DAY_OF_MONTH) != calendars[1].get(Calendar.DAY_OF_MONTH)) {
             calendars[1].add(Calendar.DATE, 1);
             n++;
         }

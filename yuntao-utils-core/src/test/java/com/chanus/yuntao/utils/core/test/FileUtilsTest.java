@@ -453,4 +453,28 @@ public class FileUtilsTest {
         System.out.println(FileUtils.isSub(new File("F:\\test\\test1\\test2"), new File("F:\\test\\test1")));// false
         System.out.println(FileUtils.isSub(new File("F:\\test\\test1"), new File("F:\\test\\test1\\test2")));// true
     }
+
+    @Test
+    public void toBase64Test() {
+        System.out.println(FileUtils.toBase64(new File("D:\\work\\document\\厦门六连环\\0.jpg")));// false
+    }
+
+    @Test
+    public void toBase64OnlineTest() {
+        String url = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1599631845885&di=f04d61ea73e5c7489f0d49453bbef6a1&imgtype=0&src=http%3A%2F%2Fa3.att.hudong.com%2F14%2F75%2F01300000164186121366756803686.jpg";
+        System.out.println(FileUtils.toBase64Online(url));// false
+    }
+
+    @Test
+    public void base64ToFileTest() {
+        String base64String = FileUtils.toBase64(new File("D:\\work\\document\\厦门六连环\\正面_meitu_1.jpg"));
+        FileUtils.base64ToFile(base64String, "D:\\work\\document\\厦门六连环\\sfz", "z.jpg");
+    }
+
+    @Test
+    public void base64ToFileTest2() {
+        String url = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1599631845885&di=f04d61ea73e5c7489f0d49453bbef6a1&imgtype=0&src=http%3A%2F%2Fa3.att.hudong.com%2F14%2F75%2F01300000164186121366756803686.jpg";
+        String base64String = FileUtils.toBase64Online(url);
+        FileUtils.base64ToFile(base64String, "D:\\work\\document\\厦门六连环\\sfz\\fengjing.jpg");
+    }
 }
