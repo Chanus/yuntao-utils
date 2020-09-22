@@ -68,11 +68,25 @@ public class FileUtilsTest {
 
     @Test
     public void loopFilesTest() {
+        System.out.println("================= loopFiles(String path) =================");
         List<File> files = FileUtils.loopFiles("F:\\test");
         files.forEach(file -> System.out.println(file.getPath()));
 
+        System.out.println("================= loopFiles(File file) =================");
         List<File> files2 = FileUtils.loopFiles(new File("F:\\test"));
         files2.forEach(file -> System.out.println(file.getPath()));
+
+        System.out.println("================= loopFiles(String path, FileFilter fileFilter) =================");
+        List<File> files3 = FileUtils.loopFiles("F:\\test", file -> file.getName().contains("test"));
+        files3.forEach(file -> System.out.println(file.getPath()));
+
+        System.out.println("================= loopFiles(File file, FileFilter fileFilter) =================");
+        List<File> files4 = FileUtils.loopFiles(new File("F:\\test"), file -> file.getName().contains("aaa"));
+        files4.forEach(file -> System.out.println(file.getPath()));
+
+        System.out.println("================= loopFiles(File file, int maxDepth, final FileFilter fileFilter) =================");
+        List<File> files5 = FileUtils.loopFiles(new File("F:\\test"), 1, file -> file.getName().contains("aaa"));
+        files5.forEach(file -> System.out.println(file.getPath()));
     }
 
     @Test

@@ -188,6 +188,12 @@ public class ArrayUtilsTest {
     }
 
     @Test
+    public void filterTest() {
+        Integer[] array = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        System.out.println(Arrays.toString(ArrayUtils.filter(array, x -> x > 5)));// [6, 7, 8, 9]
+    }
+
+    @Test
     public void toStringTest() {
         String[] array1 = {"1", "2", "3", "4", "5"};
         int[] array2 = {1, 2, 3, 4, 5};

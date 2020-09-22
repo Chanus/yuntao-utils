@@ -211,6 +211,42 @@ public class StringUtils {
     }
 
     /**
+     * 判断字符串是否存在空或空白
+     *
+     * @param strs 字符串
+     * @return {@code true} 字符串存在空或空白；{@code false} 字符串不存在空或空白
+     * @since 1.2.5
+     */
+    public static boolean hasBlank(String... strs) {
+        if (strs == null)
+            return true;
+
+        for (String str : strs) {
+            if (isBlank(str))
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断字符串是否存在空或空白
+     *
+     * @param strs 字符串
+     * @return {@code true} 字符串存在空或空白；{@code false} 字符串不存在空或空白
+     * @since 1.2.5
+     */
+    public static boolean hasBlank(CharSequence... strs) {
+        if (strs == null)
+            return true;
+
+        for (CharSequence str : strs) {
+            if (isBlank(str))
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * 字符串是否为空，空的定义如下：
      * <pre>
      *     1、为null
@@ -336,6 +372,42 @@ public class StringUtils {
                 return false;
         }
         return true;
+    }
+
+    /**
+     * 判断字符串是否存在空
+     *
+     * @param strs 字符串
+     * @return {@code true} 字符串存在空；{@code false} 字符串不存在空
+     * @since 1.2.5
+     */
+    public static boolean hasEmpty(String... strs) {
+        if (strs == null)
+            return true;
+
+        for (String str : strs) {
+            if (isEmpty(str))
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断字符串是否存在空
+     *
+     * @param strs 字符串
+     * @return {@code true} 字符串存在空；{@code false} 字符串不存在空
+     * @since 1.2.5
+     */
+    public static boolean hasEmpty(CharSequence... strs) {
+        if (strs == null)
+            return true;
+
+        for (CharSequence str : strs) {
+            if (isEmpty(str))
+                return true;
+        }
+        return false;
     }
 
     /**

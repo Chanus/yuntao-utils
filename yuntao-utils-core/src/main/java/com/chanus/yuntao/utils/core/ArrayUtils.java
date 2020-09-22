@@ -15,6 +15,8 @@
  */
 package com.chanus.yuntao.utils.core;
 
+import com.chanus.yuntao.utils.core.lang.Filter;
+
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -378,6 +380,30 @@ public class ArrayUtils {
         final Set<T> set = new LinkedHashSet<>(array.length, 1);
         Collections.addAll(set, array);
         return set.toArray((T[]) Array.newInstance(array.getClass().getComponentType(), 0));
+    }
+
+    /**
+     * 过滤数据
+     *
+     * @param <T>    数组元素类型
+     * @param array  数组
+     * @param filter 过滤器接口，用于定义过滤规则，null 表示不过滤，返回原数组
+     * @return 过滤后的数组
+     * @since 1.2.5
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T[] filter(T[] array, Filter<T> filter) {
+        if (filter == null)
+            return array;
+
+        final ArrayList<T> list = new ArrayList<>(array.length);
+        for (T t : array) {
+            if (filter.accept(t)) {
+                list.add(t);
+            }
+        }
+
+        return list.toArray((T[]) Array.newInstance(array.getClass().getComponentType(), list.size()));
     }
 
     /**

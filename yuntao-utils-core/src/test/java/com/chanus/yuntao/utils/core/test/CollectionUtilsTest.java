@@ -121,4 +121,16 @@ public class CollectionUtilsTest {
         System.out.println(CollectionUtils.uniqueArray2String(array, "-"));
         System.out.println(CollectionUtils.uniqueArray2String(array));
     }
+
+    @Test
+    public void getAnyTest() {
+        String[] array = {"a", "s", "d", "f", "a", "s", "d", "f", "a", "s", "d", "f"};
+        System.out.println(CollectionUtils.getAny(Arrays.asList(array), 2, 3, 4, -2));// [d, f, a, d]
+    }
+
+    @Test
+    public void indexOfAllTest() {
+        String[] array = {"a", "s", "d", "f", "a", "s", "d", "f", "a", "s", "d", "f"};
+        System.out.println(Arrays.toString(CollectionUtils.indexOfAll(Arrays.asList(array), "a"::equals)));// [0, 4, 8]
+    }
 }

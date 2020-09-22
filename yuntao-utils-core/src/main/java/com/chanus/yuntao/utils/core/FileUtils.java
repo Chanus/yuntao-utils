@@ -18,16 +18,11 @@ package com.chanus.yuntao.utils.core;
 import java.io.*;
 import java.math.BigInteger;
 import java.net.URLConnection;
-import java.nio.file.CopyOption;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 文件操作工具类
@@ -140,6 +135,106 @@ public class FileUtils {
         }
 
         return files;
+    }
+
+    /**
+     * 递归遍历目录以及子目录中的所有文件<br>
+     * 如果提供 file 为文件，直接返回过滤结果
+     *
+     * @param path       当前遍历文件或目录的路径
+     * @param fileFilter 文件过滤规则对象，选择要保留的文件，只对文件有效，不过滤目录
+     * @return 文件列表
+     * @since 1.2.5
+     */
+    public static List<File> loopFiles(String path, FileFilter fileFilter) {
+        return loopFiles(new File(path), fileFilter);
+    }
+
+    /**
+     * 递归遍历目录以及子目录中的所有文件<br>
+     * 如果提供 file 为文件，直接返回过滤结果
+     *
+     * @param file       当前遍历文件或目录
+     * @param fileFilter 文件过滤规则对象，选择要保留的文件，只对文件有效，不过滤目录
+     * @return 文件列表
+     * @since 1.2.5
+     */
+    public static List<File> loopFiles(File file, FileFilter fileFilter) {
+        final List<File> fileList = new ArrayList<>();
+        if (file == null || !file.exists())
+            return fileList;
+
+        if (file.isDirectory()) {
+            final File[] subFiles = file.listFiles();
+            if (ArrayUtils.isNotEmpty(subFiles)) {
+                for (File tmp : subFiles) {
+                    fileList.addAll(loopFiles(tmp, fileFilter));
+                }
+            }
+        } else {
+            if (fileFilter == null || fileFilter.accept(file)) {
+                fileList.add(file);
+            }
+        }
+
+        return fileList;
+    }
+
+    /**
+     * 递归遍历目录以及子目录中的所有文件<br>
+     * 如果提供 file 为文件，直接返回过滤结果
+     *
+     * @param file       当前遍历文件或目录
+     * @param maxDepth   遍历最大深度，-1表示遍历到没有目录为止
+     * @param fileFilter 文件过滤规则对象，选择要保留的文件，只对文件有效，不过滤目录，null 表示接收全部文件
+     * @return 文件列表
+     * @since 1.2.5
+     */
+    public static List<File> loopFiles(File file, int maxDepth, final FileFilter fileFilter) {
+        final List<File> fileList = new ArrayList<>();
+        if (file == null || !file.exists()) {
+            return fileList;
+        } else if (!file.isDirectory()) {
+            if (fileFilter == null || fileFilter.accept(file)) {
+                fileList.add(file);
+            }
+            return fileList;
+        }
+
+        walkFiles(file.toPath(), maxDepth, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
+                final File file = path.toFile();
+                if (fileFilter == null || fileFilter.accept(file)) {
+                    fileList.add(file);
+                }
+                return FileVisitResult.CONTINUE;
+            }
+        });
+
+        return fileList;
+    }
+
+    /**
+     * 遍历指定目录下的文件并做处理
+     *
+     * @param start    起始路径，必须为目录
+     * @param maxDepth 最大遍历深度，-1表示不限制深度
+     * @param visitor  {@link FileVisitor} 接口，用于自定义在访问文件时，访问目录前后等节点做的操作
+     * @see Files#walkFileTree(Path, java.util.Set, int, FileVisitor)
+     * @since 1.2.5
+     */
+    public static void walkFiles(Path start, int maxDepth, FileVisitor<? super Path> visitor) {
+        if (maxDepth < 0) {
+            // < 0 表示遍历到最底层
+            maxDepth = Integer.MAX_VALUE;
+        }
+
+        try {
+            Files.walkFileTree(start, EnumSet.noneOf(FileVisitOption.class), maxDepth, visitor);
+        } catch (IOException e) {
+            throw new RuntimeException("IOException occurred.", e);
+        }
     }
 
     /**

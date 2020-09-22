@@ -15,6 +15,8 @@
  */
 package com.chanus.yuntao.utils.core;
 
+import com.chanus.yuntao.utils.core.lang.Matcher;
+
 import java.util.*;
 
 /**
@@ -241,5 +243,61 @@ public class CollectionUtils {
      */
     public static String uniqueArray2String(Object[] array) {
         return uniqueArray2String(array, ",");
+    }
+
+    /**
+     * 获取集合中指定多个下标的元素值，下标可以为负数，例如-1表示最后一个元素
+     *
+     * @param <T>        元素类型
+     * @param collection 集合
+     * @param indexes    下标，支持负数
+     * @return 元素值列表
+     * @since 1.2.5
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> getAny(Collection<T> collection, int... indexes) {
+        final int size = collection.size();
+        final ArrayList<T> result = new ArrayList<>();
+        if (collection instanceof List) {
+            final List<T> list = ((List<T>) collection);
+            for (int index : indexes) {
+                if (index < 0) {
+                    index += size;
+                }
+                result.add(list.get(index));
+            }
+        } else {
+            final Object[] array = collection.toArray();
+            for (int index : indexes) {
+                if (index < 0) {
+                    index += size;
+                }
+                result.add((T) array[index]);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 获取匹配规则定义中匹配到元素的所有位置
+     *
+     * @param <T>     元素类型
+     * @param list    列表
+     * @param matcher 匹配器，为空则全部匹配
+     * @return 位置数组
+     * @since 1.2.5
+     */
+    public static <T> int[] indexOfAll(List<T> list, Matcher<T> matcher) {
+        final List<Integer> indexList = new ArrayList<>();
+        if (list != null) {
+            int index = 0;
+            for (T t : list) {
+                if (null == matcher || matcher.match(t)) {
+                    indexList.add(index);
+                }
+                index++;
+            }
+        }
+        return indexList.stream().mapToInt(Integer::valueOf).toArray();
     }
 }

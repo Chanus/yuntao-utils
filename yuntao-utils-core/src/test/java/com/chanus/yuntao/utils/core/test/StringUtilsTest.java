@@ -125,6 +125,24 @@ public class StringUtilsTest {
     }
 
     @Test
+    public void hasBlankTest() {
+        System.out.println("================= hasBlank(String... strs) =================");
+        System.out.println(StringUtils.hasBlank("", null, "  "));// true
+        System.out.println(StringUtils.hasBlank(" ", null, "123"));// true
+        System.out.println(StringUtils.hasBlank("a", "b", "123"));// false
+
+        System.out.println("================= hasBlank(CharSequence... strs) =================");
+        CharSequence s1 = "";
+        CharSequence s2 = " ";
+        CharSequence s3 = "\n";
+        CharSequence s4 = "a";
+        CharSequence s5 = "b";
+        System.out.println(StringUtils.hasBlank(s1, s2, s3));// true
+        System.out.println(StringUtils.hasBlank(s1, s2, s4));// true
+        System.out.println(StringUtils.hasBlank(s4, s5));// false
+    }
+
+    @Test
     public void isEmptyTest() {
         System.out.println("================= isBlank(final String s) =================");
         System.out.println(StringUtils.isEmpty(""));// true
@@ -217,6 +235,24 @@ public class StringUtilsTest {
         System.out.println(StringUtils.isAllNotEmpty(s1, s2, s3));// false
         System.out.println(StringUtils.isAllNotEmpty(s1, s2, s4));// false
         System.out.println(StringUtils.isAllNotEmpty(s4, s5));// true
+    }
+
+    @Test
+    public void hasEmptyTest() {
+        System.out.println("================= hasEmpty(String... strs) =================");
+        System.out.println(StringUtils.hasEmpty("", null, ""));// true
+        System.out.println(StringUtils.hasEmpty(" ", null, "123"));// true
+        System.out.println(StringUtils.hasEmpty("a", "b", "123"));// false
+
+        System.out.println("================= hasEmpty(CharSequence... strs) =================");
+        CharSequence s1 = "";
+        CharSequence s2 = " ";
+        CharSequence s3 = "\n";
+        CharSequence s4 = "a";
+        CharSequence s5 = "b";
+        System.out.println(StringUtils.hasEmpty(s1, s2, s3));// true
+        System.out.println(StringUtils.hasEmpty(s1, s2, s4));// true
+        System.out.println(StringUtils.hasEmpty(s4, s5));// false
     }
 
     @Test
