@@ -19,7 +19,6 @@ import com.chanus.yuntao.utils.core.ArrayUtils;
 import com.chanus.yuntao.utils.core.StringUtils;
 import com.chanus.yuntao.utils.core.lang.Filter;
 import com.chanus.yuntao.utils.core.lang.SimpleCache;
-import com.sun.xml.internal.ws.util.UtilException;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
@@ -233,7 +232,6 @@ public class ReflectUtils {
      * @param obj   对象，static 字段则此字段为 null
      * @param field 字段
      * @return 字段值
-     * @throws UtilException 包装IllegalAccessException异常
      */
     public static Object getFieldValue(Object obj, Field field) {
         if (field == null)
@@ -730,7 +728,6 @@ public class ReflectUtils {
      * @param methodName 方法名
      * @param args       参数列表
      * @return 执行结果
-     * @throws UtilException IllegalAccessException包装
      */
     public static <T> T invoke(Object obj, String methodName, Object... args) {
         final Method method = getMethodOfObj(obj, methodName, args);

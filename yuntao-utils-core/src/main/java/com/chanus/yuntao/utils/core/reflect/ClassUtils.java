@@ -21,7 +21,6 @@ import com.chanus.yuntao.utils.core.CharsetUtils;
 import com.chanus.yuntao.utils.core.StringUtils;
 import com.chanus.yuntao.utils.core.lang.Filter;
 import com.chanus.yuntao.utils.core.lang.Singleton;
-import com.sun.xml.internal.ws.util.UtilException;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -557,7 +556,7 @@ public class ClassUtils {
                 return ReflectUtils.invoke(isSingleton ? Singleton.get(clazz) : clazz.newInstance(), method, args);
             }
         } catch (Exception e) {
-            throw new UtilException(e);
+            throw new RuntimeException(e);
         }
     }
 
