@@ -19,10 +19,7 @@ import com.chanus.yuntao.utils.core.CharsetUtils;
 import com.chanus.yuntao.utils.core.FileUtils;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,7 +164,7 @@ public class FileUtilsTest {
     }
 
     @Test
-    public void getFileExtensionTest() {
+    public void getFileExtensionTest() throws FileNotFoundException {
         System.out.println("================= getFileExtension(File file) =================");
         System.out.println(FileUtils.getFileExtension(new File(path)));
         System.out.println(FileUtils.getFileExtension(new File("F:\\test\\test2.txt")));
@@ -185,6 +182,9 @@ public class FileUtilsTest {
         System.out.println(FileUtils.getFileExtension("abcdefg"));
         System.out.println(FileUtils.getFileExtension("abcdefg.hi"));
         System.out.println(FileUtils.getFileExtension("abcdefg.hi.jk"));
+
+        System.out.println("================= getFileExtension(BufferedInputStream bufferedInputStream) =================");
+        System.out.println(FileUtils.getFileExtension(new BufferedInputStream(new FileInputStream(new File("F:\\3.jpg")))));
     }
 
     @Test
@@ -263,7 +263,7 @@ public class FileUtilsTest {
     }
 
     @Test
-    public void getFileMimeTypeTest() {
+    public void getFileMimeTypeTest() throws FileNotFoundException {
         System.out.println("================= getFileMimeType(File file) =================");
         System.out.println(FileUtils.getFileMimeType(new File(path)));
         System.out.println(FileUtils.getFileMimeType(new File("F:\\test\\test2.txt")));
@@ -470,7 +470,7 @@ public class FileUtilsTest {
 
     @Test
     public void toBase64Test() {
-        System.out.println(FileUtils.toBase64(new File("D:\\work\\document\\厦门六连环\\0.jpg")));// false
+        System.out.println(FileUtils.toBase64(new File("F:\\0.jpg")));
     }
 
     @Test
@@ -481,8 +481,8 @@ public class FileUtilsTest {
 
     @Test
     public void base64ToFileTest() {
-        String base64String = FileUtils.toBase64(new File("D:\\work\\document\\厦门六连环\\正面_meitu_1.jpg"));
-        FileUtils.base64ToFile(base64String, "D:\\work\\document\\厦门六连环\\sfz", "z.jpg");
+        String base64String = FileUtils.toBase64(new File("F:\\0.jpg"));
+        FileUtils.base64ToFile(base64String, "F:\\", "0_1.jpg");
     }
 
     @Test

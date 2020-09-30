@@ -424,15 +424,10 @@ public class HttpUtils {
      * @param url      发送请求的 URL
      * @param params   请求参数
      * @param savePath 下载文件保存路径
-     * @param fileName 下载文件名称
+     * @param fileName 下载文件名称，若不带扩展名，则默认为下载文件的类型
      * @return 下载的文件
      */
     public static File downloadPost(final String url, final String params, final String savePath, String fileName) {
-        String path = savePath + File.separatorChar + fileName;
-        File file = new File(path);
-        if (!file.getParentFile().exists()) {
-            file.getParentFile().mkdirs();
-        }
         BufferedInputStream bufferedInputStream = null;
         OutputStream out = null;
 
@@ -447,22 +442,34 @@ public class HttpUtils {
                 outputStream.flush();
                 IOUtils.closeQuietly(outputStream);
             }
+            // 获得输入流
+            bufferedInputStream = new BufferedInputStream(connection.getInputStream());
+
+            if (!fileName.contains(StringUtils.DOT)) {
+                String fileExtension = FileUtils.getFileExtension(bufferedInputStream);
+                if (StringUtils.isNotBlank(fileExtension))
+                    fileName = fileName + StringUtils.DOT + fileExtension;
+            }
+
+            String path = savePath + File.separatorChar + fileName;
+            File file = new File(path);
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
 
             // 获得输出流
             out = new FileOutputStream(file);
-            // 获得输入流
-            bufferedInputStream = new BufferedInputStream(connection.getInputStream());
             int size;
             byte[] buffer = new byte[1024];
             while ((size = bufferedInputStream.read(buffer)) != -1) {
                 out.write(buffer, 0, size);
             }
+            return file;
         } catch (Exception e) {
             throw new RuntimeException("Request exception", e);
         } finally {
             IOUtils.close(out, bufferedInputStream);
         }
-        return file;
     }
 
     /**
@@ -470,7 +477,7 @@ public class HttpUtils {
      *
      * @param url      发送请求的 URL
      * @param savePath 下载文件保存路径
-     * @param fileName 下载文件名称
+     * @param fileName 下载文件名称，若不带扩展名，则默认为下载文件的类型
      * @return 下载的文件
      */
     public static File downloadPost(final String url, final String savePath, String fileName) {
@@ -519,17 +526,23 @@ public class HttpUtils {
      *
      * @param url      发送请求的 URL
      * @param savePath 下载文件保存路径
-     * @param fileName 下载文件名称
+     * @param fileName 下载文件名称，若不带扩展名，则默认为下载文件的类型
      * @return 下载的文件
      */
-    public static File downloadGet(final String url, final String savePath, final String fileName) {
+    public static File downloadGet(final String url, final String savePath, String fileName) {
+        BufferedInputStream bufferedInputStream = downloadGet(url);
+        if (!fileName.contains(StringUtils.DOT)) {
+            String fileExtension = FileUtils.getFileExtension(bufferedInputStream);
+            if (StringUtils.isNotBlank(fileExtension))
+                fileName = fileName + StringUtils.DOT + fileExtension;
+        }
+
         String path = savePath + File.separatorChar + fileName;
         File file = new File(path);
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
 
-        BufferedInputStream bufferedInputStream = downloadGet(url);
         OutputStream out = null;
         try {
             // 获得输出流
@@ -542,8 +555,7 @@ public class HttpUtils {
         } catch (Exception e) {
             throw new RuntimeException("Request exception", e);
         } finally {
-            IOUtils.close(out);
-            IOUtils.close(bufferedInputStream);
+            IOUtils.close(out, bufferedInputStream);
         }
         return file;
     }
@@ -563,6 +575,8 @@ public class HttpUtils {
         try {
             // 打开URL连接
             HttpURLConnection connection = getGetConnection(url);
+            // 获得输入流
+            bufferedInputStream = new BufferedInputStream(connection.getInputStream());
 
             // 文件路径
             String filePath = connection.getURL().getFile();
@@ -571,6 +585,10 @@ public class HttpUtils {
             String fileFullName = filePath.substring(filePath.lastIndexOf('/') + 1);
 
             String path = savePath + File.separatorChar + fileFullName;
+            // 获取文件类型
+            String fileExtension = FileUtils.getFileExtension(bufferedInputStream);
+            if (StringUtils.isNotBlank(fileExtension))
+                path = path + StringUtils.DOT + fileExtension;
             file = new File(path);
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
@@ -578,8 +596,6 @@ public class HttpUtils {
 
             // 获得输出流
             out = new FileOutputStream(file);
-            // 获得输入流
-            bufferedInputStream = new BufferedInputStream(connection.getInputStream());
             int size;
             byte[] buffer = new byte[1024];
             while ((size = bufferedInputStream.read(buffer)) != -1) {

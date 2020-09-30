@@ -40,6 +40,14 @@ public class TableMap<K, V> implements Map<K, V>, Iterable<Map.Entry<K, V>>, Ser
 
     /**
      * 构造
+     */
+    public TableMap() {
+        this.keys = new ArrayList<>();
+        this.values = new ArrayList<>();
+    }
+
+    /**
+     * 构造
      *
      * @param size 初始容量
      */

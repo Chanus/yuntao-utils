@@ -407,6 +407,51 @@ public class ArrayUtils {
     }
 
     /**
+     * 克隆数组
+     *
+     * @param <T>   数组元素类型
+     * @param array 被克隆的数组
+     * @return 克隆后的新数组
+     * @since 1.2.6
+     */
+    public static <T> T[] clone(T[] array) {
+        if (array == null)
+            return null;
+
+        return array.clone();
+    }
+
+    /**
+     * 克隆数组，如果是非数组则返回 {@code null}
+     *
+     * @param <T> 数组元素类型
+     * @param obj 被克隆的数组对象
+     * @return 克隆后的新数组对象
+     * @since 1.2.6
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T clone(final T obj) {
+        if (obj == null)
+            return null;
+
+        if (isArray(obj)) {
+            final Object result;
+            final Class<?> componentType = obj.getClass().getComponentType();
+            if (componentType.isPrimitive()) {// 原始类型
+                int length = Array.getLength(obj);
+                result = Array.newInstance(componentType, length);
+                while (length-- > 0) {
+                    Array.set(result, length, Array.get(obj, length));
+                }
+            } else {
+                result = ((Object[]) obj).clone();
+            }
+            return (T) result;
+        }
+        return null;
+    }
+
+    /**
      * 数组或集合转字符串
      *
      * @param obj 数组或集合对象

@@ -532,6 +532,25 @@ public class FileUtils {
     }
 
     /**
+     * 获取文件扩展名，扩展名不带“.”
+     *
+     * @param bufferedInputStream 文件流
+     * @return 文件扩展名
+     * @since 1.2.6
+     */
+    public static String getFileExtension(BufferedInputStream bufferedInputStream) {
+        if (bufferedInputStream == null)
+            return null;
+
+        try {
+            String mimeType = URLConnection.guessContentTypeFromStream(bufferedInputStream);
+            return StringUtils.isBlank(mimeType) ? null : mimeType.substring(mimeType.indexOf("/") + 1);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * 获取文件所在目录
      *
      * @param file 文件

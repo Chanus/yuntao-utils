@@ -31,12 +31,12 @@ import java.io.File;
 public class ImageUtilsTest {
     @Test
     public void scaleTest1() {
-        ImageUtils.scale(new File("F:\\0.jpg"), new File("F:\\1.jpg"), 0.8f);
+        ImageUtils.scale(new File("F:\\1.jpg"), new File("F:\\2.jpg"), 0.2f);
     }
 
     @Test
     public void cutTest1() {
-        ImageUtils.cut(new File("F:\\0.jpg"), new File("F:\\1.jpg"), new Rectangle(100, 100, 200, 200));
+        ImageUtils.cut(new File("F:\\3.jpg"), new File("F:\\3_1.jpg"), new Rectangle(1452, 2384-1336, 1265, 1336));
     }
 
     @Test
@@ -62,5 +62,10 @@ public class ImageUtilsTest {
     @Test
     public void pressTextTest1() {
         ImageUtils.pressText(new File("F:\\0.jpg"), new File("F:\\1.png"), "yuntao", Color.GRAY, null, 0, 0, 0.5f);
+    }
+
+    @Test
+    public void rotateTest() {
+        ImageUtils.rotate(new File("F:\\3_1.jpg"), 89, new File("F:\\3_2.jpg"));
     }
 }

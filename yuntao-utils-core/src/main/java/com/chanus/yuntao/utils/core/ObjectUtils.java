@@ -15,6 +15,9 @@
  */
 package com.chanus.yuntao.utils.core;
 
+import com.chanus.yuntao.utils.core.reflect.ReflectUtils;
+
+import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -207,6 +210,23 @@ public class ObjectUtils {
     }
 
     /**
+     * 判断一个或多个对象是否全都为 {@code null} 或空对象
+     *
+     * @param objects 一个或多个对象
+     * @return {@code true} 对象都为 {@code null} 或空对象，{@code false} 对象不都为 {@code null} 或空对象
+     * @since 1.2.6
+     */
+    public static boolean isAllEmpty(Object... objects) {
+        if (ArrayUtils.isNotEmpty(objects)) {
+            for (Object object : objects) {
+                if (isNotEmpty(object))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * 判断指定对象是否为非空，支持：
      *
      * <ul>
@@ -222,6 +242,35 @@ public class ObjectUtils {
      */
     public static boolean isNotEmpty(Object obj) {
         return !isEmpty(obj);
+    }
+
+    /**
+     * 判断一个或多个对象是否存在 {@code null} 或空对象
+     *
+     * @param objects 一个或多个对象
+     * @return {@code true} 存在 {@code null} 或空对象，{@code false} 不存在 {@code null} 或空对象
+     * @since 1.2.6
+     */
+    public static boolean hasEmpty(Object... objects) {
+        if (ArrayUtils.isEmpty(objects))
+            return true;
+
+        for (Object object : objects) {
+            if (isEmpty(object))
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断一个或多个对象是否全都不为 {@code null} 或空对象
+     *
+     * @param objects 一个或多个对象
+     * @return {@code true} 对象都不为 {@code null} 或空对象，{@code false} 存在 {@code null} 或空对象
+     * @since 1.2.6
+     */
+    public static boolean isAllNotEmpty(Object... objects) {
+        return !hasEmpty(objects);
     }
 
     /**
@@ -319,5 +368,74 @@ public class ObjectUtils {
             e.printStackTrace();
         }
         return object;
+    }
+
+    /**
+     * 克隆对象<br>
+     * 如果对象实现 {@link Cloneable} 接口，调用其 clone 方法<br>
+     * 如果实现 {@link java.io.Serializable} 接口，执行深度克隆<br>
+     * 否则返回 {@code null}
+     *
+     * @param <T> 对象类型
+     * @param obj 被克隆的对象
+     * @return 克隆后的对象
+     * @since 1.2.6
+     */
+    public static <T> T clone(T obj) {
+        T result = ArrayUtils.clone(obj);
+        if (result == null) {
+            if (obj instanceof Cloneable) {
+                result = ReflectUtils.invoke(obj, "clone");
+            } else {
+                result = cloneByStream(obj);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 克隆对象，如果克隆失败，则返回原对象
+     *
+     * @param <T> 对象类型
+     * @param obj 被克隆的对象
+     * @return 克隆后的对象或原对象
+     * @since 1.2.6
+     */
+    public static <T> T cloneIfPossible(final T obj) {
+        T clone = null;
+        try {
+            clone = clone(obj);
+        } catch (Exception ignored) {
+
+        }
+        return clone == null ? obj : clone;
+    }
+
+    /**
+     * 克隆对象，通过字节流序列化实现深度克隆，需要克隆的对象必须实现 {@link java.io.Serializable} 接口
+     *
+     * @param <T> 对象类型
+     * @param obj 被克隆的对象
+     * @return 克隆后的对象
+     * @since 1.2.6
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T cloneByStream(T obj) {
+        if (!(obj instanceof Serializable))
+            return null;
+
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream out = null;
+        try {
+            out = new ObjectOutputStream(bos);
+            out.writeObject(obj);
+            out.flush();
+
+            return (T) new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray())).readObject();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            IOUtils.close(out, bos);
+        }
     }
 }

@@ -36,7 +36,7 @@ public class HttpUtilsTest {
     public void getTest() {
         String url = "http://pv.sohu.com/cityjson?ie=utf-8";
         String ip = "125.78.96.179";
-        String result1 = HttpUtils.get(url + "&ip=" +  ip);
+        String result1 = HttpUtils.get(url + "&ip=" + ip);
         System.out.println("result1 == " + result1);
 
         Map<String, Object> params = new HashMap<>();
@@ -53,7 +53,7 @@ public class HttpUtilsTest {
     public void getAsynTest() {
         String url = "http://pv.sohu.com/cityjson?ie=utf-8";
         String ip = "125.78.96.179";
-        HttpUtils.getAsyn(url + "&ip=" +  ip, result -> System.out.println("result == " + result));
+        HttpUtils.getAsyn(url + "&ip=" + ip, result -> System.out.println("result == " + result));
 
         Map<String, Object> params = new HashMap<>();
         params.put("ip", ip);
@@ -67,7 +67,7 @@ public class HttpUtilsTest {
         String result1 = HttpUtils.post(url, "{\"ip\":\"" + ip + "\"}");
         System.out.println("result1 == " + result1);
 
-        String result2 = HttpUtils.post(url + "&ip=" +  ip);
+        String result2 = HttpUtils.post(url + "&ip=" + ip);
         System.out.println("result2 == " + result2);
 
         Map<String, Object> params = new HashMap<>();
@@ -81,7 +81,7 @@ public class HttpUtilsTest {
         String url = "http://pv.sohu.com/cityjson?ie=utf-8";
         String ip = "125.78.96.179";
         HttpUtils.postAsyn(url, "{\"ip\":\"" + ip + "\"}", result -> System.out.println("result == " + result));
-        HttpUtils.postAsyn(url + "&ip=" +  ip, result -> System.out.println("result == " + result));
+        HttpUtils.postAsyn(url + "&ip=" + ip, result -> System.out.println("result == " + result));
         Map<String, Object> params = new HashMap<>();
         params.put("ip", ip);
         HttpUtils.postAsyn(url, params, result -> System.out.println("result == " + result));
@@ -117,7 +117,7 @@ public class HttpUtilsTest {
         String url = "http://localhost:10080/yuntao_manager/verify-code?abc=123";
         HttpUtils.downloadGet(url, "F:\\download", "321.jpg");
 
-        String url2 = "http://thirdwx.qlogo.cn/mmopen\\0pQWlgoY1K0t3XKIaqdjljLVFdlIkCpib8Qrb9srYcf39LQIibQ3yiavbbBd5TxaO1zCZ7AEfCXDib4DOeiaBAKcfcg46M1VgJD26\\132";
+        String url2 = "http://thirdwx.qlogo.cn/mmopen/0pQWlgoY1K0t3XKIaqdjljLVFdlIkCpib8Qrb9srYcf39LQIibQ3yiavbbBd5TxaO1zCZ7AEfCXDib4DOeiaBAKcfcg46M1VgJD26/132";
         HttpUtils.downloadGet(url2, "F:\\download");
 
         BufferedInputStream bis = HttpUtils.downloadGet(url);
