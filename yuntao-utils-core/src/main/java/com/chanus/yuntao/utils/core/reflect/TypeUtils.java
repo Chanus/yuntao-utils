@@ -69,6 +69,18 @@ public class TypeUtils {
     }
 
     /**
+     * 获取字段的泛型类型
+     *
+     * @param clazz     Bean 类
+     * @param fieldName 字段名
+     * @return 字段的泛型类型
+     * @since 1.3.0
+     */
+    public static Type getFieldType(Class<?> clazz, String fieldName) {
+        return getType(ReflectUtils.getField(clazz, fieldName));
+    }
+
+    /**
      * 获取 {@link Field} 对应的原始类
      *
      * @param field 字段

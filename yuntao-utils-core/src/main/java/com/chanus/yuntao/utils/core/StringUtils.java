@@ -15,8 +15,12 @@
  */
 package com.chanus.yuntao.utils.core;
 
+import com.chanus.yuntao.utils.core.function.Editor;
+import com.chanus.yuntao.utils.core.function.Filter;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -411,16 +415,6 @@ public class StringUtils {
     }
 
     /**
-     * 去除字符串首尾的空格，如果为空白字符串则返回 null
-     *
-     * @param s 字符串
-     * @return 去除首尾空格后的字符串
-     */
-    public static String trim(final String s) {
-        return isBlank(s) ? null : s.trim();
-    }
-
-    /**
      * 如果字符串是 null 或空白则返回默认字符串，否则返回本身
      *
      * @param str        字符串
@@ -457,14 +451,129 @@ public class StringUtils {
     }
 
     /**
+     * 去除字符串首尾的空格，如果为空白字符串则返回 {@code null}
+     *
+     * @param s 字符串
+     * @return 去除首尾空格后的字符串
+     */
+    public static String trim(final String s) {
+        return isBlank(s) ? null : s.trim();
+    }
+
+    /**
+     * 去除字符串头尾部的空白符
+     *
+     * @param str  字符串
+     * @param mode -1表示去除字符串头部空白符，0表示去除字符串头部和尾部的空白符，1表示去除字符串尾部空白符
+     * @return 去除空白符后的的字符串，如果原字串为 {@code null}，则返回 {@code null}
+     * @since 1.3.0
+     */
+    public static String trim(CharSequence str, int mode) {
+        if (str == null)
+            return null;
+
+        int length = str.length();
+        int start = 0;
+        int end = length;
+
+        // 扫描字符串头部
+        if (mode <= 0) {
+            while ((start < end) && (CharUtils.isBlank(str.charAt(start)))) {
+                start++;
+            }
+        }
+
+        // 扫描字符串尾部
+        if (mode >= 0) {
+            while ((start < end) && (CharUtils.isBlank(str.charAt(end - 1)))) {
+                end--;
+            }
+        }
+
+        if ((start > 0) || (end < length)) {
+            return str.toString().substring(start, end);
+        }
+
+        return str.toString();
+    }
+
+    /**
+     * 去除字符串头尾部的空白符，如果为空白字符串则返回 {@code null}
+     *
+     * @param str 字符串
+     * @return 去除头尾部空白符后的字符串
+     * @since 1.3.0
+     */
+    public static String trim(CharSequence str) {
+        return isBlank(str) ? null : trim(str, 0);
+    }
+
+    /**
+     * 去除字符串头部的空白符
+     *
+     * @param str 字符串
+     * @return 去除头部空白符后的的字符串，如果原字串为 {@code null}，则返回 {@code null}
+     * @since 1.3.0
+     */
+    public static String trimStart(CharSequence str) {
+        return trim(str, -1);
+    }
+
+    /**
+     * 去除字符串尾部的空白符
+     *
+     * @param str 字符串
+     * @return 去除尾部空白符后的的字符串，如果原字串为 {@code null}，则返回 {@code null}
+     * @since 1.3.0
+     */
+    public static String trimEnd(CharSequence str) {
+        return trim(str, 1);
+    }
+
+    /**
+     * 去除字符串头尾部的空白符，如果字符串是 {@code null}，则返回 ""
+     *
+     * @param str 字符串
+     * @return 去除头尾部空白符后的字符串, 如果为 {@code null}，则返回 ""
+     * @since 1.3.0
+     */
+    public static String trimToEmpty(CharSequence str) {
+        return str == null ? EMPTY : trim(str);
+    }
+
+    /**
+     * 去除字符串头尾部的空白符，如果字符串是 {@code null} 或者 ""，则返回 {@code null}
+     *
+     * @param str 字符串
+     * @return 去除头尾部空白符后的字符串, 如果为 {@code null} 或者 ""，则返回 {@code null}
+     * @since 1.3.0
+     */
+    public static String trimToNull(CharSequence str) {
+        final String trimStr = trim(str);
+        return EMPTY.equals(trimStr) ? null : trimStr;
+    }
+
+    /**
      * 判断字符串是否包含某字符串
      *
      * @param s 源字符串
      * @param t 目标字符串
      * @return {@code true} s 包含字符串 t；{@code false} s 不包含字符串 t
      */
-    public static boolean contains(final String s, final String t) {
-        return s != null && t != null && s.contains(t);
+    public static boolean contains(final CharSequence s, final CharSequence t) {
+        return s != null && t != null && s.toString().contains(t);
+    }
+
+    /**
+     * 判断字符串是否包含某字符串，忽略大小写
+     *
+     * @param s 源字符串
+     * @param t 目标字符串
+     * @return {@code true} s 包含字符串 t；{@code false} s 不包含字符串 t
+     * @since 1.3.0
+     */
+    public static boolean containsIgnoreCase(CharSequence s, CharSequence t) {
+        return s != null && t != null && s.toString().toLowerCase().contains(t.toString().toLowerCase());
     }
 
     /**
@@ -474,7 +583,7 @@ public class StringUtils {
      * @param t 字符串2
      * @return {@code true} 两个字符串相等；{@code false} 两个字符串不相等
      */
-    public static boolean equals(final String s, final String t) {
+    public static boolean equals(final CharSequence s, final CharSequence t) {
         return Objects.equals(s, t);
     }
 
@@ -486,11 +595,11 @@ public class StringUtils {
      * @return {@code true} 包含；{@code false} 不包含
      * @since 1.1.0
      */
-    public static boolean equalsAny(final String s, final String... strs) {
+    public static boolean equalsAny(final CharSequence s, final CharSequence... strs) {
         if (strs == null)
             return false;
 
-        for (String str : strs) {
+        for (CharSequence str : strs) {
             if (Objects.equals(s, str)) return true;
         }
         return false;
@@ -503,8 +612,11 @@ public class StringUtils {
      * @param t 字符串2
      * @return {@code true} 两个字符串相等；{@code false} 两个字符串不相等
      */
-    public static boolean equalsIgnoreCase(final String s, final String t) {
-        return s == null ? t == null : s.equalsIgnoreCase(t);
+    public static boolean equalsIgnoreCase(final CharSequence s, final CharSequence t) {
+        if (s == null)
+            return t == null;
+
+        return t != null && s.toString().equalsIgnoreCase(t.toString());
     }
 
     /**
@@ -515,11 +627,11 @@ public class StringUtils {
      * @return {@code true} 包含；{@code false} 不包含
      * @since 1.1.0
      */
-    public static boolean equalsAnyIgnoreCase(final String s, final String... strs) {
+    public static boolean equalsAnyIgnoreCase(final CharSequence s, final CharSequence... strs) {
         if (strs == null)
             return false;
 
-        for (String str : strs) {
+        for (CharSequence str : strs) {
             if (equalsIgnoreCase(s, str)) return true;
         }
         return false;
@@ -759,12 +871,12 @@ public class StringUtils {
     /**
      * 获取字符串指定编码格式的字节码
      *
-     * @param str     字符串
-     * @param charset 字符集，如果为空，则使用系统默认编码格式
+     * @param str         字符串
+     * @param charsetName 字符集，如果为空，则使用系统默认编码格式
      * @return 编码后的字节码
      */
-    public static byte[] bytes(CharSequence str, String charset) {
-        return bytes(str, isBlank(charset) ? Charset.defaultCharset() : Charset.forName(charset));
+    public static byte[] bytes(CharSequence str, String charsetName) {
+        return bytes(str, isBlank(charsetName) ? Charset.defaultCharset() : Charset.forName(charsetName));
     }
 
     /**
@@ -793,15 +905,26 @@ public class StringUtils {
     }
 
     /**
+     * 将对象转为 UTF-8 格式的字符串
+     *
+     * @param obj 对象
+     * @return 字符串
+     * @since 1.3.0
+     */
+    public static String toUtf8String(Object obj) {
+        return toString(obj, StandardCharsets.UTF_8);
+    }
+
+    /**
      * 将 byte 数组转为字符串
      *
-     * @param bytes   byte 数组
-     * @param charset 字符集，如果为空，则使用平台默认字符集
+     * @param bytes       byte 数组
+     * @param charsetName 字符集，如果为空，则使用平台默认字符集
      * @return 字符串
      * @since 1.1.0
      */
-    public static String toString(byte[] bytes, String charset) {
-        return toString(bytes, isBlank(charset) ? Charset.defaultCharset() : Charset.forName(charset));
+    public static String toString(byte[] bytes, String charsetName) {
+        return toString(bytes, isBlank(charsetName) ? Charset.defaultCharset() : Charset.forName(charsetName));
     }
 
     /**
@@ -820,7 +943,114 @@ public class StringUtils {
     }
 
     /**
-     * 获取字符串的长度，如果为 null 返回0
+     * 将 Byte 数组转为字符串
+     *
+     * @param bytes       Byte 数组
+     * @param charsetName 字符集，如果为空，则使用平台默认字符集
+     * @return 字符串
+     * @since 1.3.0
+     */
+    public static String toString(Byte[] bytes, String charsetName) {
+        return toString(bytes, isBlank(charsetName) ? Charset.defaultCharset() : Charset.forName(charsetName));
+    }
+
+    /**
+     * 将 Byte 数组转为字符串
+     *
+     * @param data    Byte 数组
+     * @param charset 字符集，如果为空，则使用平台默认字符集
+     * @return 字符串
+     * @since 1.3.0
+     */
+    public static String toString(Byte[] data, Charset charset) {
+        if (data == null)
+            return null;
+
+        byte[] bytes = new byte[data.length];
+        Byte dataByte;
+        for (int i = 0; i < data.length; i++) {
+            dataByte = data[i];
+            bytes[i] = dataByte == null ? -1 : dataByte;
+        }
+
+        return toString(bytes, charset);
+    }
+
+    /**
+     * 将编码的 ByteBuffer 数据转换为字符串
+     *
+     * @param data        ByteBuffer 数据
+     * @param charsetName 字符集，如果为空，则使用平台默认字符集
+     * @return 字符串
+     * @since 1.3.0
+     */
+    public static String toString(ByteBuffer data, String charsetName) {
+        return data == null ? null : toString(data, isBlank(charsetName) ? Charset.defaultCharset() : Charset.forName(charsetName));
+    }
+
+    /**
+     * 将 CharSequence 转换为字符串
+     *
+     * @param str {@link CharSequence}，若为 {@code null} 则返回 {@code null}
+     * @return 字符串
+     * @since 1.3.0
+     */
+    public static String toString(CharSequence str) {
+        return str == null ? null : str.toString();
+    }
+
+    /**
+     * 将编码的 ByteBuffer 数据转换为字符串
+     *
+     * @param data    ByteBuffer 数据
+     * @param charset 字符集，如果为空，则使用平台默认字符集
+     * @return 字符串
+     * @since 1.3.0
+     */
+    public static String toString(ByteBuffer data, Charset charset) {
+        return charset == null ? Charset.defaultCharset().decode(data).toString() : charset.decode(data).toString();
+    }
+
+    /**
+     * 将对象转为字符串
+     *
+     * @param obj         对象
+     * @param charsetName 字符集
+     * @return 字符串
+     */
+    public static String toString(Object obj, String charsetName) {
+        return toString(obj, isBlank(charsetName) ? Charset.defaultCharset() : Charset.forName(charsetName));
+    }
+
+    /**
+     * 将对象转为字符串
+     *
+     * @param obj     对象
+     * @param charset 字符集，如果为空，则使用平台默认字符集
+     * @return 字符串
+     * @since 1.3.0
+     */
+    public static String toString(Object obj, Charset charset) {
+        if (obj == null)
+            return null;
+
+        if (obj instanceof String) {
+            return (String) obj;
+        } else if (obj instanceof byte[]) {
+            return toString((byte[]) obj, charset);
+        } else if (obj instanceof Byte[]) {
+            return toString((Byte[]) obj, charset);
+        } else if (obj instanceof ByteBuffer) {
+            return toString((ByteBuffer) obj, charset);
+        } else if (ArrayUtils.isArray(obj)) {
+            return ArrayUtils.toString(obj);
+        }
+
+        return obj.toString();
+    }
+
+    /**
+     * 获取字符串的长度，如果为 {@code null} 返回0
      *
      * @param str 字符串
      * @return 字符串的长度
@@ -833,17 +1063,51 @@ public class StringUtils {
     /**
      * 连接多个字符串
      *
-     * @param isNullToEmpty 是否将 null 转为 ""
+     * @param isNullToEmpty 是否将 {@code null} 转为 ""
      * @param strs          字符串数组
      * @return 连接后的字符串
      * @since 1.1.0
      */
     public static String concat(boolean isNullToEmpty, CharSequence... strs) {
+        if (strs == null)
+            return null;
+
         final StringBuilder sb = new StringBuilder();
         for (CharSequence str : strs) {
             sb.append(isNullToEmpty ? defaultIfNull(str, EMPTY) : str);
         }
         return sb.toString();
+    }
+
+    /**
+     * 移除字符串中所有给定字符串
+     *
+     * @param str          字符串
+     * @param strsToRemove 被移除的字符串
+     * @return 移除给定字符串后的字符串
+     * @since 1.3.0
+     */
+    public static String remove(String str, String... strsToRemove) {
+        if (isEmpty(str) || ArrayUtils.isEmpty(strsToRemove))
+            return str;
+
+        String result = str;
+        for (String strToRemove : strsToRemove) {
+            if (strToRemove != null)
+                result = result.replace(strToRemove, EMPTY);
+        }
+        return result;
+    }
+
+    /**
+     * 移除换行符
+     *
+     * @param str 字符串
+     * @return 移除换行符后的字符串
+     * @since 1.3.0
+     */
+    public static String removeLineBreaks(String str) {
+        return remove(str, CR, LF);
     }
 
     /**
@@ -925,7 +1189,7 @@ public class StringUtils {
      * @return 下划线连接方式命名的字符串
      * @since 1.1.0
      */
-    public static String toUnderlineCase(String s) {
+    public static String toUnderlineCase(CharSequence s) {
         if (s == null)
             return null;
 
@@ -952,11 +1216,11 @@ public class StringUtils {
      * @return 驼峰式命名的字符串
      * @since 1.1.0
      */
-    public static String toCamelCase(String s) {
+    public static String toCamelCase(CharSequence s) {
         if (s == null)
             return null;
 
-        if (s.contains(UNDERLINE)) {
+        if (contains(s, UNDERLINE)) {
             final StringBuilder sb = new StringBuilder(s.length());
             boolean upperCase = false;
             for (int i = 0; i < s.length(); i++) {
@@ -973,7 +1237,7 @@ public class StringUtils {
             }
             return sb.toString();
         } else {
-            return s;
+            return s.toString();
         }
     }
 
@@ -1053,7 +1317,7 @@ public class StringUtils {
      * @return 需要查找的字符串的位置，未找到返回 -1
      * @since 1.2.2
      */
-    public static int indexOf(final CharSequence str, CharSequence searchStr, int fromIndex, boolean ignoreCase) {
+    public static int indexOf(final CharSequence str, final CharSequence searchStr, int fromIndex, boolean ignoreCase) {
         if (str == null || searchStr == null)
             return INDEX_NOT_FOUND;
 
@@ -1087,7 +1351,7 @@ public class StringUtils {
      * @return 需要查找的字符串的位置，未找到返回 -1
      * @since 1.2.2
      */
-    public static int indexOf(final CharSequence str, CharSequence searchStr) {
+    public static int indexOf(final CharSequence str, final CharSequence searchStr) {
         return indexOf(str, searchStr, 0, false);
     }
 
@@ -1099,7 +1363,7 @@ public class StringUtils {
      * @return 需要查找的字符串的位置，未找到返回 -1
      * @since 1.2.2
      */
-    public static int indexOfIgnoreCase(final CharSequence str, CharSequence searchStr) {
+    public static int indexOfIgnoreCase(final CharSequence str, final CharSequence searchStr) {
         return indexOf(str, searchStr, 0, true);
     }
 
@@ -1122,7 +1386,7 @@ public class StringUtils {
      * @return 截取后的字符串
      * @since 1.2.2
      */
-    public static String substring(String s, int beginIndex, int endIndex) {
+    public static String substring(CharSequence s, int beginIndex, int endIndex) {
         if (s == null)
             return null;
 
@@ -1153,7 +1417,7 @@ public class StringUtils {
         if (beginIndex == endIndex)
             return EMPTY;
 
-        return s.substring(beginIndex, endIndex);
+        return s.toString().substring(beginIndex, endIndex);
     }
 
     /**
@@ -1170,7 +1434,7 @@ public class StringUtils {
      * @return 截取后的字符串
      * @since 1.2.2
      */
-    public static String left(String s, int endIndex) {
+    public static String left(CharSequence s, int endIndex) {
         return substring(s, 0, endIndex);
     }
 
@@ -1188,7 +1452,7 @@ public class StringUtils {
      * @return 截取后的字符串
      * @since 1.2.2
      */
-    public static String right(String s, int beginIndex) {
+    public static String right(CharSequence s, int beginIndex) {
         if (s == null)
             return null;
         return substring(s, beginIndex, s.length());
@@ -1496,5 +1760,115 @@ public class StringUtils {
             list.add(part);
         }
         return list;
+    }
+
+    /**
+     * 格式化文本, {} 表示占位符<br>
+     * 此方法只是简单将占位符 {} 按照顺序替换为参数<br>
+     * 如果想输出 {} 使用 \\ 转义 { 即可，如果想输出 {} 之前的 \ 使用双转义符 \\\\ 即可<br>
+     * 例：<br>
+     * 通常使用：format("this is {} for {}", "a", "b") =》 this is a for b<br>
+     * 转义 {}： format("this is \\{} for {}", "a", "b") =》 this is \{} for a<br>
+     * 转义 \： format("this is \\\\{} for {}", "a", "b") =》 this is \a for b<br>
+     *
+     * @param template 文本模板，被替换的部分用 {} 表示，如果模板为 {@code null}，返回 "null"
+     * @param params   参数值
+     * @return 格式化后的文本，如果模板为 {@code null}，返回 "null"
+     * @since 1.3.0
+     */
+    public static String format(String template, Object... params) {
+        if (template == null)
+            return NULL;
+
+        if (isBlank(template) || ArrayUtils.isEmpty(params))
+            return template.toString();
+
+        final int length = template.length();
+
+        // 初始化定义好的长度以获得更好的性能
+        StringBuilder stringBuilder = new StringBuilder(length + 50);
+
+        int handledPosition = 0;// 记录已经处理到的位置
+        int delimIndex;// 占位符所在位置
+        for (int argIndex = 0; argIndex < params.length; argIndex++) {
+            delimIndex = template.indexOf(EMPTY_JSON, handledPosition);
+            if (delimIndex == -1) {// 剩余部分无占位符
+                if (handledPosition == 0) { // 不带占位符的模板直接返回
+                    return template;
+                }
+                // 字符串模板剩余部分不再包含占位符，加入剩余部分后返回结果
+                stringBuilder.append(template, handledPosition, length);
+                return stringBuilder.toString();
+            }
+
+            // 转义符
+            if (delimIndex > 0 && template.charAt(delimIndex - 1) == CharUtils.BACKSLASH) {// 转义符
+                if (delimIndex > 1 && template.charAt(delimIndex - 2) == CharUtils.BACKSLASH) {// 双转义符
+                    // 转义符之前还有一个转义符，占位符依旧有效
+                    stringBuilder.append(template, handledPosition, delimIndex - 1);
+                    stringBuilder.append(toUtf8String(params[argIndex]));
+                    handledPosition = delimIndex + 2;
+                } else {
+                    // 占位符被转义
+                    argIndex--;
+                    stringBuilder.append(template, handledPosition, delimIndex - 1);
+                    stringBuilder.append(CharUtils.DELIM_START);
+                    handledPosition = delimIndex + 1;
+                }
+            } else {// 正常占位符
+                stringBuilder.append(template, handledPosition, delimIndex);
+                stringBuilder.append(toUtf8String(params[argIndex]));
+                handledPosition = delimIndex + 2;
+            }
+        }
+
+        // 加入最后一个占位符后所有的字符
+        stringBuilder.append(template, handledPosition, template.length());
+
+        return stringBuilder.toString();
+    }
+
+    /**
+     * 过滤字符串
+     *
+     * @param str    字符串
+     * @param filter 过滤器
+     * @return 过滤后的字符串
+     * @since 1.3.0
+     */
+    public static String filter(CharSequence str, final Filter<Character> filter) {
+        if (str == null || filter == null)
+            return toString(str);
+
+        int length = str.length();
+        final StringBuilder stringBuilder = new StringBuilder(length);
+        char c;
+        for (int i = 0; i < length; i++) {
+            c = str.charAt(i);
+            if (filter.accept(c)) {
+                stringBuilder.append(c);
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    /**
+     * 编辑字符串
+     *
+     * @param str    字符串
+     * @param editor 编辑器
+     * @return 编辑后的字符串
+     * @since 1.3.0
+     */
+    public static String edit(CharSequence str, final Editor<Character, String> editor) {
+        if (str == null || editor == null)
+            return toString(str);
+
+        int length = str.length();
+        final StringBuilder stringBuilder = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            stringBuilder.append(editor.edit(str.charAt(i)));
+        }
+        return stringBuilder.toString();
     }
 }

@@ -15,7 +15,7 @@
  */
 package com.chanus.yuntao.utils.core;
 
-import com.chanus.yuntao.utils.core.lang.Matcher;
+import com.chanus.yuntao.utils.core.function.Matcher;
 
 import java.util.*;
 

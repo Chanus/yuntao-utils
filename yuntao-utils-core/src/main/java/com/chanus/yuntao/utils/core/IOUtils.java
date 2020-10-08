@@ -16,6 +16,7 @@
 package com.chanus.yuntao.utils.core;
 
 import java.io.Closeable;
+import java.io.Flushable;
 import java.io.IOException;
 
 /**
@@ -74,6 +75,37 @@ public class IOUtils {
     public static void closeQuietly(Closeable... closeables) {
         for (Closeable closeable : closeables) {
             closeQuietly(closeable);
+        }
+    }
+
+    /**
+     * 从缓存中刷出数据
+     *
+     * @param flushable {@link Flushable}
+     * @since 1.3.0
+     */
+    public static void flush(Flushable flushable) {
+        if (flushable != null) {
+            try {
+                flushable.flush();
+            } catch (IOException e) {
+                throw new RuntimeException("IOException occurred.", e);
+            }
+        }
+    }
+
+    /**
+     * 安静的从缓存中刷出数据
+     *
+     * @param flushable {@link Flushable}
+     * @since 1.3.0
+     */
+    public static void flushQuietly(Flushable flushable) {
+        if (flushable != null) {
+            try {
+                flushable.flush();
+            } catch (IOException ignored) {
+            }
         }
     }
 }

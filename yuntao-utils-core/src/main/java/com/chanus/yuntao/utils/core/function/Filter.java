@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.chanus.yuntao.utils.core.lang;
+package com.chanus.yuntao.utils.core.function;
 
 /**
- * 匹配接口
+ * 过滤器接口
  *
- * @param <T> 匹配的对象类型
+ * @param <T> 过滤的对象类型
  * @author Chanus
- * @date 2020-09-18 11:41:45
+ * @date 2020-09-18 16:48:39
  * @since 1.2.5
  */
 @FunctionalInterface
-public interface Matcher<T> {
+public interface Filter<T> {
     /**
-     * 给定对象是否匹配
+     * 是否接受对象
      *
      * @param t 对象
-     * @return {@code true} 匹配；{@code false} 不匹配
+     * @return {@code true} 接受对象；{@code false} 不接受对象
      */
-    boolean match(T t);
+    boolean accept(T t);
 }

@@ -15,7 +15,8 @@
  */
 package com.chanus.yuntao.utils.core;
 
-import com.chanus.yuntao.utils.core.lang.Filter;
+import com.chanus.yuntao.utils.core.function.Filter;
+import com.chanus.yuntao.utils.core.function.Replacer;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -71,6 +72,40 @@ public class ArrayUtils {
      */
     public static boolean isNotEmpty(Object array) {
         return !isEmpty(array);
+    }
+
+    /**
+     * 判断数组是否包含 {@code null} 元素
+     *
+     * @param array 数组
+     * @param <T>   数组元素类型
+     * @return {@code true} 数组包含 {@code null} 元素；{@code false} 数组不包含 {@code null} 元素
+     * @since 1.3.0
+     */
+    @SafeVarargs
+    public static <T> boolean hasNull(T... array) {
+        if (isEmpty(array))
+            return true;
+
+        for (T t : array) {
+            if (t == null)
+                return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * 判断一个或多个数组是否全都不为 {@code null}
+     *
+     * @param <T>   数组元素类型
+     * @param array 一个或多个数组
+     * @return {@code true} 全都不为 {@code null}；{@code false} 存在 {@code null}
+     * @since 1.3.0
+     */
+    @SafeVarargs
+    public static <T> boolean isAllNotNull(T... array) {
+        return !hasNull(array);
     }
 
     /**
@@ -133,18 +168,57 @@ public class ArrayUtils {
     /**
      * 获取元素在数组中的位置
      *
-     * @param array   数组
-     * @param element 元素
-     * @param <T>     数组元素类型
+     * @param array 数组
+     * @param value 元素
+     * @param <T>   数组元素类型
      * @return 元素在数组中的位置，数组为空或没找到元素则返回-1
      */
-    public static <T> int indexOf(T[] array, T element) {
+    public static <T> int indexOf(T[] array, Object value) {
         if (array == null)
             return -1;
 
         for (int i = 0; i < array.length; i++) {
-            if (Objects.equals(array[i], element))
+            if (Objects.equals(array[i], value))
                 return i;
+        }
+        return -1;
+    }
+
+    /**
+     * 获取元素在数组中的位置，忽略大小写
+     *
+     * @param array   数组
+     * @param element 元素
+     * @return 元素在数组中的位置，数组为空或没找到元素则返回-1
+     * @since 1.3.0
+     */
+    public static int indexOfIgnoreCase(CharSequence[] array, CharSequence element) {
+        if (array != null) {
+            for (int i = 0; i < array.length; i++) {
+                if (StringUtils.equalsIgnoreCase(array[i], element)) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 获取元素在数组中最后的位置
+     *
+     * @param <T>     数组元素类型
+     * @param array   数组
+     * @param element 元素
+     * @return 元素在数组中最后的位置，数组为空或没找到元素则返回-1
+     * @since 1.3.0
+     */
+    public static <T> int lastIndexOf(T[] array, Object element) {
+        if (null != array) {
+            for (int i = array.length - 1; i >= 0; i--) {
+                if (Objects.equals(element, array[i])) {
+                    return i;
+                }
+            }
         }
         return -1;
     }
@@ -235,7 +309,7 @@ public class ArrayUtils {
      * @param array 数组
      * @param index 位置，如果位置小于0或者大于数组长度，返回原数组
      * @param <T>   数组元素类型
-     * @return 去掉指定元素后的新数组或原数组
+     * @return 移除指定元素后的新数组或原数组
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] remove(T[] array, int index) {
@@ -247,7 +321,7 @@ public class ArrayUtils {
      *
      * @param array 数组对象
      * @param index 位置，如果位置小于0或者大于数组长度，返回原数组对象
-     * @return 去掉指定元素后的新数组对象或原数组对象
+     * @return 移除指定元素后的新数组对象或原数组对象
      */
     @SuppressWarnings("SuspiciousSystemArraycopy")
     public static Object remove(Object array, int index) {
@@ -271,6 +345,123 @@ public class ArrayUtils {
     }
 
     /**
+     * 移除数组中指定的元素，只会移除匹配到的第一个元素
+     *
+     * @param <T>     数组元素类型
+     * @param array   数组
+     * @param element 要移除的元素
+     * @return 移除指定元素后的新数组或原数组
+     * @since 1.3.0
+     */
+    public static <T> T[] remove(T[] array, T element) {
+        return remove(array, indexOf(array, element));
+    }
+
+    /**
+     * 移除数组中 {@code null} 元素
+     *
+     * @param <T>   数组元素类型
+     * @param array 数组
+     * @return 移除 {@code null} 元素后的数组
+     * @since 1.3.0
+     */
+    public static <T> T[] removeNull(T[] array) {
+        return filter(array, Objects::nonNull);
+    }
+
+    /**
+     * 移除数组中 {@code null} 或者 "" 元素
+     *
+     * @param <T>   数组元素类型
+     * @param array 数组
+     * @return 移除 {@code null} 或者 "" 元素后的数组
+     * @since 1.3.0
+     */
+    public static <T extends CharSequence> T[] removeEmpty(T[] array) {
+        return filter(array, StringUtils::isNotEmpty);
+    }
+
+    /**
+     * 移除数组中 {@code null} 或者 "" 或者空白字符串元素
+     *
+     * @param <T>   数组元素类型
+     * @param array 数组
+     * @return 移除 {@code null} 或者 "" 或者空白字符串元素后的数组
+     * @since 1.3.0
+     */
+    public static <T extends CharSequence> T[] removeBlank(T[] array) {
+        return filter(array, StringUtils::isNotBlank);
+    }
+
+    /**
+     * 数组复制
+     *
+     * @param src     源数组
+     * @param srcPos  源数组开始位置
+     * @param dest    目标数组
+     * @param destPos 目标数组开始位置
+     * @param length  拷贝数组长度
+     * @return 目标数组
+     * @see System#arraycopy(Object, int, Object, int, int)
+     * @since 1.3.0
+     */
+    public static Object copy(Object src, int srcPos, Object dest, int destPos, int length) {
+        //noinspection SuspiciousSystemArraycopy
+        System.arraycopy(src, srcPos, dest, destPos, length);
+        return dest;
+    }
+
+    /**
+     * 数组复制，源数组和目标数组都是从位置0开始复制
+     *
+     * @param src    源数组
+     * @param dest   目标数组
+     * @param length 拷贝数组长度
+     * @return 目标数组
+     * @see System#arraycopy(Object, int, Object, int, int)
+     * @since 1.3.0
+     */
+    public static Object copy(Object src, Object dest, int length) {
+        //noinspection SuspiciousSystemArraycopy
+        System.arraycopy(src, 0, dest, 0, length);
+        return dest;
+    }
+
+    /**
+     * 数组合并
+     *
+     * @param <T>    数组元素类型
+     * @param arrays 数组集合
+     * @return 合并后的数组
+     * @since 1.3.0
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T[] union(T[]... arrays) {
+        if (isEmpty(arrays))
+            return null;
+        if (arrays.length == 1)
+            return arrays[0];
+
+        int length = 0;
+        for (T[] array : arrays) {
+            if (isNotEmpty(array)) {
+                length += array.length;
+            }
+        }
+
+        T[] result = (T[]) Array.newInstance(arrays.getClass().getComponentType().getComponentType(), length);
+
+        length = 0;
+        for (T[] array : arrays) {
+            if (isNotEmpty(array)) {
+                System.arraycopy(array, 0, result, length, array.length);
+                length += array.length;
+            }
+        }
+        return result;
+    }
+
+    /**
      * 数组中是否包含元素
      *
      * @param array 数组
@@ -279,14 +470,20 @@ public class ArrayUtils {
      * @return {@code true} 包含；{@code false} 不包含
      */
     public static <T> boolean contains(T[] array, T value) {
-        if (array == null)
-            return false;
+        return indexOf(array, value) > -1;
+    }
 
-        for (T t : array) {
-            if (Objects.equals(t, value))
-                return true;
-        }
-        return false;
+    /**
+     * 数组中是否包含元素，忽略大小写
+     *
+     * @param array 数组
+     * @param value 被检查的元素
+     * @param <T>   数组元素类型
+     * @return {@code true} 包含；{@code false} 不包含
+     * @since 1.3.0
+     */
+    public static <T> boolean containsIgnoreCase(CharSequence[] array, CharSequence value) {
+        return indexOfIgnoreCase(array, value) > -1;
     }
 
     /**
@@ -334,7 +531,6 @@ public class ArrayUtils {
      * @param startIndexInclusive 开始位置（包含）
      * @param endIndexExclusive   结束位置（不包含）
      * @return 变更后的原数组
-     * @since 3.0.9
      */
     public static <T> T[] reverse(final T[] array, final int startIndexInclusive, final int endIndexExclusive) {
         if (isEmpty(array)) {
@@ -359,10 +555,56 @@ public class ArrayUtils {
      * @param <T>   数组元素类型
      * @param array 数组，会变更
      * @return 变更后的原数组
-     * @since 3.0.9
      */
     public static <T> T[] reverse(final T[] array) {
         return reverse(array, 0, array.length);
+    }
+
+    /**
+     * 将数组转换为字符串
+     *
+     * @param <T>          数组元素类型
+     * @param array        数组
+     * @param separator    分隔符
+     * @param isIgnoreNull 是否忽略 {@code null} 元素
+     * @return 连接后的字符串
+     * @since 1.3.0
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> String join(T[] array, String separator, boolean isIgnoreNull) {
+        if (array == null)
+            return null;
+
+        final StringBuilder stringBuilder = new StringBuilder();
+        boolean isFirst = true;
+        for (T t : array) {
+            if (!isIgnoreNull || t != null) {
+                if (isFirst) {
+                    isFirst = false;
+                } else {
+                    stringBuilder.append(separator);
+                }
+                if (isArray(t)) {
+                    stringBuilder.append(join((T[]) t, separator, isIgnoreNull));
+                } else {
+                    stringBuilder.append(t);
+                }
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    /**
+     * 将数组转换为字符串，忽略 {@code null} 元素
+     *
+     * @param <T>       数组元素类型
+     * @param array     数组
+     * @param separator 分隔符
+     * @return 连接后的字符串
+     * @since 1.3.0
+     */
+    public static <T> String joinIgnoreNull(T[] array, String separator) {
+        return join(array, separator, true);
     }
 
     /**
@@ -404,6 +646,20 @@ public class ArrayUtils {
         }
 
         return list.toArray((T[]) Array.newInstance(array.getClass().getComponentType(), list.size()));
+    }
+
+    /**
+     * 替换数组元素，此方法会修改原数组
+     *
+     * @param <T>      数组元素类型
+     * @param array    数组
+     * @param replacer 替换器接口
+     * @since 1.3.0
+     */
+    public static <T> void replace(T[] array, Replacer<T> replacer) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = replacer.replace(array[i]);
+        }
     }
 
     /**
@@ -449,6 +705,68 @@ public class ArrayUtils {
             return (T) result;
         }
         return null;
+    }
+
+    /**
+     * 将集合转为数组
+     *
+     * @param <T>           数组元素类型
+     * @param collection    集合
+     * @param componentType 集合元素类型
+     * @return 数组
+     * @since 1.3.0
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T[] toArray(Collection<T> collection, Class<T> componentType) {
+        return collection.toArray((T[]) Array.newInstance(componentType, 0));
+    }
+
+    /**
+     * 获取数组长度，如果数组为 {@code null}，则返回0
+     *
+     * @param array 数组对象
+     * @return 数组长度
+     * @see Array#getLength(Object)
+     * @since 1.3.0
+     */
+    public static int length(Object array) {
+        return array == null ? 0 : Array.getLength(array);
+    }
+
+    /**
+     * 判断两个数组是否相等，判断依据包括数组长度和每个元素都相等
+     *
+     * @param array1 数组1
+     * @param array2 数组2
+     * @return {@code true} 相等；{@code false} 不相等
+     * @since 1.3.0
+     */
+    public static boolean equals(Object array1, Object array2) {
+        if (array1 == array2)
+            return true;
+
+        if (hasNull(array1, array2) || array1.getClass() != array2.getClass())
+            return false;
+
+        if (array1 instanceof long[]) {
+            return Arrays.equals((long[]) array1, (long[]) array2);
+        } else if (array1 instanceof int[]) {
+            return Arrays.equals((int[]) array1, (int[]) array2);
+        } else if (array1 instanceof short[]) {
+            return Arrays.equals((short[]) array1, (short[]) array2);
+        } else if (array1 instanceof char[]) {
+            return Arrays.equals((char[]) array1, (char[]) array2);
+        } else if (array1 instanceof byte[]) {
+            return Arrays.equals((byte[]) array1, (byte[]) array2);
+        } else if (array1 instanceof double[]) {
+            return Arrays.equals((double[]) array1, (double[]) array2);
+        } else if (array1 instanceof float[]) {
+            return Arrays.equals((float[]) array1, (float[]) array2);
+        } else if (array1 instanceof boolean[]) {
+            return Arrays.equals((boolean[]) array1, (boolean[]) array2);
+        } else {
+            return Arrays.deepEquals((Object[]) array1, (Object[]) array2);
+        }
     }
 
     /**

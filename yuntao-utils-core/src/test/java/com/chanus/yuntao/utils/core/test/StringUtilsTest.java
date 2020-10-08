@@ -256,19 +256,6 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void trimTest() {
-        System.out.println(StringUtils.trim(""));// null
-        System.out.println(StringUtils.trim(" "));// null
-        System.out.println(StringUtils.trim("\n"));// null
-        System.out.println(StringUtils.trim("\t"));// null
-        System.out.println(StringUtils.trim("\r"));// null
-        System.out.println(StringUtils.trim("    "));// null
-        System.out.println(StringUtils.trim("   aaa   "));// aaa
-        System.out.println(StringUtils.trim("a   b"));// a   b
-        System.out.println(StringUtils.trim(null));// null
-    }
-
-    @Test
     public void defaultIfBlankTest() {
         System.out.println(StringUtils.defaultIfBlank("", "123"));// 123
         System.out.println(StringUtils.defaultIfBlank(" ", "123"));// 123
@@ -303,6 +290,19 @@ public class StringUtilsTest {
         System.out.println(StringUtils.defaultIfNull("\r", "123"));// 回车
         System.out.println(StringUtils.defaultIfNull("a   b", "123"));// a   b
         System.out.println(StringUtils.defaultIfNull(null, "123"));// 123
+    }
+
+    @Test
+    public void trimTest() {
+        System.out.println(StringUtils.trim(""));// null
+        System.out.println(StringUtils.trim(" "));// null
+        System.out.println(StringUtils.trim("\n"));// null
+        System.out.println(StringUtils.trim("\t"));// null
+        System.out.println(StringUtils.trim("\r"));// null
+        System.out.println(StringUtils.trim("    "));// null
+        System.out.println(StringUtils.trim("   aaa   "));// aaa
+        System.out.println(StringUtils.trim("a   b"));// a   b
+        System.out.println(StringUtils.trim(null));// null
     }
 
     @Test
@@ -494,8 +494,8 @@ public class StringUtilsTest {
 
     @Test
     public void concatTest() {
-        System.out.println(StringUtils.concat(true, "", "a", "b", null, "c"));// abc
-        System.out.println(StringUtils.concat(false, "", "a", "b", null, "c"));// abnullc
+        System.out.println(StringUtils.concat(true,"", "a", "b", null, "c"));// abc
+        System.out.println(StringUtils.concat(false,"", "a", "b", null, "c"));// abnullc
     }
 
     @Test
@@ -688,5 +688,12 @@ public class StringUtilsTest {
         System.out.println("----------------------------------------------------------------");
         String[] array5 = StringUtils.splitToArray(s, "");
         System.out.println(ArrayUtils.toString(array5));
+    }
+
+    @Test
+    public void formatTest() {
+        System.out.println(StringUtils.format("this is {} for {}", "a", "b"));// this is a for b
+        System.out.println(StringUtils.format("this is \\{} for {}", "a", "b"));// this is {} for a
+        System.out.println(StringUtils.format("this is \\\\{} for {}", "a", "b"));// this is \a for b
     }
 }

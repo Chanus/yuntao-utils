@@ -18,7 +18,6 @@ package com.chanus.yuntao.utils.core.codec;
 import com.chanus.yuntao.utils.core.CharsetUtils;
 import com.chanus.yuntao.utils.core.StreamUtils;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
@@ -211,11 +210,7 @@ public class Base64 {
      * @param out    写出到的流
      */
     public static void decodeToStream(CharSequence base64, OutputStream out) {
-        try {
-            StreamUtils.write(Base64Decoder.decode(base64), out);
-        } catch (IOException e) {
-            throw new RuntimeException("IOException occurred.", e);
-        }
+        StreamUtils.write(Base64Decoder.decode(base64), out);
     }
 
     /**

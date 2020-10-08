@@ -15,6 +15,8 @@
  */
 package com.chanus.yuntao.utils.core;
 
+import com.chanus.yuntao.utils.core.reflect.ClassUtils;
+
 import java.io.*;
 import java.math.BigInteger;
 import java.net.URLConnection;
@@ -759,7 +761,7 @@ public class FileUtils {
     }
 
     /**
-     * 创建文件
+     * 创建文件，此方法会检查 slip 漏洞
      *
      * @param parent 父目录
      * @param path   文件路径
@@ -769,7 +771,45 @@ public class FileUtils {
         if (StringUtils.isBlank(parent) || StringUtils.isBlank(path))
             return null;
 
-        return createFile(new File(parent, path));
+        return createFile(newFile(parent, path));
+    }
+
+    /**
+     * 创建 File 对象，文件路径为空则返回 {@code null}
+     *
+     * @param path 文件路径
+     * @return {@link File}
+     * @since 1.3.0
+     */
+    public static File newFile(String path) {
+        return StringUtils.isBlank(path) ? null : new File(path);
+    }
+
+    /**
+     * 创建 File 对象，此方法会检查 slip 漏洞
+     *
+     * @param parent 父目录
+     * @param path   文件路径
+     * @return {@link File}
+     * @since 1.3.0
+     */
+    public static File newFile(String parent, String path) {
+        return newFile(new File(parent), path);
+    }
+
+    /**
+     * 创建 File 对象，此方法会检查 slip 漏洞
+     *
+     * @param parent 父目录对象
+     * @param path   文件路径
+     * @return {@link File}
+     * @since 1.3.0
+     */
+    public static File newFile(File parent, String path) {
+        if (StringUtils.isBlank(path))
+            throw new NullPointerException("File path is blank!");
+
+        return checkSlip(parent, new File(parent, path));
     }
 
     /**
@@ -1361,6 +1401,40 @@ public class FileUtils {
     }
 
     /**
+     * 获取相对子路径
+     *
+     * @param rootDir 绝对父路径
+     * @param file    文件
+     * @return 相对子路径
+     * @since 1.3.0
+     */
+    public static String subPath(String rootDir, File file) {
+        try {
+            return subPath(rootDir, file.getCanonicalPath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 获取相对子路径，忽略大小写
+     *
+     * @param dirPath  父路径
+     * @param filePath 文件路径
+     * @return 相对子路径
+     * @since 1.3.0
+     */
+    public static String subPath(String dirPath, String filePath) {
+        if (StringUtils.isNotEmpty(dirPath) && StringUtils.isNotEmpty(filePath)) {
+            dirPath = StringUtils.removeSuffix(dirPath, "/");
+
+            final String result = StringUtils.removePrefixIgnoreCase(filePath, dirPath);
+            return StringUtils.removePrefix(result, "/");
+        }
+        return filePath;
+    }
+
+    /**
      * 文件转换成 Base64 字符串
      *
      * @param inputStream 文件流
@@ -1517,5 +1591,80 @@ public class FileUtils {
             copyOptions.add(StandardCopyOption.REPLACE_EXISTING);
 
         Files.copy(source.toPath(), target.toPath(), copyOptions.toArray(new CopyOption[0]));
+    }
+
+    /**
+     * 检查父完整路径是否为子路径的前半部分，如果不是说明不是子路径，可能存在 slip 注入
+     *
+     * @param parentFile 父文件或目录
+     * @param file       子文件或目录
+     * @return 子文件或目录
+     * @since 1.3.0
+     */
+    public static File checkSlip(File parentFile, File file) {
+        if (parentFile != null && file != null) {
+            String parentCanonicalPath;
+            String canonicalPath;
+            try {
+                parentCanonicalPath = parentFile.getCanonicalPath();
+                canonicalPath = file.getCanonicalPath();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            if (!canonicalPath.startsWith(parentCanonicalPath)) {
+                throw new IllegalArgumentException(StringUtils.format("New file is outside of the parent dir: {}", file.getName()));
+            }
+        }
+        return file;
+    }
+
+    /**
+     * 获取指定层级的父路径
+     *
+     * @param filePath 目录或文件路径
+     * @param level    层级
+     * @return 父路径，如果不存在返回 {@code null}
+     * @since 1.3.0
+     */
+    public static String getParent(String filePath, int level) {
+        final File parent = getParent(newFile(filePath), level);
+        try {
+            return parent == null ? null : parent.getCanonicalPath();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 获取指定层级的父路径
+     *
+     * @param file  目录或文件
+     * @param level 层级
+     * @return 父路径 File，如果不存在返回 {@code null}
+     * @since 1.3.0
+     */
+    public static File getParent(File file, int level) {
+        if (level < 1 || file == null)
+            return file;
+
+        try {
+            File parentFile = file.getCanonicalFile().getParentFile();
+            return level == 1 ? parentFile : getParent(parentFile, level - 1);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 获取 Web 项目下的 web root 路径<br>
+     * 原理是首先获取 ClassPath 路径，由于在 Web 项目中 ClassPath 位于 WEB-INF/classes/ 下，故向上获取两级目录即可
+     *
+     * @return web root 路径
+     * @since 1.3.0
+     */
+    public static File getWebRoot() {
+        final String classPath = ClassUtils.getClassPath();
+
+        return StringUtils.isBlank(classPath) ? null : getParent(newFile(classPath), 2);
     }
 }

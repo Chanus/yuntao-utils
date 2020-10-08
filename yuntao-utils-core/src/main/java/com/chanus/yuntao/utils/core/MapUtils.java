@@ -15,7 +15,7 @@
  */
 package com.chanus.yuntao.utils.core;
 
-import com.chanus.yuntao.utils.core.lang.Filter;
+import com.chanus.yuntao.utils.core.function.Filter;
 
 import java.util.*;
 
@@ -163,7 +163,6 @@ public class MapUtils {
      * @param <V> 值类型
      * @param map Map 集合
      * @return {@link TreeMap}
-     * @see #newTreeMap(Map, Comparator)
      */
     public static <K, V> TreeMap<K, V> sort(Map<K, V> map) {
         return sort(map, null);
@@ -177,7 +176,6 @@ public class MapUtils {
      * @param map        Map 集合
      * @param comparator 比较器
      * @return {@link TreeMap}
-     * @see #newTreeMap(Map, Comparator)
      */
     public static <K, V> TreeMap<K, V> sort(Map<K, V> map, Comparator<? super K> comparator) {
         if (map == null)
