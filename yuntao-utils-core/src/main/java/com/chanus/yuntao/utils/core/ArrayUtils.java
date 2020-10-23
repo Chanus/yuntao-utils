@@ -578,7 +578,7 @@ public class ArrayUtils {
         final StringBuilder stringBuilder = new StringBuilder();
         boolean isFirst = true;
         for (T t : array) {
-            if (!isIgnoreNull || t != null) {
+            if (!isIgnoreNull || ObjectUtils.isNotEmpty(t)) {
                 if (isFirst) {
                     isFirst = false;
                 } else {

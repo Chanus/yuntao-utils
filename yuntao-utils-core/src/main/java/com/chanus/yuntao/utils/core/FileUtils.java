@@ -19,7 +19,10 @@ import com.chanus.yuntao.utils.core.reflect.ClassUtils;
 
 import java.io.*;
 import java.math.BigInteger;
+import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
@@ -110,7 +113,7 @@ public class FileUtils {
      * @since 1.2.1
      */
     public static List<File> loopFiles(String path) {
-        return loopFiles(new File(path));
+        return loopFiles(newFile(path));
     }
 
     /**
@@ -121,22 +124,7 @@ public class FileUtils {
      * @since 1.2.1
      */
     public static List<File> loopFiles(File file) {
-        final List<File> files = new ArrayList<>();
-        if (file == null || !file.exists())
-            return files;
-
-        if (file.isDirectory()) {
-            final File[] subFiles = file.listFiles();
-            if (ArrayUtils.isNotEmpty(subFiles)) {
-                for (File temp : subFiles) {
-                    files.addAll(loopFiles(temp));
-                }
-            }
-        } else {
-            files.add(file);
-        }
-
-        return files;
+        return loopFiles(file, null);
     }
 
     /**
@@ -149,7 +137,7 @@ public class FileUtils {
      * @since 1.2.5
      */
     public static List<File> loopFiles(String path, FileFilter fileFilter) {
-        return loopFiles(new File(path), fileFilter);
+        return loopFiles(newFile(path), fileFilter);
     }
 
     /**
@@ -240,72 +228,546 @@ public class FileUtils {
     }
 
     /**
+     * 获得输入流
+     *
+     * @param file 文件
+     * @return {@link BufferedInputStream}
+     * @since 1.4.0
+     */
+    public static BufferedInputStream getInputStream(File file) {
+        return StreamUtils.toBuffered(StreamUtils.toStream(file));
+    }
+
+    /**
+     * 获得输入流
+     *
+     * @param path 文件路径
+     * @return {@link BufferedInputStream}
+     * @since 1.4.0
+     */
+    public static BufferedInputStream getInputStream(String path) {
+        return getInputStream(newFile(path));
+    }
+
+    /**
+     * 获得一个文件读取器
+     *
+     * @param file    文件
+     * @param charset 字符集
+     * @return {@link BufferedReader}
+     * @since 1.4.0
+     */
+    public static BufferedReader getReader(File file, Charset charset) {
+        return StreamUtils.getReader(getInputStream(file), charset);
+    }
+
+    /**
+     * 获得一个文件读取器
+     *
+     * @param path    文件路径
+     * @param charset 字符集
+     * @return {@link BufferedReader}
+     * @since 1.4.0
+     */
+    public static BufferedReader getReader(String path, Charset charset) {
+        return getReader(newFile(path), charset);
+    }
+
+    /**
+     * 获得一个文件读取器
+     *
+     * @param file 文件
+     * @return {@link BufferedReader}
+     * @since 1.4.0
+     */
+    public static BufferedReader getUtf8Reader(File file) {
+        return getReader(file, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 获得一个文件读取器
+     *
+     * @param path 文件路径
+     * @return {@link BufferedReader}
+     * @since 1.4.0
+     */
+    public static BufferedReader getUtf8Reader(String path) {
+        return getReader(path, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 读文件，文件的长度不能超过 Integer.MAX_VALUE
+     *
+     * @param file 文件
+     * @return 字节码
+     * @throws IOException IO 异常
+     * @since 1.4.0
+     */
+    public static byte[] readBytes(File file) throws IOException {
+        if (file == null)
+            return null;
+
+        long len = file.length();
+        if (len >= Integer.MAX_VALUE)
+            throw new IOException("File is larger then max array size");
+
+        byte[] bytes = new byte[(int) len];
+        FileInputStream in = null;
+        int readLength;
+        try {
+            in = new FileInputStream(file);
+            readLength = in.read(bytes);
+            if (readLength < len) {
+                throw new IOException(StringUtils.format("File length is [{}] but read [{}]!", len, readLength));
+            }
+        } catch (Exception e) {
+            throw new IOException(e);
+        } finally {
+            IOUtils.close(in);
+        }
+
+        return bytes;
+    }
+
+    /**
+     * 读文件，文件的长度不能超过 Integer.MAX_VALUE
+     *
+     * @param path 文件路径
+     * @return 字节码
+     * @throws IOException IO 异常
+     * @since 1.4.0
+     */
+    public static byte[] readBytes(String path) throws IOException {
+        return readBytes(newFile(path));
+    }
+
+    /**
      * 读文件
      *
      * @param file    文件
-     * @param charset 编码方式
+     * @param charset 字符集
      * @return 文件内容
+     * @throws IOException IO 异常
+     * @since 1.4.0
      */
-    public static String read(File file, String charset) {
-        if (file == null || !file.isFile())
-            return null;
-
-        StringBuilder content = new StringBuilder();
-        InputStreamReader isr = null;
-        BufferedReader reader = null;
-        try {
-            isr = new InputStreamReader(new FileInputStream(file), charset);
-            reader = new BufferedReader(isr);
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (!"".equals(content.toString())) {
-                    content.append("\r\n");
-                }
-                content.append(line);
-            }
-            return content.toString();
-        } catch (IOException e) {
-            throw new RuntimeException("IOException occurred.", e);
-        } finally {
-            IOUtils.close(reader);
-            IOUtils.close(isr);
-        }
+    public static String readString(File file, Charset charset) throws IOException {
+        return new String(readBytes(file), charset);
     }
 
     /**
      * 读文件
      *
      * @param path    文件路径
-     * @param charset 编码方式
+     * @param charset 字符集
      * @return 文件内容
+     * @throws IOException IO 异常
+     * @since 1.4.0
      */
-    public static String read(String path, String charset) {
-        return StringUtils.isBlank(path) ? null : read(new File(path), charset);
+    public static String readString(String path, Charset charset) throws IOException {
+        return readString(newFile(path), charset);
+    }
+
+    /**
+     * 读文件
+     *
+     * @param url     文件 URL
+     * @param charset 字符集
+     * @return 文件内容
+     * @throws IOException IO 异常
+     * @since 1.4.0
+     */
+    public static String readString(URL url, Charset charset) throws IOException {
+        if (url == null)
+            throw new NullPointerException("Empty url provided!");
+
+        InputStream inputStream = null;
+        try {
+            inputStream = url.openStream();
+            return StreamUtils.read2String(inputStream, charset);
+        } catch (IOException e) {
+            throw new IOException(e);
+        } finally {
+            IOUtils.close(inputStream);
+        }
+    }
+
+    /**
+     * 读文件，使用 UTF-8 编码
+     *
+     * @param file 文件
+     * @return 文件内容
+     * @throws IOException IO 异常
+     * @since 1.4.0
+     */
+    public static String readUtf8String(File file) throws IOException {
+        return readString(file, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 读文件，使用 UTF-8 编码
+     *
+     * @param path 文件路径
+     * @return 文件内容
+     * @throws IOException IO 异常
+     * @since 1.4.0
+     */
+    public static String readUtf8String(String path) throws IOException {
+        return readString(path, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 读文件，使用 UTF-8 编码
+     *
+     * @param url 文件 URL
+     * @return 文件内容
+     * @throws IOException IO 异常
+     * @since 1.4.0
+     */
+    public static String readUtf8String(URL url) throws IOException {
+        return readString(url, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 从文件中读取每一行数据
+     *
+     * @param file    文件
+     * @param charset 字符集
+     * @return 文件中的每行内容的集合
+     * @throws IOException IO 异常
+     * @since 1.4.0
+     */
+    public static List<String> readLines(File file, Charset charset) throws IOException {
+        BufferedReader reader = null;
+        try {
+            List<String> lines = new ArrayList<>();
+            reader = getReader(file, charset);
+            String line;
+            while (true) {
+                line = reader.readLine();
+                if (line == null) {
+                    break;
+                }
+                lines.add(line);
+            }
+            return lines;
+        } catch (IOException e) {
+            throw new IOException(e);
+        } finally {
+            IOUtils.close(reader);
+        }
+    }
+
+    /**
+     * 从文件中读取每一行数据
+     *
+     * @param path    文件路径
+     * @param charset 字符集
+     * @return 文件中的每行内容的集合
+     * @throws IOException IO 异常
+     * @since 1.4.0
+     */
+    public static List<String> readLines(String path, Charset charset) throws IOException {
+        return readLines(newFile(path), charset);
+    }
+
+    /**
+     * 从文件中读取每一行数据
+     *
+     * @param url     文件的 URL
+     * @param charset 字符集
+     * @return 文件中的每行内容的集合
+     * @throws IOException IO 异常
+     * @since 1.4.0
+     */
+    public static List<String> readLines(URL url, Charset charset) throws IOException {
+        InputStream inputStream = null;
+        try {
+            inputStream = url.openStream();
+            return StreamUtils.readLines(inputStream, charset, new ArrayList<>());
+        } catch (IOException e) {
+            throw new IOException(e);
+        } finally {
+            IOUtils.close(inputStream);
+        }
+    }
+
+    /**
+     * 从文件中读取每一行数据，使用 UTF-8 编码
+     *
+     * @param file 文件
+     * @return 文件中的每行内容的集合
+     * @throws IOException IO 异常
+     * @since 1.4.0
+     */
+    public static List<String> readUtf8Lines(File file) throws IOException {
+        return readLines(file, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 从文件中读取每一行数据，使用 UTF-8 编码
+     *
+     * @param path 文件路径
+     * @return 文件中的每行内容的集合
+     * @throws IOException IO 异常
+     * @since 1.4.0
+     */
+    public static List<String> readUtf8Lines(String path) throws IOException {
+        return readLines(path, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 从文件中读取每一行数据，使用 UTF-8 编码
+     *
+     * @param url 文件的 URL
+     * @return 文件中的每行内容的集合
+     * @throws IOException IO 异常
+     * @since 1.4.0
+     */
+    public static List<String> readUtf8Lines(URL url) throws IOException {
+        return readLines(url, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 获得一个输出流对象
+     *
+     * @param file 输出文件
+     * @return 输出流对象
+     * @since 1.4.0
+     */
+    public static BufferedOutputStream getOutputStream(File file) {
+        final OutputStream outputStream;
+        try {
+            outputStream = new FileOutputStream(createFile(file));
+        } catch (IOException e) {
+            throw new RuntimeException("IOException occurred.", e);
+        }
+        return StreamUtils.toBuffered(outputStream);
+    }
+
+    /**
+     * 获得一个输出流对象
+     *
+     * @param path 输出到的文件路径，绝对路径
+     * @return 输出流对象
+     * @since 1.4.0
+     */
+    public static BufferedOutputStream getOutputStream(String path) {
+        return getOutputStream(createFile(path));
+    }
+
+    /**
+     * 获得一个带缓存的写入对象
+     *
+     * @param file     输出文件
+     * @param charset  字符集
+     * @param isAppend 是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @return {@link BufferedWriter} 对象
+     * @since 1.4.0
+     */
+    public static BufferedWriter getWriter(File file, Charset charset, boolean isAppend) {
+        try {
+            return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(createFile(file), isAppend), charset));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("FileNotFoundException occurred.", e);
+        }
+    }
+
+    /**
+     * 获得一个带缓存的写入对象
+     *
+     * @param path     输出到的文件路径，绝对路径
+     * @param charset  字符集
+     * @param isAppend 是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @return {@link BufferedWriter} 对象
+     * @since 1.4.0
+     */
+    public static BufferedWriter getWriter(String path, Charset charset, boolean isAppend) {
+        return getWriter(createFile(path), charset, isAppend);
+    }
+
+    /**
+     * 获得一个打印写入对象
+     *
+     * @param file     输出文件
+     * @param charset  字符集
+     * @param isAppend 是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @return {@link PrintWriter} 对象
+     * @since 1.4.0
+     */
+    public static PrintWriter getPrintWriter(File file, Charset charset, boolean isAppend) {
+        return new PrintWriter(getWriter(file, charset, isAppend));
+    }
+
+    /**
+     * 获得一个打印写入对象
+     *
+     * @param path     输出到的文件路径，绝对路径
+     * @param charset  字符集
+     * @param isAppend 是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @return {@link PrintWriter} 对象
+     * @since 1.4.0
+     */
+    public static PrintWriter getPrintWriter(String path, Charset charset, boolean isAppend) {
+        return new PrintWriter(getWriter(path, charset, isAppend));
     }
 
     /**
      * 写文件
      *
-     * @param path    文件路径
-     * @param content 文件内容
-     * @param append  是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @param file     文件
+     * @param content  文件内容
+     * @param charset  字符集
+     * @param isAppend 是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @return 被写入的文件
+     * @since 1.4.0
      */
-    public static void write(String path, String content, boolean append) {
-        if (StringUtils.isBlank(path))
-            return;
-        if (StringUtils.isBlank(content))
-            return;
+    public static File write(File file, String content, Charset charset, boolean isAppend) {
+        if (file == null || StringUtils.isBlank(content))
+            return file;
 
-        FileWriter fileWriter = null;
+        BufferedWriter bufferedWriter = null;
         try {
-            createFile(path);
-            fileWriter = new FileWriter(path, append);
-            fileWriter.write(content);
+            bufferedWriter = getWriter(file, charset, isAppend);
+            bufferedWriter.write(content);
+            bufferedWriter.flush();
         } catch (IOException e) {
             throw new RuntimeException("IOException occurred.", e);
         } finally {
-            IOUtils.close(fileWriter);
+            IOUtils.close(bufferedWriter);
         }
+
+        return file;
+    }
+
+    /**
+     * 写文件，覆盖模式
+     *
+     * @param file    文件
+     * @param content 文件内容
+     * @param charset 字符集
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File write(File file, String content, Charset charset) {
+        return write(file, content, charset, false);
+    }
+
+    /**
+     * 写文件
+     *
+     * @param path     文件路径
+     * @param content  文件内容
+     * @param charset  字符集
+     * @param isAppend 是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File write(String path, String content, Charset charset, boolean isAppend) {
+        return write(createFile(path), content, charset, isAppend);
+    }
+
+    /**
+     * 写文件，覆盖模式
+     *
+     * @param path    文件路径
+     * @param content 文件内容
+     * @param charset 字符集
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File write(String path, String content, Charset charset) {
+        return write(path, content, charset, false);
+    }
+
+    /**
+     * 写文件，使用 UTF-8 编码
+     *
+     * @param file     文件
+     * @param content  文件内容
+     * @param isAppend 是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File write(File file, String content, boolean isAppend) {
+        return write(file, content, StandardCharsets.UTF_8, isAppend);
+    }
+
+    /**
+     * 写文件，使用 UTF-8 编码，覆盖模式
+     *
+     * @param file    文件
+     * @param content 文件内容
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File write(File file, String content) {
+        return write(file, content, false);
+    }
+
+    /**
+     * 写文件，使用 UTF-8 编码
+     *
+     * @param path     文件路径
+     * @param content  文件内容
+     * @param isAppend 是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @return 被写入的文件
+     */
+    public static File write(String path, String content, boolean isAppend) {
+        return write(path, content, StandardCharsets.UTF_8, isAppend);
+    }
+
+    /**
+     * 写文件，使用 UTF-8 编码，覆盖模式
+     *
+     * @param path    文件路径
+     * @param content 文件内容
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File write(String path, String content) {
+        return write(path, content, false);
+    }
+
+    /**
+     * 写文件
+     *
+     * @param file     文件
+     * @param contents 文件内容列表
+     * @param charset  字符集
+     * @param isAppend 是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File write(File file, List<String> contents, Charset charset, boolean isAppend) {
+        if (file == null || CollectionUtils.isEmpty(contents))
+            return file;
+
+        PrintWriter printWriter = null;
+        try {
+            printWriter = getPrintWriter(file, charset, isAppend);
+            for (String line : contents) {
+                printWriter.println(line);
+                printWriter.flush();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            IOUtils.close(printWriter);
+        }
+        return file;
+    }
+
+    /**
+     * 写文件，覆盖模式
+     *
+     * @param file     文件
+     * @param contents 文件内容列表
+     * @param charset  字符集
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File write(File file, List<String> contents, Charset charset) {
+        return write(file, contents, charset, false);
     }
 
     /**
@@ -313,50 +775,93 @@ public class FileUtils {
      *
      * @param path     文件路径
      * @param contents 文件内容列表
-     * @param append   是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @param charset  字符集
+     * @param isAppend 是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @return 被写入的文件
+     * @since 1.4.0
      */
-    public static void write(String path, List<String> contents, boolean append) {
-        if (CollectionUtils.isEmpty(contents))
-            return;
+    public static File write(String path, List<String> contents, Charset charset, boolean isAppend) {
+        return write(createFile(path), contents, charset, isAppend);
+    }
 
-        FileWriter fileWriter = null;
-        try {
-            createFile(path);
-            fileWriter = new FileWriter(path, append);
-            int i = 0;
-            for (String line : contents) {
-                if (i++ > 0) {
-                    fileWriter.write("\r\n");
-                }
-                fileWriter.write(line);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("IOException occurred.", e);
-        } finally {
-            IOUtils.close(fileWriter);
-        }
+    /**
+     * 写文件，覆盖模式
+     *
+     * @param path     文件路径
+     * @param contents 文件内容列表
+     * @param charset  字符集
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File write(String path, List<String> contents, Charset charset) {
+        return write(path, contents, charset, false);
+    }
+
+    /**
+     * 写文件，使用 UTF-8 编码
+     *
+     * @param file     文件
+     * @param contents 文件内容列表
+     * @param isAppend 是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File write(File file, List<String> contents, boolean isAppend) {
+        return write(file, contents, StandardCharsets.UTF_8, isAppend);
+    }
+
+    /**
+     * 写文件，使用 UTF-8 编码，覆盖模式
+     *
+     * @param file     文件
+     * @param contents 文件内容列表
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File write(File file, List<String> contents) {
+        return write(file, contents, false);
+    }
+
+    /**
+     * 写文件，使用 UTF-8 编码
+     *
+     * @param path     文件路径
+     * @param contents 文件内容列表
+     * @param isAppend 是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @return 被写入的文件
+     */
+    public static File write(String path, List<String> contents, boolean isAppend) {
+        return write(path, contents, StandardCharsets.UTF_8, isAppend);
+    }
+
+    /**
+     * 写文件，使用 UTF-8 编码，覆盖模式
+     *
+     * @param path     文件路径
+     * @param contents 文件内容列表
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File write(String path, List<String> contents) {
+        return write(path, contents, false);
     }
 
     /**
      * 写入数据到文件
      *
-     * @param file   文件
-     * @param data   数据
-     * @param append 是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
-     * @return 目标文件
+     * @param file     文件
+     * @param data     数据
+     * @param isAppend 是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @return 被写入的文件
      * @since 1.2.1
      */
-    public static File write(File file, byte[] data, boolean append) {
-        if (file == null)
-            return null;
-
-        if (data == null)
+    public static File write(File file, byte[] data, boolean isAppend) {
+        if (file == null || data == null)
             return file;
 
         FileOutputStream fileOutputStream = null;
         try {
-            createFile(file);
-            fileOutputStream = new FileOutputStream(file, append);
+            fileOutputStream = new FileOutputStream(createFile(file), isAppend);
             fileOutputStream.write(data, 0, data.length);
             fileOutputStream.flush();
         } catch (IOException e) {
@@ -368,19 +873,40 @@ public class FileUtils {
     }
 
     /**
+     * 写入数据到文件，覆盖模式
+     *
+     * @param file 文件
+     * @param data 数据
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File write(File file, byte[] data) {
+        return write(file, data, false);
+    }
+
+    /**
      * 写入数据到文件
      *
-     * @param path   文件路径
-     * @param data   数据
-     * @param append 是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
-     * @return 目标文件
+     * @param path     文件路径
+     * @param data     数据
+     * @param isAppend 是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @return 被写入的文件
      * @since 1.2.1
      */
-    public static File write(String path, byte[] data, boolean append) {
-        if (StringUtils.isBlank(path))
-            return null;
+    public static File write(String path, byte[] data, boolean isAppend) {
+        return write(createFile(path), data, isAppend);
+    }
 
-        return write(createFile(path), data, append);
+    /**
+     * 写入数据到文件，覆盖模式
+     *
+     * @param path 文件路径
+     * @param data 数据
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File write(String path, byte[] data) {
+        return write(path, data, false);
     }
 
     /**
@@ -388,30 +914,28 @@ public class FileUtils {
      *
      * @param file        文件
      * @param inputStream 输入流
-     * @param append      是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
-     * @return 目标文件
+     * @param isAppend    是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @return 被写入的文件
      * @since 1.2.1
      */
-    public static File writeFromStream(File file, InputStream inputStream, boolean append) {
-        OutputStream o = null;
+    public static File writeFromStream(File file, InputStream inputStream, boolean isAppend) {
+        OutputStream outputStream = null;
         try {
-            createFile(file);
-            o = new FileOutputStream(file, append);
+            outputStream = new FileOutputStream(createFile(file), isAppend);
             byte[] data = new byte[1024];
             int length;
             while ((length = inputStream.read(data)) != -1) {
-                o.write(data, 0, length);
+                outputStream.write(data, 0, length);
             }
-            o.flush();
-            return file;
+            outputStream.flush();
         } catch (FileNotFoundException e) {
             throw new RuntimeException("FileNotFoundException occurred.", e);
         } catch (IOException e) {
             throw new RuntimeException("IOException occurred.", e);
         } finally {
-            IOUtils.close(o);
-            IOUtils.close(inputStream);
+            IOUtils.close(outputStream, inputStream);
         }
+        return file;
     }
 
     /**
@@ -419,15 +943,12 @@ public class FileUtils {
      *
      * @param path        文件路径
      * @param inputStream 输入流
-     * @param append      是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
-     * @return 目标文件
+     * @param isAppend    是否向文件中追加内容，{@code true} 在文件结尾追加内容，{@code false} 覆盖文件内容
+     * @return 被写入的文件
      * @since 1.2.1
      */
-    public static File writeFromStream(String path, InputStream inputStream, boolean append) {
-        if (StringUtils.isBlank(path))
-            return null;
-
-        return writeFromStream(new File(path), inputStream, append);
+    public static File writeFromStream(String path, InputStream inputStream, boolean isAppend) {
+        return writeFromStream(new File(path), inputStream, isAppend);
     }
 
     /**
@@ -460,18 +981,137 @@ public class FileUtils {
     }
 
     /**
+     * 写文件，追加模式
+     *
+     * @param file    文件
+     * @param content 文件内容
+     * @param charset 字符集
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File append(File file, String content, Charset charset) {
+        return write(file, content, charset, true);
+    }
+
+    /**
+     * 写文件，追加模式
+     *
+     * @param path    文件路径
+     * @param content 文件内容
+     * @param charset 字符集
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File append(String path, String content, Charset charset) {
+        return write(path, content, charset, true);
+    }
+
+    /**
+     * 写文件，使用 UTF-8 编码，追加模式
+     *
+     * @param file    文件
+     * @param content 文件内容
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File append(File file, String content) {
+        return write(file, content, true);
+    }
+
+    /**
+     * 写文件，使用 UTF-8 编码，追加模式
+     *
+     * @param path    文件路径
+     * @param content 文件内容
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File append(String path, String content) {
+        return write(path, content, true);
+    }
+
+    /**
+     * 写文件，追加模式
+     *
+     * @param file     文件
+     * @param contents 文件内容列表
+     * @param charset  字符集
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File append(File file, List<String> contents, Charset charset) {
+        return write(file, contents, charset, true);
+    }
+
+    /**
+     * 写文件，追加模式
+     *
+     * @param path     文件路径
+     * @param contents 文件内容列表
+     * @param charset  字符集
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File append(String path, List<String> contents, Charset charset) {
+        return write(path, contents, charset, true);
+    }
+
+    /**
+     * 写文件，使用 UTF-8 编码，追加模式
+     *
+     * @param file     文件
+     * @param contents 文件内容列表
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File append(File file, List<String> contents) {
+        return write(file, contents, true);
+    }
+
+    /**
+     * 写文件，使用 UTF-8 编码，追加模式
+     *
+     * @param path     文件路径
+     * @param contents 文件内容列表
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File append(String path, List<String> contents) {
+        return write(path, contents, true);
+    }
+
+    /**
+     * 写入数据到文件，追加模式
+     *
+     * @param file 文件
+     * @param data 数据
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File append(File file, byte[] data) {
+        return write(file, data, true);
+    }
+
+    /**
+     * 写入数据到文件，追加模式
+     *
+     * @param path 文件路径
+     * @param data 数据
+     * @return 被写入的文件
+     * @since 1.4.0
+     */
+    public static File append(String path, byte[] data) {
+        return write(path, data, true);
+    }
+
+    /**
      * 获取文件名，包含扩展名
      *
      * @param file 文件
      * @return 文件名，包含扩展名
      */
     public static String getFileName(File file) {
-        if (file == null)
-            return null;
-
-        String fileName = file.getName();
-
-        return fileName.lastIndexOf(FILE_EXTENSION_SEPARATOR) == -1 ? null : fileName;
+        return file == null ? null : file.getName();
     }
 
     /**
@@ -481,10 +1121,7 @@ public class FileUtils {
      * @return 文件名，包含扩展名
      */
     public static String getFileName(String path) {
-        if (StringUtils.isBlank(path) || path.lastIndexOf(FILE_EXTENSION_SEPARATOR) == -1)
-            return null;
-
-        return new File(path).getName();
+        return StringUtils.isBlank(path) ? null : getFileName(new File(path));
     }
 
     /**
@@ -495,7 +1132,13 @@ public class FileUtils {
      */
     public static String getFileNameWithoutExtension(File file) {
         String fileName = getFileName(file);
-        return fileName == null ? null : fileName.substring(0, fileName.lastIndexOf(FILE_EXTENSION_SEPARATOR));
+        if (fileName == null)
+            return null;
+
+        if (fileName.contains(FILE_EXTENSION_SEPARATOR))
+            return fileName.substring(0, fileName.lastIndexOf(FILE_EXTENSION_SEPARATOR));
+        else
+            return fileName;
     }
 
     /**
@@ -505,8 +1148,7 @@ public class FileUtils {
      * @return 文件名，不包含扩展名
      */
     public static String getFileNameWithoutExtension(String path) {
-        String fileName = getFileName(path);
-        return fileName == null ? null : fileName.substring(0, fileName.lastIndexOf(FILE_EXTENSION_SEPARATOR));
+        return StringUtils.isBlank(path) ? null : getFileNameWithoutExtension(new File(path));
     }
 
     /**
@@ -517,8 +1159,10 @@ public class FileUtils {
      */
     public static String getFileExtension(File file) {
         String fileName = getFileName(file);
+        if (fileName == null || !fileName.contains(FILE_EXTENSION_SEPARATOR))
+            return null;
 
-        return fileName == null ? null : fileName.substring(fileName.lastIndexOf(FILE_EXTENSION_SEPARATOR) + 1);
+        return fileName.substring(fileName.lastIndexOf(FILE_EXTENSION_SEPARATOR) + 1);
     }
 
     /**
@@ -528,9 +1172,7 @@ public class FileUtils {
      * @return 文件扩展名
      */
     public static String getFileExtension(String path) {
-        String fileName = getFileName(path);
-
-        return fileName == null ? null : fileName.substring(fileName.lastIndexOf(FILE_EXTENSION_SEPARATOR) + 1);
+        return StringUtils.isBlank(path) ? null : getFileExtension(new File(path));
     }
 
     /**
@@ -584,21 +1226,33 @@ public class FileUtils {
     /**
      * 获取文件大小
      *
-     * @param file 文件
-     * @return 返回文件字节数，若文件不存在或不是文件则返回0
+     * @param file 文件或目录
+     * @return 返回文件字节数，若文件不存在则返回0
      */
     public static long getFileSize(File file) {
-        if (!isFileExist(file))
+        if (file == null || !file.exists())
             return 0L;
 
-        return file.length();
+        if (file.isDirectory()) {
+            long size = 0L;
+            File[] subFiles = file.listFiles();
+            if (ArrayUtils.isEmpty(subFiles)) {
+                return 0L;
+            }
+            for (File subFile : subFiles) {
+                size += getFileSize(subFile);
+            }
+            return size;
+        } else {
+            return file.length();
+        }
     }
 
     /**
      * 获取文件大小
      *
-     * @param path 文件路径
-     * @return 返回文件字节数，若文件不存在或不是文件则返回0
+     * @param path 文件路径或目录路径
+     * @return 返回文件字节数，若文件不存在则返回0
      */
     public static long getFileSize(String path) {
         if (StringUtils.isBlank(path))
@@ -1379,10 +2033,8 @@ public class FileUtils {
      * @param path 待处理文件全路径
      */
     public static void clean(String path) {
-        if (StringUtils.isBlank(path))
-            return;
-
-        clean(new File(path));
+        if (StringUtils.isNotBlank(path))
+            clean(new File(path));
     }
 
     /**
@@ -1594,6 +2246,20 @@ public class FileUtils {
     }
 
     /**
+     * 转换文件编码
+     *
+     * @param file        文件
+     * @param srcCharset  原文件的编码，必须与文件内容的编码保持一致，否则导致乱码
+     * @param destCharset 转码后的编码
+     * @return 被转换编码的文件
+     * @since 1.4.0
+     */
+    /*public static File convertCharset(File file, Charset srcCharset, Charset destCharset) {
+        final String str = readString(file, srcCharset);
+        return writeString(str, file, destCharset);
+    }*/
+
+    /**
      * 检查父完整路径是否为子路径的前半部分，如果不是说明不是子路径，可能存在 slip 注入
      *
      * @param parentFile 父文件或目录
@@ -1666,5 +2332,20 @@ public class FileUtils {
         final String classPath = ClassUtils.getClassPath();
 
         return StringUtils.isBlank(classPath) ? null : getParent(newFile(classPath), 2);
+    }
+
+    /**
+     * 获取当前系统的换行分隔符
+     * <pre>
+     *     Windows: \r\n
+     *     Mac: \r
+     *     Linux: \n
+     * </pre>
+     *
+     * @return 当前系统的换行分隔符
+     * @since 1.4.0
+     */
+    public static String getLineSeparator() {
+        return System.lineSeparator();
     }
 }

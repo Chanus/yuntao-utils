@@ -349,7 +349,7 @@ public class ObjectUtils {
      * @since 1.1.0
      */
     public static <T> T mapToObject(Map<String, Object> map, Class<T> clazz) {
-        if (CollectionUtils.isEmpty(map))
+        if (MapUtils.isEmpty(map))
             return null;
 
         T object = null;

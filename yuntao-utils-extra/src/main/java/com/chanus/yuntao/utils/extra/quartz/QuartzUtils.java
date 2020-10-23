@@ -15,7 +15,7 @@
  */
 package com.chanus.yuntao.utils.extra.quartz;
 
-import com.chanus.yuntao.utils.core.CollectionUtils;
+import com.chanus.yuntao.utils.core.MapUtils;
 import com.chanus.yuntao.utils.core.StringUtils;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
@@ -464,7 +464,7 @@ public class QuartzUtils {
             if (!isJobKey(scheduler, jobKey))
                 return;
 
-            if (!CollectionUtils.isEmpty(triggerMap)) {// 存在触发器
+            if (MapUtils.isNotEmpty(triggerMap)) {// 存在触发器
                 TriggerKey triggerKey = null;
                 for (String triggerName : triggerMap.keySet()) {
                     String triggerGroupName = StringUtils.isBlank(triggerMap.get(triggerName)) ? TRIGGER_GROUP_NAME : triggerMap.get(triggerName);

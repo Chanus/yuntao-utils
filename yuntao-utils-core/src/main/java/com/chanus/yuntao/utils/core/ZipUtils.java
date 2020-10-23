@@ -66,7 +66,7 @@ public class ZipUtils {
         } else {// 如果是目录，则压缩整个目录
             // 压缩目录中的文件或子目录
             File[] childFileList = file.listFiles();
-            if (!CollectionUtils.isEmpty(childFileList)) {
+            if (ArrayUtils.isNotEmpty(childFileList)) {
                 for (File value : childFileList) {
                     value.getAbsolutePath().indexOf(file.getAbsolutePath());
                     compress(srcRootDir, value, zos);

@@ -107,6 +107,109 @@ public class MapUtils {
     }
 
     /**
+     * 将 Map 集合转成字符串，以"="连接和"&"分割，忽略 {@code null} 的键和值
+     *
+     * @param <K> 键类型
+     * @param <V> 值类型
+     * @param map Map 集合
+     * @return 连接后的字符串
+     * @since 1.4.0
+     */
+    public static <K, V> String joinDefaultIgnoreNull(Map<K, V> map) {
+        return joinIgnoreNull(map, StringUtils.AMP, StringUtils.EQUAL);
+    }
+
+    /**
+     * 将 Map 集合的 key 转成字符串
+     *
+     * @param <K>          键类型
+     * @param <V>          值类型
+     * @param map          Map 集合
+     * @param separator    连接符
+     * @param isIgnoreNull 是否忽略 {@code null} 的键和值
+     * @return {@code separator} 连接的字符串
+     * @since 1.4.0
+     */
+    public static <K, V> String keyJoin(Map<K, V> map, String separator, boolean isIgnoreNull) {
+        if (isEmpty(map))
+            return null;
+
+        final StringBuilder stringBuilder = new StringBuilder();
+        boolean isFirst = true;
+        for (K k : map.keySet()) {
+            if (!isIgnoreNull || ObjectUtils.isNotEmpty(k)) {
+                if (isFirst) {
+                    isFirst = false;
+                } else {
+                    stringBuilder.append(separator);
+                }
+                stringBuilder.append(k);
+            }
+        }
+
+        return stringBuilder.toString();
+    }
+
+    /**
+     * 将 Map 集合的 key 转成字符串，忽略 {@code null} 的 key
+     *
+     * @param <K>       键类型
+     * @param <V>       值类型
+     * @param map       Map 集合
+     * @param separator 连接符
+     * @return {@code separator} 连接的字符串
+     * @since 1.4.0
+     */
+    public static <K, V> String keyJoinIgnoreNull(Map<K, V> map, String separator) {
+        return keyJoin(map, separator, true);
+    }
+
+    /**
+     * 将 Map 集合的 value 转成字符串
+     *
+     * @param <K>          键类型
+     * @param <V>          值类型
+     * @param map          Map 集合
+     * @param separator    连接符
+     * @param isIgnoreNull 是否忽略 {@code null} 的键和值
+     * @return {@code separator} 连接的字符串
+     * @since 1.4.0
+     */
+    public static <K, V> String valueJoin(Map<K, V> map, String separator, boolean isIgnoreNull) {
+        if (isEmpty(map))
+            return null;
+
+        final StringBuilder stringBuilder = new StringBuilder();
+        boolean isFirst = true;
+        for (V v : map.values()) {
+            if (!isIgnoreNull || ObjectUtils.isNotEmpty(v)) {
+                if (isFirst) {
+                    isFirst = false;
+                } else {
+                    stringBuilder.append(separator);
+                }
+                stringBuilder.append(v);
+            }
+        }
+
+        return stringBuilder.toString();
+    }
+
+    /**
+     * 将 Map 集合的 value 转成字符串，忽略 {@code null} 的 value
+     *
+     * @param <K>       键类型
+     * @param <V>       值类型
+     * @param map       Map 集合
+     * @param separator 连接符
+     * @return {@code separator} 连接的字符串
+     * @since 1.4.0
+     */
+    public static <K, V> String valueJoinIgnoreNull(Map<K, V> map, String separator) {
+        return valueJoin(map, separator, true);
+    }
+
+    /**
      * 过滤 Map 集合，通过传入的 {@link Filter} 实现来返回需要的元素内容
      *
      * @param <K>    键类型

@@ -69,7 +69,7 @@ public class UrlUtils {
      * @return http 请求 URI
      */
     public static String getParamsUri(Map<String, Object> params) {
-        if (CollectionUtils.isEmpty(params))
+        if (MapUtils.isEmpty(params))
             return null;
 
         StringBuilder uri = new StringBuilder();

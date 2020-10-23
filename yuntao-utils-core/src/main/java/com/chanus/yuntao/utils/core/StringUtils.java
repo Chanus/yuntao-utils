@@ -57,6 +57,8 @@ public class StringUtils {
     public static final String BRACKET_START = "[";
     public static final String BRACKET_END = "]";
     public static final String COLON = ":";
+    public static final String AMP = "&";
+    public static final String EQUAL = "=";
 
     public static final String HTML_NBSP = "&nbsp;";
     public static final String HTML_AMP = "&amp;";

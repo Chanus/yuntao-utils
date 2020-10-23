@@ -17,6 +17,7 @@ package com.chanus.yuntao.utils.core;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -288,7 +289,7 @@ public class StreamUtils {
      * @return 数据字节数组
      * @since 1.3.0
      */
-    public static byte[] readBytes(InputStream inputStream, int length) {
+    public static byte[] read2Byte(InputStream inputStream, int length) {
         if (inputStream == null)
             return null;
 
@@ -335,6 +336,24 @@ public class StreamUtils {
     }
 
     /**
+     * 从 FileChannel 中读取数据
+     *
+     * @param fileChannel 文件管道
+     * @param charset     字符集
+     * @return 数据字符串
+     * @throws IOException IO 异常
+     */
+    public static String read2String(FileChannel fileChannel, Charset charset) throws IOException {
+        MappedByteBuffer buffer;
+        try {
+            buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size()).load();
+        } catch (IOException e) {
+            throw new IOException(e);
+        }
+        return StringUtils.toString(buffer, charset);
+    }
+
+    /**
      * 从输入流中读取数据到字符串
      *
      * @param inputStream 输入流
@@ -356,7 +375,7 @@ public class StreamUtils {
     }
 
     /**
-     * 从输入流中读取数据到字符串
+     * 从输入流中读取数据到字符串，使用 UTF-8 编码
      *
      * @param inputStream 输入流
      * @return 数据字符串
@@ -364,6 +383,18 @@ public class StreamUtils {
      */
     public static String read2Utf8String(InputStream inputStream) {
         return read2String(inputStream, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 从 FileChannel 中读取数据，使用 UTF-8 编码
+     *
+     * @param fileChannel 文件管道
+     * @return 数据字符串
+     * @throws IOException IO 异常
+     * @since 1.4.0
+     */
+    public static String read2Utf8String(FileChannel fileChannel) throws IOException {
+        return read2String(fileChannel, StandardCharsets.UTF_8);
     }
 
     /**

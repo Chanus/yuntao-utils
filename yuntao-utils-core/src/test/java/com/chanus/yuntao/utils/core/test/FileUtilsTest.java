@@ -15,7 +15,6 @@
  */
 package com.chanus.yuntao.utils.core.test;
 
-import com.chanus.yuntao.utils.core.CharsetUtils;
 import com.chanus.yuntao.utils.core.FileUtils;
 import org.junit.Test;
 
@@ -87,15 +86,6 @@ public class FileUtilsTest {
     }
 
     @Test
-    public void readTest() {
-        File file = new File(path);
-        String s1 = FileUtils.read(file, CharsetUtils.UTF_8);
-        System.out.println(s1);
-        String s2 = FileUtils.read(path, CharsetUtils.UTF_8);
-        System.out.println(s2);
-    }
-
-    @Test
     public void writeTest() {
         FileUtils.write(path, "abcdefg", false);
         FileUtils.write(path, "\r\nhijklmn\r\n", true);
@@ -105,12 +95,13 @@ public class FileUtilsTest {
             {
                 add("opq rst");
                 add("uvw xyz");
+                add("啊啊啊啊");
             }
         };
-        FileUtils.write(path, content, true);
+        FileUtils.write(ROOT + "/test2.txt", content, true);
 
         FileInputStream fis;
-        String path2 = ROOT + "/test2.txt";
+        String path2 = ROOT + "/test3.txt";
         try {
             fis = new FileInputStream(path2);
             FileUtils.writeFromStream(new File(path), fis, true);
@@ -126,7 +117,7 @@ public class FileUtilsTest {
         System.out.println("================= getFileName(File file) =================");
         System.out.println(FileUtils.getFileName(new File(path)));
         System.out.println(FileUtils.getFileName(new File("F:\\test\\test2.txt")));
-        System.out.println(FileUtils.getFileName(new File("F:\\test\\test3.txt")));
+        System.out.println(FileUtils.getFileName(new File("F:\\test\\test3")));
         System.out.println(FileUtils.getFileName(new File("F:\\test/test2.txt.t")));
         System.out.println(FileUtils.getFileName(new File("abcdefg")));
         System.out.println(FileUtils.getFileName(new File("abcdefg.hi")));
@@ -135,7 +126,7 @@ public class FileUtilsTest {
         System.out.println("================= getFileName(String path) =================");
         System.out.println(FileUtils.getFileName(path));
         System.out.println(FileUtils.getFileName("F:\\test\\test2.txt"));
-        System.out.println(FileUtils.getFileName("F:\\test\\test3.txt"));
+        System.out.println(FileUtils.getFileName("F:\\test\\test3"));
         System.out.println(FileUtils.getFileName("F:\\test/test2.txt.t"));
         System.out.println(FileUtils.getFileName("abcdefg"));
         System.out.println(FileUtils.getFileName("abcdefg.hi"));
@@ -147,7 +138,7 @@ public class FileUtilsTest {
         System.out.println("================= getFileNameWithoutExtension(File file) =================");
         System.out.println(FileUtils.getFileNameWithoutExtension(new File(path)));
         System.out.println(FileUtils.getFileNameWithoutExtension(new File("F:\\test\\test2.txt")));
-        System.out.println(FileUtils.getFileNameWithoutExtension(new File("F:\\test\\test3.txt")));
+        System.out.println(FileUtils.getFileNameWithoutExtension(new File("F:\\test\\test3")));
         System.out.println(FileUtils.getFileNameWithoutExtension(new File("F:\\test/test2.txt.t")));
         System.out.println(FileUtils.getFileNameWithoutExtension(new File("abcdefg")));
         System.out.println(FileUtils.getFileNameWithoutExtension(new File("abcdefg.hi")));
@@ -156,7 +147,7 @@ public class FileUtilsTest {
         System.out.println("================= getFileNameWithoutExtension(String path) =================");
         System.out.println(FileUtils.getFileNameWithoutExtension(path));
         System.out.println(FileUtils.getFileNameWithoutExtension("F:\\test\\test2.txt"));
-        System.out.println(FileUtils.getFileNameWithoutExtension("F:\\test\\test3.txt"));
+        System.out.println(FileUtils.getFileNameWithoutExtension("F:\\test\\test3"));
         System.out.println(FileUtils.getFileNameWithoutExtension("F:\\test/test2.txt.t"));
         System.out.println(FileUtils.getFileNameWithoutExtension("abcdefg"));
         System.out.println(FileUtils.getFileNameWithoutExtension("abcdefg.hi"));
@@ -168,7 +159,7 @@ public class FileUtilsTest {
         System.out.println("================= getFileExtension(File file) =================");
         System.out.println(FileUtils.getFileExtension(new File(path)));
         System.out.println(FileUtils.getFileExtension(new File("F:\\test\\test2.txt")));
-        System.out.println(FileUtils.getFileExtension(new File("F:\\test\\test3.txt")));
+        System.out.println(FileUtils.getFileExtension(new File("F:\\test\\test3")));
         System.out.println(FileUtils.getFileExtension(new File("F:\\test/test2.txt.t")));
         System.out.println(FileUtils.getFileExtension(new File("abcdefg")));
         System.out.println(FileUtils.getFileExtension(new File("abcdefg.hi")));
@@ -177,7 +168,7 @@ public class FileUtilsTest {
         System.out.println("================= getFileExtension(String path) =================");
         System.out.println(FileUtils.getFileExtension(path));
         System.out.println(FileUtils.getFileExtension("F:\\test\\test2.txt"));
-        System.out.println(FileUtils.getFileExtension("F:\\test\\test3.txt"));
+        System.out.println(FileUtils.getFileExtension("F:\\test\\test3"));
         System.out.println(FileUtils.getFileExtension("F:\\test/test2.txt.t"));
         System.out.println(FileUtils.getFileExtension("abcdefg"));
         System.out.println(FileUtils.getFileExtension("abcdefg.hi"));

@@ -50,7 +50,7 @@ public class CustomMap extends HashMap<String, Object> {
      * @param value 值
      */
     public CustomMap(String key, Object value) {
-        new CustomMap().put(key, value);
+        this.put(key, value);
     }
 
     /**

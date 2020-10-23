@@ -41,6 +41,7 @@ public class CharUtils {
     public static final char DOUBLE_QUOTES = '"';
     public static final char SINGLE_QUOTE = '\'';
     public static final char AMP = '&';
+    public static final char EQUAL = '=';
 
     /**
      * 给定对象对应的类是否为字符类，字符类包括：

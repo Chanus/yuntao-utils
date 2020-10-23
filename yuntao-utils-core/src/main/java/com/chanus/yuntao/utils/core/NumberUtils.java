@@ -88,7 +88,7 @@ public class NumberUtils {
     public static BigDecimal add(Number... values) {
         BigDecimal result = BigDecimal.ZERO;
 
-        if (CollectionUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values))
             return result;
 
         for (Number value : values) {
@@ -109,7 +109,7 @@ public class NumberUtils {
     public static BigDecimal add(String... values) {
         BigDecimal result = BigDecimal.ZERO;
 
-        if (CollectionUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values))
             return result;
 
         for (String value : values) {
@@ -130,7 +130,7 @@ public class NumberUtils {
     public static BigDecimal add(BigDecimal... values) {
         BigDecimal result = BigDecimal.ZERO;
 
-        if (CollectionUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values))
             return result;
 
         for (BigDecimal value : values) {
@@ -195,7 +195,7 @@ public class NumberUtils {
     public static BigDecimal subtract(Number... values) {
         BigDecimal result = BigDecimal.ZERO;
 
-        if (CollectionUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values))
             return result;
 
         if (values[0] != null)
@@ -222,7 +222,7 @@ public class NumberUtils {
     public static BigDecimal subtract(String... values) {
         BigDecimal result = BigDecimal.ZERO;
 
-        if (CollectionUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values))
             return result;
 
         if (StringUtils.isNotBlank(values[0]))
@@ -249,7 +249,7 @@ public class NumberUtils {
     public static BigDecimal subtract(BigDecimal... values) {
         BigDecimal result = BigDecimal.ZERO;
 
-        if (CollectionUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values))
             return result;
 
         if (values[0] != null)
@@ -318,7 +318,7 @@ public class NumberUtils {
      * @return 积
      */
     public static BigDecimal multiply(Number... values) {
-        if (CollectionUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values))
             return BigDecimal.ZERO;
 
         BigDecimal result = BigDecimal.ONE;
@@ -342,7 +342,7 @@ public class NumberUtils {
      * @return 积
      */
     public static BigDecimal multiply(String... values) {
-        if (CollectionUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values))
             return BigDecimal.ZERO;
 
         BigDecimal result = BigDecimal.ONE;
@@ -366,7 +366,7 @@ public class NumberUtils {
      * @return 积
      */
     public static BigDecimal multiply(BigDecimal... values) {
-        if (CollectionUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values))
             return BigDecimal.ZERO;
 
         BigDecimal result = BigDecimal.ONE;
