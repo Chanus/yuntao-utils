@@ -608,6 +608,18 @@ public class ArrayUtils {
     }
 
     /**
+     * 将数组转换为字符串，以 “,” 分隔，忽略 {@code null} 元素
+     *
+     * @param <T>       数组元素类型
+     * @param array     数组
+     * @return 连接后的字符串
+     * @since 1.4.1
+     */
+    public static <T> String joinDefaultIgnoreNull(T[] array) {
+        return join(array, StringUtils.COMMA, true);
+    }
+
+    /**
      * 去重数组中的元素，去重后生成新的数组，原数组不变
      *
      * @param array 数组
