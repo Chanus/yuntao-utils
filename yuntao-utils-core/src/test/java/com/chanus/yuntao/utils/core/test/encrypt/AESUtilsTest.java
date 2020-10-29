@@ -53,28 +53,22 @@ public class AESUtilsTest {
         String cipher2 = AESUtils.encrypt(text, key);
         System.out.println("指定秘钥，使用默认向量加密：" + cipher2);
 
-        String cipher3 = AESUtils.encrypt(text);
-        System.out.println("使用默认秘钥和向量加密：" + cipher3);
-
         String text1 = AESUtils.decrypt(cipher1, key, vector);
         System.out.println("指定秘钥和向量解密：" + text1);
 
         String text2 = AESUtils.decrypt(cipher2, key);
         System.out.println("指定秘钥，使用默认向量解密：" + text2);
 
-        String text3 = AESUtils.decrypt(cipher3);
-        System.out.println("使用默认秘钥和向量解密：" + text3);
+        String cipher3 = AESUtils.encrypt(text, customKey, vector);
+        System.out.println("指定自定义秘钥和向量加密：" + cipher3);
 
-        String cipher4 = AESUtils.encrypt(text, customKey, vector);
-        System.out.println("指定自定义秘钥和向量加密：" + cipher4);
+        String cipher4 = AESUtils.encrypt(text, customKey);
+        System.out.println("指定自定义秘钥，使用默认向量加密：" + cipher4);
 
-        String cipher5 = AESUtils.encrypt(text, customKey);
-        System.out.println("指定自定义秘钥，使用默认向量加密：" + cipher5);
-
-        String text4 = AESUtils.decrypt(cipher4, customKey, vector);
+        String text4 = AESUtils.decrypt(cipher3, customKey, vector);
         System.out.println("指定自定义秘钥和向量解密：" + text4);
 
-        String text5 = AESUtils.decrypt(cipher5, customKey);
+        String text5 = AESUtils.decrypt(cipher4, customKey);
         System.out.println("指定自定义秘钥，使用默认向量解密：" + text5);
     }
 

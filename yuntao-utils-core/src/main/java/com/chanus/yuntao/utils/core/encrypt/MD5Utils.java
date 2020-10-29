@@ -27,6 +27,10 @@ import java.util.Objects;
  */
 public class MD5Utils {
     /**
+     * MD5 加密
+     */
+    private static final String KEY_ALGORITHM = "MD5";
+    /**
      * 用于加密的字符
      */
     private static final String[] HEX_DIGITS = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
@@ -50,12 +54,12 @@ public class MD5Utils {
     /**
      * MD5 加密字符串
      *
-     * @param text 明文字符串
+     * @param data 明文字符串
      * @return MD5 加密后的密文字符串
      */
-    public static String md5(String text) {
+    public static String md5(String data) {
         try {
-            return byteArrayToHexString(MessageDigest.getInstance("MD5").digest(text.getBytes()));
+            return byteArrayToHexString(MessageDigest.getInstance(KEY_ALGORITHM).digest(data.getBytes()));
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -65,34 +69,34 @@ public class MD5Utils {
     /**
      * MD5 根据密钥加密字符串
      *
-     * @param text 明文字符串
+     * @param data 明文字符串
      * @param key  密钥
      * @return MD5 加密后的密文字符串
      */
-    public static String md5(String text, String key) {
-        return md5(text + key);
+    public static String md5(String data, String key) {
+        return md5(data + key);
     }
 
     /**
      * MD5 验证字符串
      *
-     * @param text   明文字符串
+     * @param data   明文字符串
      * @param cipher 密文字符串
      * @return {@code true} 验证通过；{@code false} 验证不通过
      */
-    public static boolean verify(String text, String cipher) {
-        return Objects.equals(md5(text), cipher);
+    public static boolean verify(String data, String cipher) {
+        return Objects.equals(md5(data), cipher);
     }
 
     /**
      * MD5 根据密钥验证字符串
      *
-     * @param text   明文字符串
+     * @param data   明文字符串
      * @param cipher 密文字符串
      * @param key    密钥
      * @return {@code true} 验证通过；{@code false} 验证不通过
      */
-    public static boolean verify(String text, String cipher, String key) {
-        return verify(text + key, cipher);
+    public static boolean verify(String data, String cipher, String key) {
+        return verify(data + key, cipher);
     }
 }

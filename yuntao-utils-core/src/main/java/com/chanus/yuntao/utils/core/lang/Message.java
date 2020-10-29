@@ -208,6 +208,16 @@ public class Message {
         return fail("操作失败");
     }
 
+    /**
+     * 判断是否操作成功
+     *
+     * @return {@code true} 操作成功；{@code false} 操作失败
+     * @since 1.4.3
+     */
+    public boolean isSuccess() {
+        return this.code == SUCCESS;
+    }
+
     public int getCode() {
         return code;
     }

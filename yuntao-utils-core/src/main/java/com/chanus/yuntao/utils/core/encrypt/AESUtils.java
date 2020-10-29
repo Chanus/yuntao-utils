@@ -45,10 +45,6 @@ public class AESUtils {
      */
     private static final String CIPHER_ALGORITHM_ECB = "AES/ECB/PKCS5PADDING";
     /**
-     * AES 密钥（长度可以选择128bits【16bytes】，192bits【24bytes】和256bits【32bytes】密钥，其他不行）
-     */
-    private static final String DEFAULT_KEY = "ChanusYun@yuntao";
-    /**
      * 初始化向量参数，AES 为 16 bytes
      */
     private static final String INIT_VECTOR = "yuntao0123456789";
@@ -81,18 +77,18 @@ public class AESUtils {
     /**
      * AES CBC 模式加密数据
      *
-     * @param text   待加密内容
+     * @param data   待加密内容
      * @param key    128位的密钥字符串，或 {@link AESUtils#generateKey(String)} 方法生成的密钥字符串
      * @param vector 128位的初始化向量字符串
      * @return Base64 转码后的加密数据
      */
-    public static String encrypt(final String text, final String key, final String vector) {
+    public static String encrypt(final String data, final String key, final String vector) {
         try {
             // 兼容128位任意字符串和generateKey生成的Base64转码的密钥字符串
             byte[] b = key.length() == 16 ? key.getBytes(StandardCharsets.UTF_8) : Base64.getDecoder().decode(key);
             Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM_CBC);
             cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(b, KEY_ALGORITHM), new IvParameterSpec(vector.getBytes(StandardCharsets.UTF_8)));
-            return Base64.getEncoder().encodeToString(cipher.doFinal(text.getBytes(StandardCharsets.UTF_8)));
+            return Base64.getEncoder().encodeToString(cipher.doFinal(data.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,39 +99,29 @@ public class AESUtils {
     /**
      * AES CBC 模式加密数据，使用默认初始化向量
      *
-     * @param text 待加密内容
+     * @param data 待加密内容
      * @param key  128位的密钥字符串，或 {@link AESUtils#generateKey(String)} 方法生成的密钥字符串
      * @return Base64 转码后的加密数据
      */
-    public static String encrypt(final String text, final String key) {
-        return encrypt(text, key, INIT_VECTOR);
-    }
-
-    /**
-     * AES CBC 模式加密数据，使用默认密钥和初始化向量
-     *
-     * @param text 待加密内容
-     * @return Base64 转码后的加密数据
-     */
-    public static String encrypt(final String text) {
-        return encrypt(text, DEFAULT_KEY, INIT_VECTOR);
+    public static String encrypt(final String data, final String key) {
+        return encrypt(data, key, INIT_VECTOR);
     }
 
     /**
      * AES CBC 模式解密数据
      *
-     * @param text   待解密内容
+     * @param data   待解密内容
      * @param key    128位的密钥字符串，或 {@link AESUtils#generateKey(String)} 方法生成的密钥字符串
      * @param vector 128位的初始化向量字符串
      * @return 解密后数据
      */
-    public static String decrypt(final String text, final String key, final String vector) {
+    public static String decrypt(final String data, final String key, final String vector) {
         try {
             // 兼容128位任意字符串和generateKey生成的Base64转码的密钥字符串
             byte[] b = key.length() == 16 ? key.getBytes(StandardCharsets.UTF_8) : Base64.getDecoder().decode(key);
             Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM_CBC);
             cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(b, KEY_ALGORITHM), new IvParameterSpec(vector.getBytes(StandardCharsets.UTF_8)));
-            return new String(cipher.doFinal(Base64.getDecoder().decode(text)), StandardCharsets.UTF_8);
+            return new String(cipher.doFinal(Base64.getDecoder().decode(data)), StandardCharsets.UTF_8);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -146,32 +132,22 @@ public class AESUtils {
     /**
      * AES CBC 模式解密数据，使用默认初始化向量
      *
-     * @param text 待解密内容
+     * @param data 待解密内容
      * @param key  128位的密钥字符串，或 {@link AESUtils#generateKey(String)} 方法生成的密钥字符串
      * @return 解密后数据
      */
-    public static String decrypt(String text, String key) {
-        return decrypt(text, key, INIT_VECTOR);
-    }
-
-    /**
-     * AES CBC 模式解密数据，使用默认密钥和初始化向量
-     *
-     * @param text 待解密内容
-     * @return 解密后数据
-     */
-    public static String decrypt(String text) {
-        return decrypt(text, DEFAULT_KEY, INIT_VECTOR);
+    public static String decrypt(String data, String key) {
+        return decrypt(data, key, INIT_VECTOR);
     }
 
     /**
      * AES ECB 模式加密数据
      *
-     * @param text 待加密内容
+     * @param data 待加密内容
      * @param key  128位的密钥字符串，或 {@link AESUtils#generateKey(String)} 方法生成的密钥字符串
      * @return Base64 转码后的加密数据
      */
-    public static String encryptWithEcb(String text, String key) {
+    public static String encryptWithEcb(String data, String key) {
         try {
             // 兼容128位任意字符串和generateKey生成的Base64转码的密钥字符串
             byte[] b = key.length() == 16 ? key.getBytes(StandardCharsets.UTF_8) : Base64.getDecoder().decode(key);
@@ -180,7 +156,7 @@ public class AESUtils {
             // 使用密钥初始化，设置为加密模式
             cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(b, KEY_ALGORITHM));
             // 通过Base64转码加密数据后返回
-            return Base64.getEncoder().encodeToString(cipher.doFinal(text.getBytes(StandardCharsets.UTF_8)));
+            return Base64.getEncoder().encodeToString(cipher.doFinal(data.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -191,11 +167,11 @@ public class AESUtils {
     /**
      * AES ECB 模式解密数据
      *
-     * @param text 待解密内容
+     * @param data 待解密内容
      * @param key  128位的密钥字符串，或 {@link AESUtils#generateKey(String)} 方法生成的密钥字符串
      * @return 解密后数据
      */
-    public static String decryptWithEcb(String text, String key) {
+    public static String decryptWithEcb(String data, String key) {
         try {
             // 兼容128位任意字符串和generateKey生成的Base64转码的密钥字符串
             byte[] b = key.length() == 16 ? key.getBytes(StandardCharsets.UTF_8) : Base64.getDecoder().decode(key);
@@ -204,7 +180,7 @@ public class AESUtils {
             // 使用密钥初始化，设置为解密模式
             cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(b, KEY_ALGORITHM));
             // 返回解密后数据
-            return new String(cipher.doFinal(Base64.getDecoder().decode(text)), StandardCharsets.UTF_8);
+            return new String(cipher.doFinal(Base64.getDecoder().decode(data)), StandardCharsets.UTF_8);
         } catch (Exception e) {
             e.printStackTrace();
         }
