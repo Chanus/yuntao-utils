@@ -15,7 +15,6 @@
  */
 package com.chanus.yuntao.utils.core.test.encrypt;
 
-import com.chanus.yuntao.utils.core.encrypt.DESUtils;
 import com.chanus.yuntao.utils.core.encrypt.DESedeUtils;
 import org.junit.Test;
 
@@ -60,11 +59,11 @@ public class DESedeUtilsTest {
     @Test
     public void encryptWithEcbTest() {
         String data = "DESede ECB 模式加密测试";
-        System.out.println(DESUtils.encryptWithEcb(data, key));// r94k2eKk5U0fKeU4UM9A9i754IeKRoqdc++vBsi0UkQ=
+        System.out.println(DESedeUtils.encryptWithEcb(data, key));// IpMIvJyt6vF7NpJK7vRipzWto8KfqQnz5EOphIDnITQ=
     }
 
     @Test
     public void decryptWithEcbTest() {
-        System.out.println(DESUtils.decryptWithEcb("r94k2eKk5U0fKeU4UM9A9i754IeKRoqdc++vBsi0UkQ=", key));// DESede ECB 模式加密测试
+        System.out.println(DESedeUtils.decryptWithEcb("IpMIvJyt6vF7NpJK7vRipzWto8KfqQnz5EOphIDnITQ=", key));// DESede ECB 模式加密测试
     }
 }
