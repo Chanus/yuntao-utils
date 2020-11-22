@@ -375,6 +375,28 @@ public class StreamUtils {
     }
 
     /**
+     * 从 {@link Reader} 中读取数据到字符串
+     *
+     * @param reader {@link Reader}
+     * @return 数据字符串
+     * @since 1.4.4
+     */
+    public static String read2String(Reader reader) {
+        // 从返回的内容中读取所需内容
+        final BufferedReader bufferedReader = getReader(reader);
+        StringBuilder stringBuilder = new StringBuilder();
+        String line;
+        try {
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+            return stringBuilder.toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * 从输入流中读取数据到字符串，使用 UTF-8 编码
      *
      * @param inputStream 输入流

@@ -84,6 +84,21 @@ public class UrlUtils {
     }
 
     /**
+     * 将 Map 集合转换成 http 请求 URI，生成的 URI 中的参数名会按字典序排序
+     *
+     * @param params     Map 集合
+     * @param ignoreKeys 转换成 http 请求 URI 时需要忽略的参数名
+     * @return http 请求 URI
+     * @since 1.4.4
+     */
+    public static String getParamsUri(Map<String, Object> params, final String... ignoreKeys) {
+        if (MapUtils.isEmpty(params))
+            return null;
+
+        return getParamsUri(MapUtils.removeAny(MapUtils.sort(params), ignoreKeys));
+    }
+
+    /**
      * 获取 http 请求 URL 中指定参数的值
      *
      * @param url       http 请求 URL

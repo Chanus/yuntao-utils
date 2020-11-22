@@ -46,13 +46,17 @@ public class UrlUtilsTest {
             private static final long serialVersionUID = -7346761257298985734L;
 
             {
-                put("a", "aaa");
-                put("b", "bbb");
-                put("c", "ccc");
-                put("d", "ddd");
+                put("abc", "aaa");
+                put("cba", "bbb");
+                put("ccc", "ccc");
+                put("drt", "ddd");
+                put("zkj", "zzz");
+                put("ydf", "yyy");
+                put("xee", "xxx");
             }
         };
         System.out.println(UrlUtils.getParamsUri(map));
+        System.out.println(UrlUtils.getParamsUri(map, "abc"));
     }
 
     @Test
