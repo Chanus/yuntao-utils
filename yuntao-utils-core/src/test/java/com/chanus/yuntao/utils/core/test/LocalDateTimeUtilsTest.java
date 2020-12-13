@@ -457,6 +457,18 @@ public class LocalDateTimeUtilsTest {
     }
 
     @Test
+    public void compareNowTest() {
+        LocalDateTime source = LocalDateTimeUtils.parseDateTimeMillis("2018-05-12 20:11:33.123");
+        System.out.println("比较日期时间：" + LocalDateTimeUtils.compareNow(source));
+
+        LocalDate source2 = LocalDateTimeUtils.parseDate("2020-12-12");
+        System.out.println("比较日期：" + LocalDateTimeUtils.compareNow(source2));
+
+        LocalTime source3 = LocalDateTimeUtils.parseTimeMillis("20:11:33.123");
+        System.out.println("比较时间：" + LocalDateTimeUtils.compareNow(source3));
+    }
+
+    @Test
     public void betweenTest() {
         LocalDateTime start = LocalDateTimeUtils.parseDateTimeMillis("2019-05-12 20:11:33.123");
         LocalDateTime end = LocalDateTimeUtils.parseDateTimeMillis("2021-05-12 20:11:33.123");

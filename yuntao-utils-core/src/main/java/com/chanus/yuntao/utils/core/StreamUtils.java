@@ -83,7 +83,7 @@ public class StreamUtils {
                 writer.flush();
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("IOException occurred.", e);
         }
         return size;
     }
@@ -122,7 +122,7 @@ public class StreamUtils {
                 outputStream.flush();
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("IOException occurred.", e);
         }
         return size;
     }
@@ -193,7 +193,7 @@ public class StreamUtils {
                 byteBuffer.clear();
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("IOException occurred.", e);
         }
 
         return size;
@@ -218,7 +218,7 @@ public class StreamUtils {
             }
             return collection;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("IOException occurred.", e);
         }
     }
 
@@ -392,7 +392,9 @@ public class StreamUtils {
             }
             return stringBuilder.toString();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("IOException occurred.", e);
+        } finally {
+            IOUtils.closeQuietly(bufferedReader);
         }
     }
 
@@ -432,7 +434,7 @@ public class StreamUtils {
             if (data != null)
                 outputStream.write(data);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("IOException occurred.", e);
         } finally {
             if (isCloseOut)
                 IOUtils.close(outputStream);
@@ -469,7 +471,7 @@ public class StreamUtils {
             }
             outputStreamWriter.flush();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("IOException occurred.", e);
         } finally {
             if (isCloseOut)
                 IOUtils.close(outputStreamWriter);

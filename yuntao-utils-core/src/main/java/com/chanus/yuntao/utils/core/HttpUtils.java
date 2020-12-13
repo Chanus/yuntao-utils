@@ -19,6 +19,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,6 +33,26 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0.0
  */
 public class HttpUtils {
+    /**
+     * 表单类型 Content-Type（key/value 数据格式）
+     */
+    public static final String CONTENT_TYPE_FORM = "application/x-www-form-urlencoded; charset=UTF-8";
+    /**
+     * 流类型 Content-Type
+     */
+    public static final String CONTENT_TYPE_STREAM = "application/octet-stream; charset=UTF-8";
+    /**
+     * JSON 类型 Content-Type
+     */
+    public static final String CONTENT_TYPE_JSON = "application/json; charset=UTF-8";
+    /**
+     * XML 类型 Content-Type
+     */
+    public static final String CONTENT_TYPE_XML = "application/xml; charset=UTF-8";
+    /**
+     * 文本类型 Content-Type
+     */
+    public static final String CONTENT_TYPE_TEXT = "application/text; charset=UTF-8";
     /**
      * 请求超时时间60s
      */
@@ -49,14 +70,6 @@ public class HttpUtils {
      */
     private static final String END = "\r\n";
     /**
-     * 默认媒体类型（key/value 数据格式）
-     */
-    private static final String CONTENT_TYPE_DEFAULT = "application/x-www-form-urlencoded;charset=UTF-8";
-    /**
-     * JSON 数据格式的媒体类型
-     */
-    private static final String CONTENT_TYPE_JSON = "application/json;charset=UTF-8";
-    /**
      * 需要在表单中进行文件上传时的媒体类型
      */
     private static final String CONTENT_TYPE_UPLOAD = "multipart/form-data; boundary=" + BOUNDARY;
@@ -71,47 +84,99 @@ public class HttpUtils {
     /**
      * 向指定 URL 发送 GET 方法的请求
      *
-     * @param url 发送请求的 URL，包含请求参数
+     * @param url            发送请求的 URL
+     * @param connectTimeout 建立连接的超时时间，单位是毫秒
+     * @param readTimeout    传递数据的超时时间，单位是毫秒
+     * @param headers        请求头信息
+     * @param queries        请求参数
      * @return 远程资源的响应结果
+     * @throws Exception 请求异常
+     * @since 1.4.5
      */
-    public static String get(final String url) {
-        StringBuilder result = new StringBuilder();// 返回的结果
-        BufferedReader bufferedReader = null;
-        try {
-            // 打开 URL 连接
-            HttpURLConnection connection = getGetConnection(url);
-            // 响应头部获取
-            // Map<String, List<String>> headers = httpConn.getHeaderFields();
-
-            if (connection.getResponseCode() == 200) {
-                bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
-
-                String line;
-                // 读取返回的内容
-                while ((line = bufferedReader.readLine()) != null) {
-                    result.append(line);
-                }
-            } else {
-                throw new RuntimeException("response code is not 200 ... ");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Request exception", e);
-        } finally {
-            IOUtils.close(bufferedReader);
+    public static String get(String url, int connectTimeout, int readTimeout, Map<String, String> headers, Map<String, Object> queries) throws Exception {
+        // 将请求参数追加到 url 中
+        if (MapUtils.isNotEmpty(queries))
+            url = UrlUtils.setParam(url, queries);
+        // 创建URL对象
+        URL connURL = new URL(url);
+        // 打开URL连接
+        HttpURLConnection connection = (HttpURLConnection) connURL.openConnection();
+        // 设置请求头信息
+        if (MapUtils.isEmpty(headers)) {
+            headers = new HashMap<>();
+            headers.put("Accept", "*/*");
+            headers.put("Connection", "Keep-Alive");
+            headers.put("User-Agent", "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)");
         }
-        return result.toString();
+        for (Map.Entry<String, String> e : headers.entrySet()) {
+            connection.setRequestProperty(e.getKey(), e.getValue());
+        }
+        // 设置通用属性
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(connectTimeout);
+        connection.setReadTimeout(readTimeout);
+        // 建立实际的连接
+        connection.connect();
+
+        if (connection.getResponseCode() == 200) {
+            String result = StreamUtils.read2String(new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8)));
+            // 关闭连接
+            connection.disconnect();
+
+            return result;
+        } else {
+            throw new RuntimeException("response code is not 200 ... ");
+        }
     }
 
     /**
      * 向指定 URL 发送 GET 方法的请求
      *
-     * @param url        发送请求的 URL
-     * @param parameters 请求参数
+     * @param url     发送请求的 URL
+     * @param headers 请求头信息
+     * @param queries 请求参数
      * @return 远程资源的响应结果
+     * @throws Exception 请求异常
+     * @since 1.4.5
      */
-    public static String get(String url, final Map<String, Object> parameters) {
-        url = UrlUtils.setParam(url, parameters);
-        return get(url);
+    public static String get(String url, Map<String, String> headers, Map<String, Object> queries) throws Exception {
+        return get(url, TIMEOUT_IN_MILLIONS, TIMEOUT_IN_MILLIONS, headers, queries);
+    }
+
+    /**
+     * 向指定 URL 发送 GET 方法的请求
+     *
+     * @param url     发送请求的 URL
+     * @param queries 请求参数
+     * @return 远程资源的响应结果
+     * @throws Exception 请求异常
+     */
+    public static String get(String url, final Map<String, Object> queries) throws Exception {
+        return get(url, null, queries);
+    }
+
+    /**
+     * 向指定 URL 发送 GET 方法的请求
+     *
+     * @param url 发送请求的 URL，包含请求参数
+     * @return 远程资源的响应结果
+     * @throws Exception 请求异常
+     */
+    public static String get(final String url) throws Exception {
+        return get(url, null);
+    }
+
+    /**
+     * 向指定 URL 发送 GET 方法的请求
+     *
+     * @param url     发送请求的 URL
+     * @param headers 请求头信息
+     * @return 远程资源的响应结果
+     * @throws Exception 请求异常
+     * @since 1.4.5
+     */
+    public static String getWithHeaders(String url, Map<String, String> headers) throws Exception {
+        return get(url, headers, null);
     }
 
     /**
@@ -146,15 +211,15 @@ public class HttpUtils {
     /**
      * 向指定 URL 发送异步 GET 方法的请求
      *
-     * @param url        发送请求的 URL
-     * @param parameters 请求参数
-     * @param callBack   回调方法
+     * @param url      发送请求的 URL
+     * @param queries  请求参数
+     * @param callBack 回调方法
      */
-    public static void getAsyn(final String url, final Map<String, Object> parameters, final CallBack callBack) {
+    public static void getAsyn(final String url, final Map<String, Object> queries, final CallBack callBack) {
         ExecutorService pool = Executors.newCachedThreadPool();
         pool.execute(() -> {
             try {
-                String result = get(url, parameters);
+                String result = get(url, queries);
                 if (callBack != null) {
                     callBack.onRequestComplete(result);
                 }
@@ -176,66 +241,131 @@ public class HttpUtils {
     /**
      * 向指定 URL 发送 POST 方法的请求
      *
-     * @param url         发送请求的 URL，可以包含请求参数
-     * @param params      请求参数
-     * @param contentType 媒体类型
+     * @param url            发送请求的 URL，可以包含请求参数
+     * @param connectTimeout 建立连接的超时时间，单位是毫秒
+     * @param readTimeout    传递数据的超时时间，单位是毫秒
+     * @param headers        请求头信息
+     * @param queries        请求参数
+     * @param body           请求 body 参数
      * @return 远程资源的响应结果
-     * @since 1.2.4
+     * @throws Exception 请求异常
+     * @since 1.4.5
      */
-    public static String post(final String url, final String params, String contentType) {
-        StringBuilder result = new StringBuilder();// 返回的结果
-        BufferedReader bufferedReader = null;// 读取响应输入流
-        BufferedWriter bufferedWriter = null;// 写入参数输出流
-        try {
-            // 打开 URL 连接
-            HttpURLConnection connection = getPostConnection(url, contentType);
-
-            // POST 请求参数
-            if (StringUtils.isNotBlank(params)) {
-                bufferedWriter = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8));
-                bufferedWriter.write(params);
-                bufferedWriter.flush();
-            }
-
-            // 读取响应
-            // 定义 BufferedReader 输入流来读取URL的响应，并设置编码方式
-            bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
-            String line;
-            // 读取返回的内容
-            while ((line = bufferedReader.readLine()) != null) {
-                result.append(line);
-            }
-            connection.disconnect();
-        } catch (Exception e) {
-            throw new RuntimeException("Request exception", e);
-        } finally {
-            IOUtils.close(bufferedWriter);
-            IOUtils.close(bufferedReader);
+    public static String post(String url, int connectTimeout, int readTimeout, Map<String, String> headers,
+                              Map<String, Object> queries, String body) throws Exception {
+        // 将请求参数追加到 url 中
+        if (MapUtils.isNotEmpty(queries))
+            url = UrlUtils.setParam(url, queries);
+        // 创建 URL 对象
+        URL connURL = new URL(url);
+        // 打开 URL 连接
+        HttpURLConnection connection = (HttpURLConnection) connURL.openConnection();
+        // 设置请求头信息
+        if (MapUtils.isEmpty(headers)) {
+            headers = new HashMap<>();
+            headers.put("Accept", "*/*");
+            headers.put("Connection", "Keep-Alive");
+            headers.put("Content-Type", CONTENT_TYPE_FORM);
         }
-        return result.toString();
+        for (Map.Entry<String, String> e : headers.entrySet()) {
+            connection.setRequestProperty(e.getKey(), e.getValue());
+        }
+        // 设定请求的方法，默认是 GET
+        connection.setRequestMethod("POST");
+        // 设置是否向 connection 输出
+        connection.setDoOutput(true);
+        // 设置是否从 connection 读入，默认情况下是 true
+        connection.setDoInput(true);
+        // POST 请求不能使用缓存
+        connection.setUseCaches(false);
+        connection.setInstanceFollowRedirects(true);
+        connection.setConnectTimeout(connectTimeout);
+        connection.setReadTimeout(readTimeout);
+        // 建立实际的连接
+        connection.connect();
+
+        // 设置 body 内的参数
+        if (StringUtils.isNotBlank(body)) {
+            // 写入参数输出流
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8));
+            bufferedWriter.write(body);
+            bufferedWriter.flush();
+            bufferedWriter.close();
+        }
+
+        // 读取响应
+        String result = StreamUtils.read2String(new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8)));
+        // 关闭连接
+        connection.disconnect();
+
+        return result;
     }
 
     /**
      * 向指定 URL 发送 POST 方法的请求
      *
-     * @param url    发送请求的 URL，可以包含请求参数
-     * @param params 请求参数
+     * @param url     发送请求的 URL，可以包含请求参数
+     * @param headers 请求头信息
+     * @param queries 请求参数
+     * @param body    请求 body 参数
      * @return 远程资源的响应结果
+     * @throws Exception 请求异常
+     * @since 1.4.5
      */
-    public static String post(final String url, final String params) {
-        return post(url, params, CONTENT_TYPE_DEFAULT);
+    public static String post(String url, Map<String, String> headers, Map<String, Object> queries, String body) throws Exception {
+        return post(url, TIMEOUT_IN_MILLIONS, TIMEOUT_IN_MILLIONS, headers, queries, body);
     }
 
     /**
      * 向指定 URL 发送 POST 方法的请求
      *
-     * @param url    发送请求的 URL，可以包含请求参数
-     * @param params json 格式的请求参数
+     * @param url     发送请求的 URL，可以包含请求参数
+     * @param headers 请求头信息
+     * @param queries 请求参数
      * @return 远程资源的响应结果
-     * @since 1.2.4
+     * @throws Exception 请求异常
+     * @since 1.4.5
      */
-    public static String postJson(final String url, final String params) {
-        return post(url, params, CONTENT_TYPE_JSON);
+    public static String post(String url, Map<String, String> headers, Map<String, Object> queries) throws Exception {
+        return post(url, TIMEOUT_IN_MILLIONS, TIMEOUT_IN_MILLIONS, headers, queries, null);
+    }
+
+    /**
+     * 向指定 URL 发送 POST 方法的请求
+     *
+     * @param url     发送请求的 URL，可以包含请求参数
+     * @param headers 请求头信息
+     * @param body    请求 body 参数
+     * @return 远程资源的响应结果
+     * @throws Exception 请求异常
+     * @since 1.4.5
+     */
+    public static String post(String url, Map<String, String> headers, String body) throws Exception {
+        return post(url, TIMEOUT_IN_MILLIONS, TIMEOUT_IN_MILLIONS, headers, null, body);
+    }
+
+    /**
+     * 向指定 URL 发送 POST 方法的请求
+     *
+     * @param url     发送请求的 URL
+     * @param queries 请求参数
+     * @return 远程资源的响应结果
+     * @throws Exception 请求异常
+     */
+    public static String post(String url, Map<String, Object> queries) throws Exception {
+        return post(url, null, queries);
+    }
+
+    /**
+     * 向指定 URL 发送 POST 方法的请求
+     *
+     * @param url  发送请求的 URL，可以包含请求参数
+     * @param body 请求 body 参数
+     * @return 远程资源的响应结果
+     * @throws Exception 请求异常
+     */
+    public static String post(String url, String body) throws Exception {
+        return post(url, null, body);
     }
 
     /**
@@ -244,20 +374,37 @@ public class HttpUtils {
      * @param url 发送请求的 URL，可以包含请求参数
      * @return 远程资源的响应结果
      */
-    public static String post(final String url) {
-        return post(url, (String) null);
+    public static String post(String url) throws Exception {
+        return post(url, TIMEOUT_IN_MILLIONS, TIMEOUT_IN_MILLIONS, null, null, null);
     }
 
     /**
      * 向指定 URL 发送 POST 方法的请求
      *
-     * @param url        发送请求的 URL
-     * @param parameters 请求参数
+     * @param url     发送请求的 URL，可以包含请求参数
+     * @param headers 请求头信息
      * @return 远程资源的响应结果
+     * @throws Exception 请求异常
+     * @since 1.4.5
      */
-    public static String post(final String url, final Map<String, Object> parameters) {
-        String uri = UrlUtils.getParamsUri(parameters);
-        return post(url, uri);
+    public static String postWithHeaders(String url, Map<String, String> headers) throws Exception {
+        return post(url, TIMEOUT_IN_MILLIONS, TIMEOUT_IN_MILLIONS, headers, null, null);
+    }
+
+    /**
+     * 向指定 URL 发送 POST 方法的请求
+     *
+     * @param url  发送请求的 URL，可以包含请求参数
+     * @param json json 格式的请求参数
+     * @return 远程资源的响应结果
+     * @since 1.2.4
+     */
+    public static String postJson(String url, String json) throws Exception {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Accept", "*/*");
+        headers.put("Connection", "Keep-Alive");
+        headers.put("Content-Type", CONTENT_TYPE_JSON);
+        return post(url, headers, json);
     }
 
     /**
@@ -433,7 +580,7 @@ public class HttpUtils {
 
         try {
             // 打开URL连接
-            HttpURLConnection connection = getPostConnection(url, CONTENT_TYPE_DEFAULT);
+            HttpURLConnection connection = getPostConnection(url, CONTENT_TYPE_FORM);
 
             // 请求参数
             if (StringUtils.isNotBlank(params)) {
@@ -494,7 +641,7 @@ public class HttpUtils {
     public static BufferedInputStream downloadPost(final String url, final String params) {
         try {
             // 打开URL连接
-            HttpURLConnection connection = getPostConnection(url, CONTENT_TYPE_DEFAULT);
+            HttpURLConnection connection = getPostConnection(url, CONTENT_TYPE_FORM);
 
             // 请求参数
             if (StringUtils.isNotBlank(params)) {

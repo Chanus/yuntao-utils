@@ -18,6 +18,7 @@ package com.chanus.yuntao.utils.core.test;
 import com.chanus.yuntao.utils.core.UrlUtils;
 import org.junit.Test;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +30,22 @@ import java.util.Map;
  * @since 1.0.0
  */
 public class UrlUtilsTest {
+    @Test
+    public void buildUrlTest() throws UnsupportedEncodingException {
+        String host = "http://localhost/";
+        String path = "query";
+        Map<String, Object> queries = new HashMap<>();
+        queries.put("a", "aaa");
+        queries.put("b", 123456);
+        queries.put("c", 3.1415926);
+        queries.put("d", true);
+        queries.put(null, "abcdefg");
+        queries.put("e", "你好");
+        queries.put("f", null);
+        String url = UrlUtils.buildUrl(host, path, queries);
+        System.out.println(url);
+    }
+
     @Test
     public void getParamsMapTest() {
         String query = "a=aaa&b=bbb&c=ccc&d=ddd&e=e1&e=e2&e=e3";

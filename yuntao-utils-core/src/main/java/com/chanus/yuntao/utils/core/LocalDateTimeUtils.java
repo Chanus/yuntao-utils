@@ -815,6 +815,39 @@ public class LocalDateTimeUtils {
     }
 
     /**
+     * 比较指定日期时间与当前日期时间的大小
+     *
+     * @param source 需要比较的日期时间
+     * @return {@code source} 大于当前日期时间返回1，{@code source} 小于当前日期时间返回-1，{@code source} 等于当前日期时间返回0
+     * @since 1.4.5
+     */
+    public static int compareNow(LocalDateTime source) {
+        return compare(source, LocalDateTime.now());
+    }
+
+    /**
+     * 比较指定日期与当前日期的大小
+     *
+     * @param source 需要比较的日期
+     * @return {@code source} 大于当前日期返回1，{@code source} 小于当前日期返回-1，{@code source} 等于当前日期返回0
+     * @since 1.4.5
+     */
+    public static int compareNow(LocalDate source) {
+        return compare(source, LocalDate.now());
+    }
+
+    /**
+     * 比较指定时间与当前时间的大小
+     *
+     * @param source 需要比较的时间
+     * @return {@code source} 大于当前时间返回1，{@code source} 小于当前时间返回-1，{@code source} 等于当前时间返回0
+     * @since 1.4.5
+     */
+    public static int compareNow(LocalTime source) {
+        return compare(source, LocalTime.now());
+    }
+
+    /**
      * 比较日期时间是否在指定日期时间范围之类
      *
      * @param localDateTime 待比较日期时间

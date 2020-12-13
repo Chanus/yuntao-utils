@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public class HttpUtilsTest {
     @Test
-    public void getTest() {
+    public void getTest() throws Exception {
         String url = "http://pv.sohu.com/cityjson?ie=utf-8";
         String ip = "125.78.96.179";
         String result1 = HttpUtils.get(url + "&ip=" + ip);
@@ -50,6 +50,39 @@ public class HttpUtilsTest {
     }
 
     @Test
+    public void newGetTest() throws Exception {
+        String url = "http://localhost:15080/mcby_mobile/gettest";
+        Map<String, Object> queries = new HashMap<>();
+        queries.put("a", "啊啊啊啊啊啊啊啊");
+        queries.put("b", "bbbbbbbbb");
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("c", "cccccccccccc");
+        headers.put("d", "dddddddd");
+
+        System.out.println(HttpUtils.get(url, headers, queries));
+    }
+
+    @Test
+    public void newPostTest() throws Exception {
+        String url = "http://localhost:15080/mcby_mobile/posttest";
+        Map<String, Object> queries = new HashMap<>();
+        queries.put("a", "啊啊啊啊啊啊啊啊");
+        queries.put("b", "bbbbbbbbb");
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Accept", "*/*");
+        headers.put("Connection", "Keep-Alive");
+        headers.put("Content-Type", HttpUtils.CONTENT_TYPE_JSON);
+        headers.put("c", "cccccccccccc");
+        headers.put("d", "dddddddd");
+
+        String body = "abcdefg 啊啊啊啊 hhhh";
+
+        System.out.println(HttpUtils.post(url, headers, queries, body));
+    }
+
+    @Test
     public void getAsynTest() {
         String url = "http://pv.sohu.com/cityjson?ie=utf-8";
         String ip = "125.78.96.179";
@@ -61,7 +94,7 @@ public class HttpUtilsTest {
     }
 
     @Test
-    public void postTest() {
+    public void postTest() throws Exception {
         String url = "http://pv.sohu.com/cityjson?ie=utf-8";
         String ip = "125.78.96.179";
         String result1 = HttpUtils.post(url, "{\"ip\":\"" + ip + "\"}");

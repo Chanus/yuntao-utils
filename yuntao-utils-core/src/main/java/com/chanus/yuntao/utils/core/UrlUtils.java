@@ -15,6 +15,8 @@
  */
 package com.chanus.yuntao.utils.core;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +28,46 @@ import java.util.Map;
  * @since 1.0.0
  */
 public class UrlUtils {
+    /**
+     * 构建 http 请求 URL
+     *
+     * @param host    请求域名
+     * @param path    请求路径
+     * @param queries 请求参数
+     * @return http 请求 URL
+     * @throws UnsupportedEncodingException {@link URLEncoder} 转码失败时抛出异常
+     * @since 1.4.5
+     */
+    public static String buildUrl(String host, String path, Map<String, Object> queries) throws UnsupportedEncodingException {
+        StringBuilder sbUrl = new StringBuilder();
+        sbUrl.append(host);
+        if (StringUtils.isNotBlank(path))
+            sbUrl.append(path);
+
+        if (MapUtils.isNotEmpty(queries)) {
+            StringBuilder sbQuery = new StringBuilder();
+            for (Map.Entry<String, Object> query : queries.entrySet()) {
+                if (sbQuery.length() > 0)
+                    sbQuery.append("&");
+
+                if (StringUtils.isBlank(query.getKey()) && ObjectUtils.isNotEmpty(query.getValue()))
+                    sbQuery.append(URLEncoder.encode(query.getValue().toString(), CharsetUtils.UTF_8));
+
+                if (StringUtils.isNotBlank(query.getKey())) {
+                    sbQuery.append(query.getKey());
+                    if (ObjectUtils.isNotEmpty(query.getValue())) {
+                        sbQuery.append("=");
+                        sbQuery.append(URLEncoder.encode(query.getValue().toString(), CharsetUtils.UTF_8));
+                    }
+                }
+            }
+            if (sbQuery.length() > 0)
+                sbUrl.append("?").append(sbQuery);
+        }
+
+        return sbUrl.toString();
+    }
+
     /**
      * 解析 http 请求 URI 获取请求参数，转换为 Map 键值对
      *
@@ -77,7 +119,11 @@ public class UrlUtils {
             if (params.get(key) == null)
                 continue;
 
-            uri.append(key).append("=").append(params.get(key).toString()).append("&");
+            try {
+                uri.append(key).append("=").append(URLEncoder.encode(params.get(key).toString(), CharsetUtils.UTF_8)).append("&");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
 
         return uri.substring(0, uri.length() - 1);
@@ -106,21 +152,21 @@ public class UrlUtils {
      * @return 返回参数名 {@code paramName} 对应的值
      */
     public static String getParamValue(String url, String paramName) {
+        String paramValue = null;
         int temp_index = url.indexOf("?");
-        if (temp_index != -1) {
+        if (temp_index != -1) {// 有 ? 有参数
             int param_index = url.indexOf(paramName + "=", temp_index + 1);
-            if (param_index != -1) {
+            if (param_index != -1) {// 有 = 有参数
                 temp_index = url.indexOf("&", param_index + paramName.length() + 1);
                 if (temp_index != -1) {
-                    return url.substring(param_index + paramName.length() + 1, temp_index);
+                    paramValue = url.substring(param_index + paramName.length() + 1, temp_index);
+                } else {
+                    paramValue = url.substring(param_index + paramName.length() + 1);
                 }
-                return url.substring(param_index + paramName.length() + 1);
-            } else {
-                return null;
             }
-        } else {
-            return null;
         }
+
+        return paramValue;
     }
 
     /**
@@ -132,6 +178,11 @@ public class UrlUtils {
      * @return 返回追加参数后的 URL
      */
     public static String setParam(String url, String paramName, String paramValue) {
+        try {
+            paramValue = URLEncoder.encode(paramValue, CharsetUtils.UTF_8);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         int temp_index = url.indexOf("?");
         if (temp_index != -1) {// url 中已带有参数
             int param_index = url.indexOf(paramName + "=", temp_index + 1);
