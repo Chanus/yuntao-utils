@@ -134,6 +134,12 @@ public class FileUtilsTest {
     }
 
     @Test
+    public void getValidFileNameTest() {
+        String fileName = "a\\b/c:d*e\"f<g>h|i?j";
+        System.out.println(FileUtils.getValidFileName(fileName));
+    }
+
+    @Test
     public void getFileNameWithoutExtensionTest() {
         System.out.println("================= getFileNameWithoutExtension(File file) =================");
         System.out.println(FileUtils.getFileNameWithoutExtension(new File(path)));

@@ -38,27 +38,170 @@ import java.util.zip.GZIPOutputStream;
  * @since 1.0.0
  */
 public class StringUtils {
+    /**
+     * 空格
+     */
     public static final String SPACE = " ";
-    public static final String TAB = "	";
-    public static final String DOT = ".";
-    public static final String DOUBLE_DOT = "..";
-    public static final String SLASH = "/";
-    public static final String BACKSLASH = "\\";
-    public static final String EMPTY = "";
-    public static final String NULL = "null";
-    public static final String CR = "\r";
-    public static final String LF = "\n";
-    public static final String CRLF = "\r\n";
-    public static final String UNDERLINE = "_";
-    public static final String DASHED = "-";
+    /**
+     * 感叹号
+     */
+    public static final String EXCLAMATION_MARK = "!";
+    /**
+     * 引号 (双引号)
+     */
+    public static final String DOUBLE_QUOTE = "\"";
+    /**
+     * 数字符号
+     */
+    public static final String HASH = "#";
+    /**
+     * 美元符
+     */
+    public static final String DOLLAR = "$";
+    /**
+     * 百分号
+     */
+    public static final String PERCENT = "%";
+    /**
+     * 和号
+     */
+    public static final String AMPERSAND = "&";
+    /**
+     * 省略号 (单引号)
+     */
+    public static final String APOSTROPHE = "'";
+    /**
+     * 左圆括号
+     */
+    public static final String OPEN_PARENTHESIS = "(";
+    /**
+     * 右圆括号
+     */
+    public static final String CLOSE_PARENTHESIS = ")";
+    /**
+     * 星号
+     */
+    public static final String ASTERISK = "*";
+    /**
+     * 加号
+     */
+    public static final String PLUS = "+";
+    /**
+     * 逗号
+     */
     public static final String COMMA = ",";
-    public static final String DELIM_START = "{";
-    public static final String DELIM_END = "}";
-    public static final String BRACKET_START = "[";
-    public static final String BRACKET_END = "]";
+    /**
+     * 连字号或减号
+     */
+    public static final String HYPHEN = "-";
+    /**
+     * 句点或小数点
+     */
+    public static final String DOT = ".";
+    /**
+     * 斜杠
+     */
+    public static final String SLASH = "/";
+    /**
+     * 冒号
+     */
     public static final String COLON = ":";
-    public static final String AMP = "&";
+    /**
+     * 分号
+     */
+    public static final String SEMICOLON = ";";
+    /**
+     * 小于
+     */
+    public static final String LESS_THAN = "<";
+    /**
+     * 等于
+     */
     public static final String EQUAL = "=";
+    /**
+     * 大于
+     */
+    public static final String GREATER_THAN = ">";
+    /**
+     * 问号
+     */
+    public static final String QUESTION_MARK = "?";
+    /**
+     * 商业 at 符号
+     */
+    public static final String AT = "@";
+    /**
+     * 左中括号
+     */
+    public static final String OPEN_SQUARE_BRACKET = "[";
+    /**
+     * 右中括号
+     */
+    public static final String CLOSE_SQUARE_BRACKET = "]";
+    /**
+     * 反斜杠
+     */
+    public static final String BACKSLASH = "\\";
+    /**
+     * 音调符号
+     */
+    public static final String CARET = "^";
+    /**
+     * 下划线
+     */
+    public static final String UNDERSCORE = "_";
+    /**
+     * 重音符
+     */
+    public static final String BACK_QUOTE = "`";
+    /**
+     * 左大括号
+     */
+    public static final String OPEN_BRACE = "{";
+    /**
+     * 右大括号
+     */
+    public static final String CLOSE_BRACE = "}";
+    /**
+     * 垂直线
+     */
+    public static final String VERTICAL_BAR = "|";
+    /**
+     * 代字号
+     */
+    public static final String TILDE = "~";
+    /**
+     * 制表符
+     */
+    public static final String TAB = "	";
+    /**
+     * 双点号
+     */
+    public static final String DOUBLE_DOT = "..";
+    /**
+     * 空字符串
+     */
+    public static final String EMPTY = "";
+    /**
+     * null 字符串
+     */
+    public static final String NULL = "null";
+    /**
+     * 回车
+     */
+    public static final String CR = "\r";
+    /**
+     * 换行
+     */
+    public static final String LF = "\n";
+    /**
+     * 回车换行
+     */
+    public static final String CRLF = "\r\n";
+    /**
+     * 空 json 字符串
+     */
+    public static final String EMPTY_JSON = "{}";
 
     public static final String HTML_NBSP = "&nbsp;";
     public static final String HTML_AMP = "&amp;";
@@ -66,8 +209,6 @@ public class StringUtils {
     public static final String HTML_APOS = "&apos;";
     public static final String HTML_LT = "&lt;";
     public static final String HTML_GT = "&gt;";
-
-    public static final String EMPTY_JSON = "{}";
 
     public static final int INDEX_NOT_FOUND = -1;
 
@@ -796,7 +937,30 @@ public class StringUtils {
      * @return 返回替换后的字符串
      */
     public static String replace(final String source, final int begin, final int end) {
-        return source.substring(0, begin) + repeat("*", end - begin) + source.substring(end);
+        return source.substring(0, begin) + repeat(ASTERISK, end - begin) + source.substring(end);
+    }
+
+    /**
+     * 将源字符串指定的字符替换成目标字符串
+     *
+     * @param source   源字符串
+     * @param target   目标字符串
+     * @param replaced 要替换的字符串数组
+     * @return 返回替换后的字符串
+     * @since 1.4.5
+     */
+    public static String replaceAny(String source, String target, String... replaced) {
+        if (source == null || target == null)
+            return source;
+
+        if (ArrayUtils.isNotEmpty(replaced)) {
+            for (String s : replaced) {
+                if (s != null)
+                    source = source.replace(s, target);
+            }
+        }
+
+        return source;
     }
 
     /**
@@ -1200,8 +1364,8 @@ public class StringUtils {
             final char c = s.charAt(i);
             final Character preChar = i > 0 ? s.charAt(i - 1) : null;
             if (Character.isUpperCase(c)) {
-                if (preChar != null && preChar != CharUtils.UNDERLINE)
-                    sb.append(UNDERLINE);
+                if (preChar != null && preChar != CharUtils.UNDERSCORE)
+                    sb.append(UNDERSCORE);
 
                 sb.append(Character.toLowerCase(c));
             } else {
@@ -1222,13 +1386,13 @@ public class StringUtils {
         if (s == null)
             return null;
 
-        if (contains(s, UNDERLINE)) {
+        if (contains(s, UNDERSCORE)) {
             final StringBuilder sb = new StringBuilder(s.length());
             boolean upperCase = false;
             for (int i = 0; i < s.length(); i++) {
                 char c = s.charAt(i);
 
-                if (c == CharUtils.UNDERLINE) {
+                if (c == CharUtils.UNDERSCORE) {
                     upperCase = true;
                 } else if (upperCase) {
                     sb.append(Character.toUpperCase(c));
@@ -1814,7 +1978,7 @@ public class StringUtils {
                     // 占位符被转义
                     argIndex--;
                     stringBuilder.append(template, handledPosition, delimIndex - 1);
-                    stringBuilder.append(CharUtils.DELIM_START);
+                    stringBuilder.append(CharUtils.OPEN_BRACE);
                     handledPosition = delimIndex + 1;
                 }
             } else {// 正常占位符

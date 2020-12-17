@@ -116,7 +116,7 @@ public class MapUtils {
      * @since 1.4.0
      */
     public static <K, V> String joinDefaultIgnoreNull(Map<K, V> map) {
-        return joinIgnoreNull(map, StringUtils.AMP, StringUtils.EQUAL);
+        return joinIgnoreNull(map, StringUtils.AMPERSAND, StringUtils.EQUAL);
     }
 
     /**

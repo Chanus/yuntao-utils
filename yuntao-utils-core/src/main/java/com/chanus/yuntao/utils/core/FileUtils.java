@@ -1125,6 +1125,19 @@ public class FileUtils {
     }
 
     /**
+     * 去除文件名中不支持的特殊字符（\ / : * " < > | ?）
+     *
+     * @param fileName 文件名
+     * @return 去除特殊字符后的文件名
+     * @since 1.4.5
+     */
+    public static String getValidFileName(String fileName) {
+        return StringUtils.remove(fileName, StringUtils.BACKSLASH, StringUtils.SLASH, StringUtils.COLON,
+                StringUtils.ASTERISK, StringUtils.DOUBLE_QUOTE, StringUtils.LESS_THAN, StringUtils.GREATER_THAN,
+                StringUtils.VERTICAL_BAR, StringUtils.QUESTION_MARK);
+    }
+
+    /**
      * 获取文件名，不包含扩展名
      *
      * @param file 文件
@@ -2244,20 +2257,6 @@ public class FileUtils {
 
         Files.copy(source.toPath(), target.toPath(), copyOptions.toArray(new CopyOption[0]));
     }
-
-    /**
-     * 转换文件编码
-     *
-     * @param file        文件
-     * @param srcCharset  原文件的编码，必须与文件内容的编码保持一致，否则导致乱码
-     * @param destCharset 转码后的编码
-     * @return 被转换编码的文件
-     * @since 1.4.0
-     */
-    /*public static File convertCharset(File file, Charset srcCharset, Charset destCharset) {
-        final String str = readString(file, srcCharset);
-        return writeString(str, file, destCharset);
-    }*/
 
     /**
      * 检查父完整路径是否为子路径的前半部分，如果不是说明不是子路径，可能存在 slip 注入

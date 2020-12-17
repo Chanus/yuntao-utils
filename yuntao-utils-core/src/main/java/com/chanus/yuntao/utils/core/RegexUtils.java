@@ -40,6 +40,8 @@ public class RegexUtils {
      * 正则中需要被转义的关键字
      */
     public final static Set<Character> REGEX_KEYS = new HashSet<Character>() {
+        private static final long serialVersionUID = 6621791963440385237L;
+
         {
             addAll(Arrays.asList('$', '(', ')', '*', '+', '.', '[', ']', '?', '\\', '^', '{', '}', '|'));
         }

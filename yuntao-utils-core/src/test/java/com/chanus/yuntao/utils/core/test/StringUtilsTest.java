@@ -435,6 +435,11 @@ public class StringUtilsTest {
     }
 
     @Test
+    public void replaceAnyTest() {
+        System.out.println(StringUtils.replaceAny("13378653645", "*", "3", "7", "4"));
+    }
+
+    @Test
     public void capitalizeTest() {
         System.out.println(StringUtils.capitalize("test"));
     }

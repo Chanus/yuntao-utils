@@ -48,7 +48,7 @@ public class UrlUtils {
             StringBuilder sbQuery = new StringBuilder();
             for (Map.Entry<String, Object> query : queries.entrySet()) {
                 if (sbQuery.length() > 0)
-                    sbQuery.append("&");
+                    sbQuery.append(StringUtils.AMPERSAND);
 
                 if (StringUtils.isBlank(query.getKey()) && ObjectUtils.isNotEmpty(query.getValue()))
                     sbQuery.append(URLEncoder.encode(query.getValue().toString(), CharsetUtils.UTF_8));
@@ -56,13 +56,13 @@ public class UrlUtils {
                 if (StringUtils.isNotBlank(query.getKey())) {
                     sbQuery.append(query.getKey());
                     if (ObjectUtils.isNotEmpty(query.getValue())) {
-                        sbQuery.append("=");
+                        sbQuery.append(StringUtils.EQUAL);
                         sbQuery.append(URLEncoder.encode(query.getValue().toString(), CharsetUtils.UTF_8));
                     }
                 }
             }
             if (sbQuery.length() > 0)
-                sbUrl.append("?").append(sbQuery);
+                sbUrl.append(StringUtils.QUESTION_MARK).append(sbQuery);
         }
 
         return sbUrl.toString();
@@ -76,17 +76,17 @@ public class UrlUtils {
      * @return 请求参数 {@code Map} 集合
      */
     public static Map<String, String> getParamsMap(String query, String duplicate) {
-        if (StringUtils.isBlank(query) || !query.contains("="))
+        if (StringUtils.isBlank(query) || !query.contains(StringUtils.EQUAL))
             return null;
 
         Map<String, String> params = new HashMap<>();
-        if (query.contains("&")) {// 多个参数
-            String[] kvs = query.split("&");
+        if (query.contains(StringUtils.AMPERSAND)) {// 多个参数
+            String[] kvs = query.split(StringUtils.AMPERSAND);
             String[] kv;
             for (String p : kvs) {
                 if (StringUtils.isBlank(p))
                     continue;
-                kv = p.split("=");
+                kv = p.split(StringUtils.EQUAL);
                 if (kv.length != 2 || StringUtils.isBlank(kv[0]) || StringUtils.isBlank(kv[1]))
                     continue;
                 if (params.containsKey(kv[0])) {
@@ -96,7 +96,7 @@ public class UrlUtils {
                 }
             }
         } else {// 一个参数
-            String[] kv = query.split("=");
+            String[] kv = query.split(StringUtils.EQUAL);
             if (kv.length == 2 && StringUtils.isNotBlank(kv[0]) && StringUtils.isNotBlank(kv[1]))
                 params.put(kv[0], kv[1]);
         }
@@ -120,7 +120,7 @@ public class UrlUtils {
                 continue;
 
             try {
-                uri.append(key).append("=").append(URLEncoder.encode(params.get(key).toString(), CharsetUtils.UTF_8)).append("&");
+                uri.append(key).append(StringUtils.EQUAL).append(URLEncoder.encode(params.get(key).toString(), CharsetUtils.UTF_8)).append(StringUtils.AMPERSAND);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -153,11 +153,11 @@ public class UrlUtils {
      */
     public static String getParamValue(String url, String paramName) {
         String paramValue = null;
-        int temp_index = url.indexOf("?");
+        int temp_index = url.indexOf(StringUtils.QUESTION_MARK);
         if (temp_index != -1) {// 有 ? 有参数
-            int param_index = url.indexOf(paramName + "=", temp_index + 1);
+            int param_index = url.indexOf(paramName + StringUtils.EQUAL, temp_index + 1);
             if (param_index != -1) {// 有 = 有参数
-                temp_index = url.indexOf("&", param_index + paramName.length() + 1);
+                temp_index = url.indexOf(StringUtils.AMPERSAND, param_index + paramName.length() + 1);
                 if (temp_index != -1) {
                     paramValue = url.substring(param_index + paramName.length() + 1, temp_index);
                 } else {
@@ -183,25 +183,25 @@ public class UrlUtils {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        int temp_index = url.indexOf("?");
+        int temp_index = url.indexOf(StringUtils.QUESTION_MARK);
         if (temp_index != -1) {// url 中已带有参数
-            int param_index = url.indexOf(paramName + "=", temp_index + 1);
+            int param_index = url.indexOf(paramName + StringUtils.EQUAL, temp_index + 1);
             if (param_index != -1) {// url 中已存在要追加的参数
-                temp_index = url.indexOf("&", param_index + paramName.length() + 1);
+                temp_index = url.indexOf(StringUtils.AMPERSAND, param_index + paramName.length() + 1);
                 if (temp_index != -1) {
-                    return url.substring(0, param_index) + paramName + "=" + paramValue + url.substring(temp_index);
+                    return url.substring(0, param_index) + paramName + StringUtils.EQUAL + paramValue + url.substring(temp_index);
                 }
-                return url.substring(0, param_index) + paramName + "=" + paramValue;
+                return url.substring(0, param_index) + paramName + StringUtils.EQUAL + paramValue;
             } else {// url 中不存在要追加的参数
                 // url 以 & 结尾
-                if (url.lastIndexOf("&") == url.length() - 1) {
-                    return url + paramName + "=" + paramValue;
+                if (url.lastIndexOf(StringUtils.AMPERSAND) == url.length() - 1) {
+                    return url + paramName + StringUtils.EQUAL + paramValue;
                 }
                 // url 不以 & 结尾
-                return url + "&" + paramName + "=" + paramValue;
+                return url + StringUtils.AMPERSAND + paramName + StringUtils.EQUAL + paramValue;
             }
         } else {// url 中不带参数
-            return url + "?" + paramName + "=" + paramValue;
+            return url + StringUtils.QUESTION_MARK + paramName + StringUtils.EQUAL + paramValue;
         }
     }
 
@@ -217,16 +217,16 @@ public class UrlUtils {
         if (null == uri)
             return url;
 
-        int temp_index = url.indexOf("?");
+        int temp_index = url.indexOf(StringUtils.QUESTION_MARK);
         if (temp_index != -1) {// url 中已带有参数
             // url 以 & 结尾
-            if (url.lastIndexOf("&") == url.length() - 1) {
+            if (url.lastIndexOf(StringUtils.AMPERSAND) == url.length() - 1) {
                 return url + uri;
             }
             // url 不以 & 结尾
-            return url + "&" + uri;
+            return url + StringUtils.AMPERSAND + uri;
         } else {// url 中不带参数
-            return url + "?" + uri;
+            return url + StringUtils.QUESTION_MARK + uri;
         }
     }
 
@@ -238,11 +238,11 @@ public class UrlUtils {
      * @return 返回移除参数 {@code paramName} 后的 URL
      */
     public static String removeParam(String url, String paramName) {
-        int temp_index = url.indexOf("?");
+        int temp_index = url.indexOf(StringUtils.QUESTION_MARK);
         if (temp_index != -1) {
-            int param_index = url.indexOf(paramName + "=", temp_index + 1);
+            int param_index = url.indexOf(paramName + StringUtils.EQUAL, temp_index + 1);
             if (param_index != -1) {
-                temp_index = url.indexOf("&", param_index + paramName.length() + 1);
+                temp_index = url.indexOf(StringUtils.AMPERSAND, param_index + paramName.length() + 1);
                 if (temp_index != -1) {
                     return url.substring(0, param_index) + url.substring(temp_index + 1);
                 }

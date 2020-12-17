@@ -135,6 +135,6 @@ public final class Singleton {
         if (ArrayUtils.isEmpty(params))
             return className;
 
-        return className + "#" + ArrayUtils.joinIgnoreNull(params, StringUtils.UNDERLINE);
+        return className + "#" + ArrayUtils.joinIgnoreNull(params, StringUtils.UNDERSCORE);
     }
 }

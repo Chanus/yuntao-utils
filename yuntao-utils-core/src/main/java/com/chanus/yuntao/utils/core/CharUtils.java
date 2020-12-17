@@ -23,25 +23,150 @@ package com.chanus.yuntao.utils.core;
  * @since 1.0.0
  */
 public class CharUtils {
+    /**
+     * 空格
+     */
     public static final char SPACE = ' ';
-    public static final char TAB = '	';
-    public static final char DOT = '.';
-    public static final char SLASH = '/';
-    public static final char BACKSLASH = '\\';
-    public static final char CR = '\r';
-    public static final char LF = '\n';
-    public static final char UNDERLINE = '_';
-    public static final char DASHED = '-';
+    /**
+     * 感叹号
+     */
+    public static final char EXCLAMATION_MARK = '!';
+    /**
+     * 引号 (双引号)
+     */
+    public static final char DOUBLE_QUOTE = '"';
+    /**
+     * 数字符号
+     */
+    public static final char HASH = '#';
+    /**
+     * 美元符
+     */
+    public static final char DOLLAR = '$';
+    /**
+     * 百分号
+     */
+    public static final char PERCENT = '%';
+    /**
+     * 和号
+     */
+    public static final char AMPERSAND = '&';
+    /**
+     * 省略号 (单引号)
+     */
+    public static final char APOSTROPHE = '\'';
+    /**
+     * 左圆括号
+     */
+    public static final char OPEN_PARENTHESIS = '(';
+    /**
+     * 右圆括号
+     */
+    public static final char CLOSE_PARENTHESIS = ')';
+    /**
+     * 星号
+     */
+    public static final char ASTERISK = '*';
+    /**
+     * 加号
+     */
+    public static final char PLUS = '+';
+    /**
+     * 逗号
+     */
     public static final char COMMA = ',';
-    public static final char DELIM_START = '{';
-    public static final char DELIM_END = '}';
-    public static final char BRACKET_START = '[';
-    public static final char BRACKET_END = ']';
+    /**
+     * 连字号或减号
+     */
+    public static final char HYPHEN = '-';
+    /**
+     * 句点或小数点
+     */
+    public static final char DOT = '.';
+    /**
+     * 斜杠
+     */
+    public static final char SLASH = '/';
+    /**
+     * 冒号
+     */
     public static final char COLON = ':';
-    public static final char DOUBLE_QUOTES = '"';
-    public static final char SINGLE_QUOTE = '\'';
-    public static final char AMP = '&';
+    /**
+     * 分号
+     */
+    public static final char SEMICOLON = ';';
+    /**
+     * 小于
+     */
+    public static final char LESS_THAN = '<';
+    /**
+     * 等于
+     */
     public static final char EQUAL = '=';
+    /**
+     * 大于
+     */
+    public static final char GREATER_THAN = '>';
+    /**
+     * 问号
+     */
+    public static final char QUESTION_MARK = '?';
+    /**
+     * 商业 at 符号
+     */
+    public static final char AT = '@';
+    /**
+     * 左中括号
+     */
+    public static final char OPEN_SQUARE_BRACKET = '[';
+    /**
+     * 右中括号
+     */
+    public static final char CLOSE_SQUARE_BRACKET = ']';
+    /**
+     * 反斜杠
+     */
+    public static final char BACKSLASH = '\\';
+    /**
+     * 音调符号
+     */
+    public static final char CARET = '^';
+    /**
+     * 下划线
+     */
+    public static final char UNDERSCORE = '_';
+    /**
+     * 重音符
+     */
+    public static final char BACK_QUOTE = '`';
+    /**
+     * 左大括号
+     */
+    public static final char OPEN_BRACE = '{';
+    /**
+     * 右大括号
+     */
+    public static final char CLOSE_BRACE = '}';
+    /**
+     * 垂直线
+     */
+    public static final char VERTICAL_BAR = '|';
+    /**
+     * 代字号
+     */
+    public static final char TILDE = '~';
+    /**
+     * 制表符
+     */
+    public static final char TAB = '	';
+    /**
+     * 回车
+     */
+    public static final char CR = '\r';
+    /**
+     * 换行
+     */
+    public static final char LF = '\n';
 
     /**
      * 给定对象对应的类是否为字符类，字符类包括：
