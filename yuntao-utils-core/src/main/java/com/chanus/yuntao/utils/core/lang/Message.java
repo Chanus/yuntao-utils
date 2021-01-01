@@ -218,6 +218,56 @@ public class Message {
         return this.code == SUCCESS;
     }
 
+    /**
+     * 判断是否操作失败
+     *
+     * @return {@code true} 操作失败；{@code false} 操作成功
+     * @since 1.4.6
+     */
+    public boolean isFail() {
+        return this.code != SUCCESS;
+    }
+
+    /**
+     * 执行成功
+     *
+     * @param msg 信息内容
+     * @return {@link Message}
+     * @since 1.4.6
+     */
+    public Message setSuccess(String msg) {
+        this.code = SUCCESS;
+        this.msg = msg;
+        return this;
+    }
+
+    /**
+     * 执行失败
+     *
+     * @param msg 信息内容
+     * @return {@link Message}
+     * @since 1.4.6
+     */
+    public Message setFail(String msg) {
+        this.code = FAIL;
+        this.msg = msg;
+        return this;
+    }
+
+    /**
+     * 执行失败
+     *
+     * @param code 信息代码
+     * @param msg  信息内容
+     * @return {@link Message}
+     * @since 1.4.6
+     */
+    public Message setFail(int code, String msg) {
+        this.code = code;
+        this.msg = msg;
+        return this;
+    }
+
     public int getCode() {
         return code;
     }

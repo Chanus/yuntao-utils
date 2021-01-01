@@ -720,7 +720,7 @@ public class LocalDateTimeUtils {
     }
 
     /**
-     * 根据 {@code field} 获取两个日期时间相间隔的数值，如相间隔的年数，月数，天数，小时数，分钟数，秒数，毫秒数，星期数等，{@code start} 和{@code end} 不区分先后顺序<br>
+     * 根据 {@code field} 获取两个日期时间相间隔的数值，如相间隔的年数，月数，天数，小时数，分钟数，秒数，毫秒数，星期数等<br>
      * 其中，计算相间隔的年数和月数时忽略时间部分
      *
      * @param start 开始日期时间
@@ -731,14 +731,14 @@ public class LocalDateTimeUtils {
     public static long interval(LocalDateTime start, LocalDateTime end, ChronoUnit field) {
         if (field == ChronoUnit.YEARS || field == ChronoUnit.MONTHS) {
             Period period = Period.between(LocalDate.from(start), LocalDate.from(end));
-            return field == ChronoUnit.YEARS ? Math.abs(period.getYears()) : Math.abs(period.getYears() * 12 + period.getMonths());
+            return field == ChronoUnit.YEARS ? period.getYears() : (period.getYears() * 12L + period.getMonths());
         }
 
-        return Math.abs(field.between(start, end));
+        return field.between(start, end);
     }
 
     /**
-     * 根据 {@code field} 获取两个日期相间隔的数值，如相间隔的年数，月数，天数，星期数，{@code start} 和 {@code end} 不区分先后顺序
+     * 根据 {@code field} 获取两个日期相间隔的数值，如相间隔的年数，月数，天数，星期数
      *
      * @param start 开始日期
      * @param end   结束日期
@@ -747,15 +747,15 @@ public class LocalDateTimeUtils {
      */
     public static long interval(LocalDate start, LocalDate end, ChronoUnit field) {
         if (field == ChronoUnit.YEARS || field == ChronoUnit.MONTHS) {
-            Period period = Period.between(LocalDate.from(start), LocalDate.from(end));
-            return field == ChronoUnit.YEARS ? Math.abs(period.getYears()) : Math.abs(period.getYears() * 12 + period.getMonths());
+            Period period = Period.between(start, end);
+            return field == ChronoUnit.YEARS ? period.getYears() : (period.getYears() * 12L + period.getMonths());
         }
 
-        return Math.abs(field.between(start, end));
+        return field.between(start, end);
     }
 
     /**
-     * 根据 {@code field} 获取两个时间相间隔的数值，如相间隔的小时数，分钟数，秒数，毫秒数等，{@code start} 和 {@code end} 不区分先后顺序
+     * 根据 {@code field} 获取两个时间相间隔的数值，如相间隔的小时数，分钟数，秒数，毫秒数等
      *
      * @param start 开始时间
      * @param end   结束时间
@@ -763,7 +763,7 @@ public class LocalDateTimeUtils {
      * @return {@code start} 与 {@code end} 根据 {@code field} 相间的数值
      */
     public static long interval(LocalTime start, LocalTime end, ChronoUnit field) {
-        return Math.abs(field.between(start, end));
+        return field.between(start, end);
     }
 
     /**

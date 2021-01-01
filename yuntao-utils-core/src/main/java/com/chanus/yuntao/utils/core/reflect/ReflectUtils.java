@@ -668,7 +668,7 @@ public class ReflectUtils {
             for (int i = 0; i < args.length; i++) {
                 type = types[i];
                 if (type.isPrimitive() && args[i] == null) {
-                    // 参数是原始类型，而传入参数为null时赋予默认值
+                    // 参数是原始类型，而传入参数为 null 时赋予默认值
                     args[i] = ClassUtils.getDefaultValue(type);
                 }
             }

@@ -208,9 +208,27 @@ public class DateUtilsTest {
     }
 
     @Test
-    public void diffYearsTest() {
-        System.out.println(DateUtils.diffYears(DateUtils.parseDateTime("2020-06-13 22:47:33"), DateUtils.parseDateTime("2019-06-13 22:47:33")));
-        System.out.println(DateUtils.diffYears(DateUtils.parseDateTime("2019-06-13 22:47:33"), DateUtils.parseDateTime("2020-06-13 22:47:33")));
+    public void diffSecondsTest() {
+        System.out.println(DateUtils.diffSeconds(DateUtils.parseDateTime("2019-06-13 22:48:33"), DateUtils.parseDateTime("2019-06-13 22:47:33")));
+        System.out.println(DateUtils.diffSeconds(DateUtils.parseDateTime("2019-06-13 22:47:33"), DateUtils.parseDateTime("2019-06-13 22:48:33")));
+    }
+
+    @Test
+    public void diffMinutesTest() {
+        System.out.println(DateUtils.diffMinutes(DateUtils.parseDateTime("2019-06-13 22:48:33"), DateUtils.parseDateTime("2019-06-13 22:47:33")));
+        System.out.println(DateUtils.diffMinutes(DateUtils.parseDateTime("2019-06-13 22:47:33"), DateUtils.parseDateTime("2019-06-13 22:48:33")));
+    }
+
+    @Test
+    public void diffHoursTest() {
+        System.out.println(DateUtils.diffHours(DateUtils.parseDateTime("2019-06-13 21:48:33"), DateUtils.parseDateTime("2019-06-13 22:48:33")));
+        System.out.println(DateUtils.diffHours(DateUtils.parseDateTime("2019-06-13 22:48:33"), DateUtils.parseDateTime("2019-06-13 21:48:33")));
+    }
+
+    @Test
+    public void diffDaysTest() {
+        System.out.println(DateUtils.diffDays(DateUtils.parseDateTime("2018-06-13 22:47:33"), DateUtils.parseDateTime("2019-06-13 22:47:33")));
+        System.out.println(DateUtils.diffDays(DateUtils.parseDateTime("2019-06-13 22:47:33"), DateUtils.parseDateTime("2018-06-13 22:47:33")));
     }
 
     @Test
@@ -220,9 +238,9 @@ public class DateUtilsTest {
     }
 
     @Test
-    public void diffDaysTest() {
-        System.out.println(DateUtils.diffDays(DateUtils.parseDateTime("2018-06-13 22:47:33"), DateUtils.parseDateTime("2019-06-13 22:47:33")));
-        System.out.println(DateUtils.diffDays(DateUtils.parseDateTime("2019-06-13 22:47:33"), DateUtils.parseDateTime("2018-06-13 22:47:33")));
+    public void diffYearsTest() {
+        System.out.println(DateUtils.diffYears(DateUtils.parseDateTime("2020-06-13 22:47:33"), DateUtils.parseDateTime("2019-06-13 22:47:33")));
+        System.out.println(DateUtils.diffYears(DateUtils.parseDateTime("2019-06-13 22:47:33"), DateUtils.parseDateTime("2020-06-13 22:47:33")));
     }
 
     @Test

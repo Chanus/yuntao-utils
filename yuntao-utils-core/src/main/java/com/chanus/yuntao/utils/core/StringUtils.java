@@ -23,9 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -215,7 +213,7 @@ public class StringUtils {
     /**
      * 判断字符串是否为空或空白，空白的定义如下：
      * <pre>
-     *     1、为null
+     *     1、为 null
      *     2、为不可见字符（如空格）
      *     3、""
      * </pre>
@@ -230,7 +228,7 @@ public class StringUtils {
     /**
      * 判断字符串是否为空或空白，空白的定义如下：
      * <pre>
-     *     1、为null
+     *     1、为 null
      *     2、为不可见字符（如空格）
      *     3、""
      * </pre>
@@ -294,7 +292,7 @@ public class StringUtils {
     /**
      * 判断字符串是否为非空或非空白，空白的定义如下：
      * <pre>
-     *     1、为null
+     *     1、为 null
      *     2、为不可见字符（如空格）
      *     3、""
      * </pre>
@@ -309,7 +307,7 @@ public class StringUtils {
     /**
      * 判断字符串是否为非空或非空白，空白的定义如下：
      * <pre>
-     *     1、为null
+     *     1、为 null
      *     2、为不可见字符（如空格）
      *     3、""
      * </pre>
@@ -396,7 +394,7 @@ public class StringUtils {
     /**
      * 字符串是否为空，空的定义如下：
      * <pre>
-     *     1、为null
+     *     1、为 null
      *     2、为""
      * </pre>
      *
@@ -410,7 +408,7 @@ public class StringUtils {
     /**
      * 字符串是否为空，空的定义如下：
      * <pre>
-     *     1、为null
+     *     1、为 null
      *     2、为""
      * </pre>
      *
@@ -460,7 +458,7 @@ public class StringUtils {
     /**
      * 字符串是否不为空，空的定义如下：
      * <pre>
-     *     1、为null
+     *     1、为 null
      *     2、为""
      * </pre>
      *
@@ -474,7 +472,7 @@ public class StringUtils {
     /**
      * 字符串是否不为空，空的定义如下：
      * <pre>
-     *     1、为null
+     *     1、为 null
      *     2、为""
      * </pre>
      *
@@ -1649,9 +1647,9 @@ public class StringUtils {
         for (int i = 0; i < len; i++) {
             if (CharUtils.equals(separator, s.charAt(i), ignoreCase)) {
                 addToList(list, s.substring(start, i), isTrim, ignoreEmpty);
-                start = i + 1;// i+1同时将 start 与 i 保持一致
+                start = i + 1;// i + 1同时将 start 与 i 保持一致
 
-                // 检查是否超出范围（最大允许 limit-1 个，剩下一个留给末尾字符串）
+                // 检查是否超出范围（最大允许 limit - 1 个，剩下一个留给末尾字符串）
                 if (limit > 0 && list.size() > limit - 2) {
                     break;
                 }
@@ -1686,6 +1684,39 @@ public class StringUtils {
     }
 
     /**
+     * 使用空白符切分字符串
+     *
+     * @param s           被切分的字符串
+     * @param limit       限制分片数，-1不限制
+     * @param isTrim      是否去除切分字符串后每个元素两边的空格
+     * @param ignoreEmpty 是否忽略空串
+     * @return 切分后的集合
+     * @since 1.4.6
+     */
+    public static List<String> split(String s, int limit, boolean isTrim, boolean ignoreEmpty) {
+        if (isEmpty(s))
+            return new ArrayList<>(0);
+
+        if (limit == 1)
+            return addToList(new ArrayList<>(1), s, isTrim, ignoreEmpty);
+
+        final ArrayList<String> list = new ArrayList<>(limit > 0 ? limit : 16);
+        int len = s.length();
+        int start = 0;// 切分后每个部分的起始
+        for (int i = 0; i < len; i++) {
+            if (CharUtils.isBlank(s.charAt(i))) {
+                addToList(list, s.substring(start, i), isTrim, ignoreEmpty);
+                start = i + 1;// i + 1 同时将 start 与 i 保持一致
+
+                // 检查是否超出范围（最大允许 limit - 1 个，剩下一个留给末尾字符串）
+                if (limit > 0 && list.size() > limit - 2)
+                    break;
+            }
+        }
+        return addToList(list, s.substring(start, len), isTrim, ignoreEmpty);
+    }
+
+    /**
      * 使用空白符切分字符串<br>
      * 切分后的字符串两边不包含空白符，空串或空白符串并不做为元素之一
      *
@@ -1695,26 +1726,7 @@ public class StringUtils {
      * @since 1.2.2
      */
     public static List<String> split(String s, int limit) {
-        if (isEmpty(s))
-            return new ArrayList<>(0);
-
-        if (limit == 1)
-            return addToList(new ArrayList<>(1), s, true, true);
-
-        final ArrayList<String> list = new ArrayList<>();
-        int len = s.length();
-        int start = 0;// 切分后每个部分的起始
-        for (int i = 0; i < len; i++) {
-            if (CharUtils.isBlank(s.charAt(i))) {
-                addToList(list, s.substring(start, i), true, true);
-                start = i + 1;// i+1 同时将 start 与 i 保持一致
-
-                // 检查是否超出范围（最大允许 limit-1 个，剩下一个留给末尾字符串）
-                if (limit > 0 && list.size() > limit - 2)
-                    break;
-            }
-        }
-        return addToList(list, s.substring(start, len), true, true);
+        return split(s, limit, true, true);
     }
 
     /**
@@ -1733,7 +1745,7 @@ public class StringUtils {
      * 切分字符串
      *
      * @param s           被切分的字符串
-     * @param separator   分隔符字符串
+     * @param separator   分隔符字符串，若为 {@code null} 或空串则使用空白符切分字符串
      * @param limit       限制分片数，-1不限制
      * @param isTrim      是否去除切分字符串后每个元素两边的空格
      * @param ignoreEmpty 是否忽略空串
@@ -1749,7 +1761,7 @@ public class StringUtils {
             return addToList(new ArrayList<>(1), s, isTrim, ignoreEmpty);
 
         if (isEmpty(separator)) {// 分隔符为空时按照空白符切分
-            return split(s, limit);
+            return split(s, limit, isTrim, ignoreEmpty);
         } else if (separator.length() == 1) {// 分隔符只有一个字符长度时按照单分隔符切分
             return split(s, separator.charAt(0), limit, isTrim, ignoreEmpty, ignoreCase);
         }
@@ -1780,7 +1792,7 @@ public class StringUtils {
      * 切分字符串，去除切分字符串后每个元素两边的空格，忽略空串
      *
      * @param s         被切分的字符串
-     * @param separator 分隔符字符串
+     * @param separator 分隔符字符串，若为 {@code null} 或空串则使用空白符切分字符串
      * @param limit     限制分片数，-1不限制
      * @return 切分后的集合
      * @since 1.2.2
@@ -1793,7 +1805,7 @@ public class StringUtils {
      * 切分字符串，去除切分字符串后每个元素两边的空格，忽略空串
      *
      * @param s         被切分的字符串
-     * @param separator 分隔符字符串
+     * @param separator 分隔符字符串，若为 {@code null} 或空串则使用空白符切分字符串
      * @return 切分后的集合
      * @since 1.2.2
      */
@@ -1871,7 +1883,7 @@ public class StringUtils {
      * 切分字符串为字符串数组
      *
      * @param s           被切分的字符串
-     * @param separator   分隔符字符串
+     * @param separator   分隔符字符串，若为 {@code null} 或空串则使用空白符切分字符串
      * @param limit       限制分片数，-1不限制
      * @param isTrim      是否去除切分字符串后每个元素两边的空格
      * @param ignoreEmpty 是否忽略空串
@@ -1887,7 +1899,7 @@ public class StringUtils {
      * 切分字符串为字符串数组，去除切分字符串后每个元素两边的空格，忽略空串
      *
      * @param s         被切分的字符串
-     * @param separator 分隔符字符串
+     * @param separator 分隔符字符串，若为 {@code null} 或空串则使用空白符切分字符串
      * @param limit     限制分片数，-1不限制
      * @return 切分后的字符串数组
      * @since 1.2.2
@@ -1900,7 +1912,7 @@ public class StringUtils {
      * 切分字符串为字符串数组，去除切分字符串后每个元素两边的空格，忽略空串
      *
      * @param s         被切分的字符串
-     * @param separator 分隔符字符串
+     * @param separator 分隔符字符串，若为 {@code null} 或空串则使用空白符切分字符串
      * @return 切分后的字符串数组
      * @since 1.2.2
      */
@@ -1947,7 +1959,7 @@ public class StringUtils {
             return NULL;
 
         if (isBlank(template) || ArrayUtils.isEmpty(params))
-            return template.toString();
+            return template;
 
         final int length = template.length();
 
@@ -2036,5 +2048,68 @@ public class StringUtils {
             stringBuilder.append(editor.edit(str.charAt(i)));
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     * 校验数字字符串是否符合指定规则
+     *
+     * @param str           数字字符串
+     * @param separator     分隔符，若为 {@code null} 则不分割字符串
+     * @param count         分隔符分割的数字个数，若为 {@code null} 则不验证
+     * @param length        由分隔符分割的数字最大长度，若为 {@code null} 则不验证
+     * @param min           由分隔符分割的数字最小值，{@code null} 不验证
+     * @param max           由分隔符分割的数字最大值，{@code null} 不验证
+     * @param isFixed       是否固定长度 length，{@code true} 则固定，{@code false} 不固定
+     * @param isIgnore0     是否忽略 0，若为 {@code null} 则不验证，{@code true} 则 01 合法，{@code false} 则 01 不合法
+     * @param isAllowRepeat 是否允许重复，{@code true} 则允许，{@code false} 则不允许
+     * @return {@code true} 数字字符串符合指定规则；{@code false} 数字字符串不符合指定规则
+     * @since 1.4.6
+     */
+    public static boolean numericVerification(String str, String separator, Integer count, Integer length, Integer min, Integer max, boolean isFixed, Boolean isIgnore0, boolean isAllowRepeat) {
+        if (isBlank(str))
+            return false;
+        String[] arr = separator == null ? new String[]{str} : splitToArray(str, separator, -1, false, false, false);
+        if (count != null && arr.length != count)// 分隔符分割的数字个数不匹配
+            return false;
+        Set<String> set = new HashSet<>();
+        for (String s : arr) {
+            if (!numericVerification(s, length, min, max, isFixed, isIgnore0))
+                return false;
+            set.add(s);
+        }
+
+        return isAllowRepeat || (set.size() == arr.length);
+    }
+
+    /**
+     * 校验数字字符串是否符合指定规则
+     *
+     * @param str       数字字符串
+     * @param length    数字字符串最大长度，若为 {@code null} 则不验证
+     * @param min       数字字符串最小值，{@code null} 不验证
+     * @param max       数字字符串最大值，{@code null} 不验证
+     * @param isFixed   是否固定长度 length，{@code true} 则固定，{@code false} 不固定
+     * @param isIgnore0 是否忽略 0，若为 {@code null} 则不验证，{@code true} 则 01 合法，{@code false} 则 01 不合法
+     * @return {@code true} 数字字符串符合指定规则；{@code false} 数字字符串不符合指定规则
+     * @since 1.4.6
+     */
+    public static boolean numericVerification(String str, Integer length, Integer min, Integer max, boolean isFixed, Boolean isIgnore0) {
+        if (!isNumeric(str))
+            return false;
+
+        if (length == null) {// 不限制数字长度
+            if (isIgnore0 != null && !isIgnore0 && str.charAt(0) == '0')
+                return false;
+        } else {
+            if (str.length() > length)// 数字长度大于最大长度
+                return false;
+            if (isFixed && str.length() != length)// 数字固定长度 length
+                return false;
+            if (isIgnore0 != null && !isIgnore0 && str.length() > 1 && str.charAt(0) == '0')
+                return false;
+        }
+
+        int num = Integer.parseInt(str);
+        return (min == null || num >= min) && (max == null || num <= max);
     }
 }

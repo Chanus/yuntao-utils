@@ -80,7 +80,7 @@ public class NumberUtils {
 
     /**
      * 提供精确的加法运算<br>
-     * 如果传入多个值为null或者空，则返回0
+     * 如果传入多个值为 null 或者空，则返回0
      *
      * @param values 多个被加值
      * @return 和
