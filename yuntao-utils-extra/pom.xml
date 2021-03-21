@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.chanus.utils</groupId>
     <artifactId>yuntao-utils</artifactId>
-    <version>1.4.6</version>
+    <version>1.5.0</version>
   </parent>
 
   <artifactId>yuntao-utils-extra</artifactId>
@@ -14,7 +14,8 @@
 
   <properties>
     <quartz.version>2.3.2</quartz.version>
-    <zxing.version>3.4.0</zxing.version>
+    <zxing.version>3.4.1</zxing.version>
+    <commons.net.version>3.8.0</commons.net.version>
   </properties>
 
   <dependencies>
@@ -39,6 +40,12 @@
       <groupId>com.google.zxing</groupId>
       <artifactId>core</artifactId>
       <version>${zxing.version}</version>
+    </dependency>
+    <!-- Apache Commons Net -->
+    <dependency>
+      <groupId>commons-net</groupId>
+      <artifactId>commons-net</artifactId>
+      <version>${commons.net.version}</version>
     </dependency>
   </dependencies>
 

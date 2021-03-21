@@ -15,6 +15,7 @@
  */
 package com.chanus.yuntao.utils.core.lang;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +26,9 @@ import java.util.Map;
  * @date 2020-10-26 14:11:47
  * @since 1.4.2
  */
-public class Message {
+public class Message implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
      * 操作成功代码
      */

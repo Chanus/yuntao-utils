@@ -1121,7 +1121,30 @@ public class FileUtils {
      * @return 文件名，包含扩展名
      */
     public static String getFileName(String path) {
-        return StringUtils.isBlank(path) ? null : getFileName(new File(path));
+        if (path == null)
+            return null;
+
+        int len = path.length();
+        if (len == 0)
+            return path;
+
+        if (CharUtils.isFileSeparator(path.charAt(len - 1))) {
+            // 以分隔符结尾的去掉结尾分隔符
+            len--;
+        }
+
+        int begin = 0;
+        char c;
+        for (int i = len - 1; i > -1; i--) {
+            c = path.charAt(i);
+            if (CharUtils.isFileSeparator(c)) {
+                // 查找最后一个路径分隔符（/或者\）
+                begin = i + 1;
+                break;
+            }
+        }
+
+        return path.substring(begin, len);
     }
 
     /**
@@ -1377,6 +1400,7 @@ public class FileUtils {
             return null;
 
         if (!dir.exists())
+            //noinspection ResultOfMethodCallIgnored
             dir.mkdirs();
 
         return dir;
@@ -1396,6 +1420,36 @@ public class FileUtils {
     }
 
     /**
+     * 创建所给文件或目录的父目录
+     *
+     * @param file 文件或目录
+     * @return 父目录
+     * @since 1.5.0
+     */
+    public static File mkParentDirs(File file) {
+        final File parentFile = file.getParentFile();
+        if (parentFile != null && !parentFile.exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            parentFile.mkdirs();
+        }
+        return parentFile;
+    }
+
+    /**
+     * 创建所给路径的父文件夹，如果存在直接返回此文件夹
+     *
+     * @param path 文件夹路径，使用 POSIX 格式，无论哪个平台
+     * @return 创建的目录
+     * @since 1.5.0
+     */
+    public static File mkParentDirs(String path) {
+        if (path == null)
+            return null;
+
+        return mkParentDirs(new File(path));
+    }
+
+    /**
      * 创建文件
      *
      * @param file 文件
@@ -1404,15 +1458,18 @@ public class FileUtils {
         if (file == null)
             return null;
 
-        file.getParentFile().mkdirs();
-        try {
-            if (!file.exists() || !file.isFile())
-                file.createNewFile();
-
-            return file;
-        } catch (IOException e) {
-            throw new RuntimeException("IOException occurred.", e);
+        if (!file.exists()) {
+            mkParentDirs(file);
+            try {
+                if (!file.isFile())
+                    //noinspection ResultOfMethodCallIgnored
+                    file.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException("IOException occurred.", e);
+            }
         }
+
+        return file;
     }
 
     /**
