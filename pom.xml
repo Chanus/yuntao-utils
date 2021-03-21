@@ -20,7 +20,7 @@
     <!-- JDK版本 -->
     <jdk.version>1.8</jdk.version>
     <!-- 单元测试 -->
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
   </properties>
 
   <dependencyManagement>
