@@ -67,6 +67,17 @@ public class CustomMap extends HashMap<String, Object> {
     /**
      * 创建 {@code CustomMap} 对象
      *
+     * @param initialCapacity 初始容量
+     * @return {@link CustomMap}
+     * @since 1.6.0
+     */
+    public static CustomMap create(int initialCapacity) {
+        return new CustomMap(initialCapacity);
+    }
+
+    /**
+     * 创建 {@code CustomMap} 对象
+     *
      * @param key   键
      * @param value 值
      * @return {@link CustomMap}
@@ -130,5 +141,16 @@ public class CustomMap extends HashMap<String, Object> {
             this.put(key, value);
 
         return this;
+    }
+
+    /**
+     * 获取字符串类型的值
+     *
+     * @param key 键
+     * @return 字符串类型值
+     * @since 1.6.0
+     */
+    public String getStringValue(String key) {
+        return (String) this.get(key);
     }
 }

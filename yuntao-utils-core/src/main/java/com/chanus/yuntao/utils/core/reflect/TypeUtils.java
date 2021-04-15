@@ -328,7 +328,7 @@ public class TypeUtils {
      * @param type 类型
      * @return {@code true} 是未知类型；{@code false} 不是未知类型
      */
-    public static boolean isUnknow(Type type) {
+    public static boolean isUnknown(Type type) {
         return type == null || type instanceof TypeVariable;
     }
 
@@ -338,7 +338,7 @@ public class TypeUtils {
      * @param types 泛型数组
      * @return {@code true} 含有泛型变量；{@code false} 不含有泛型变量
      */
-    public static boolean hasTypeVeriable(Type... types) {
+    public static boolean hasTypeVariable(Type... types) {
         for (Type type : types) {
             if (type instanceof TypeVariable) {
                 return true;

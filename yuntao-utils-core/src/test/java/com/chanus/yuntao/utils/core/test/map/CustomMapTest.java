@@ -54,4 +54,11 @@ public class CustomMapTest {
         CustomMap map = CustomMap.create().putNext("aaa", 111).putNext("bbb", 222);
         map.forEach((k, v) -> System.out.println(StringUtils.format("key = {}, value = {}", k, v)));
     }
+
+    @Test
+    public void getStringValueTest() {
+        CustomMap map = CustomMap.create().putNext("aaa", "111").putNext("bbb", "222");
+        System.out.println(map.getStringValue("aaa"));
+        System.out.println(map.getStringValue("ccc"));
+    }
 }

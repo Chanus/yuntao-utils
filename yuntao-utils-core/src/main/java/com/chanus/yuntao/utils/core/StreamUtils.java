@@ -15,6 +15,8 @@
  */
 package com.chanus.yuntao.utils.core;
 
+import com.chanus.yuntao.utils.core.function.Processor;
+
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
@@ -141,7 +143,7 @@ public class StreamUtils {
     }
 
     /**
-     * 拷贝文件流，使用 NIO
+     * 拷贝文件流，使用 NIO，会关闭流
      *
      * @param fileInputStream  文件输入流
      * @param fileOutputStream 文件输出流
@@ -219,6 +221,34 @@ public class StreamUtils {
             return collection;
         } catch (IOException e) {
             throw new RuntimeException("IOException occurred.", e);
+        } finally {
+            IOUtils.close(bufferedReader);
+        }
+    }
+
+    /**
+     * 从 {@link Reader} 中按行读取数据，并处理读取的每行数据
+     *
+     * @param <R>        集合类型
+     * @param reader     {@link Reader}
+     * @param collection 返回集合
+     * @param processor  处理器
+     * @return 内容集合
+     * @since 1.6.0
+     */
+    public static <R extends Collection<R>> R readLines(Reader reader, final R collection, Processor<String, R> processor) {
+        // 从返回的内容中读取所需内容
+        final BufferedReader bufferedReader = getReader(reader);
+        String line;
+        try {
+            while ((line = bufferedReader.readLine()) != null) {
+                collection.add(processor.process(line));
+            }
+            return collection;
+        } catch (IOException e) {
+            throw new RuntimeException("IOException occurred.", e);
+        } finally {
+            IOUtils.close(bufferedReader);
         }
     }
 
@@ -237,6 +267,21 @@ public class StreamUtils {
     }
 
     /**
+     * 从输入流中按行读取数据，并处理读取的每行数据
+     *
+     * @param <R>         集合类型
+     * @param inputStream 输入流
+     * @param charset     字符集
+     * @param collection  返回集合
+     * @param processor   处理器
+     * @return 内容集合
+     * @since 1.6.0
+     */
+    public static <R extends Collection<R>> R readLines(InputStream inputStream, Charset charset, R collection, Processor<String, R> processor) {
+        return readLines(getReader(inputStream, charset), collection, processor);
+    }
+
+    /**
      * 从输入流中按行读取数据，使用 UTF-8 编码
      *
      * @param <T>         集合类型
@@ -247,6 +292,20 @@ public class StreamUtils {
      */
     public static <T extends Collection<String>> T readUtf8Lines(InputStream inputStream, T collection) {
         return readLines(inputStream, CharsetUtils.CHARSET_UTF_8, collection);
+    }
+
+    /**
+     * 从输入流中按行读取数据，使用 UTF-8 编码，并处理读取的每行数据
+     *
+     * @param <R>         集合类型
+     * @param inputStream 输入流
+     * @param collection  返回集合
+     * @param processor   处理器
+     * @return 内容集合
+     * @since 1.6.0
+     */
+    public static <R extends Collection<R>> R readUtf8Lines(InputStream inputStream, R collection, Processor<String, R> processor) {
+        return readLines(getReader(inputStream, CharsetUtils.CHARSET_UTF_8), collection, processor);
     }
 
     /**

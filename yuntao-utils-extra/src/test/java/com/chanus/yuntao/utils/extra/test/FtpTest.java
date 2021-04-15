@@ -18,12 +18,16 @@ package com.chanus.yuntao.utils.extra.test;
 import com.chanus.yuntao.utils.core.CharsetUtils;
 import com.chanus.yuntao.utils.core.FileUtils;
 import com.chanus.yuntao.utils.core.IOUtils;
+import com.chanus.yuntao.utils.core.StreamUtils;
 import com.chanus.yuntao.utils.extra.ftp.Ftp;
 import com.chanus.yuntao.utils.extra.ftp.FtpConfig;
 import com.chanus.yuntao.utils.extra.ftp.FtpException;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ftp 测试类
@@ -33,7 +37,7 @@ import java.io.IOException;
  * @since 1.5.0
  */
 public class FtpTest {
-    private final String host = "192.168.1.3";
+    private final String host = "192.168.1.7";
     private final int port = 21;
     private final String user = "admin";
     private final String password = "123123";
@@ -135,7 +139,7 @@ public class FtpTest {
     public void existTest() {
         try (Ftp ftp = new Ftp(host, port, user, password)) {
             System.out.println(ftp.exist("/"));
-            System.out.println(ftp.exist("/aaa"));
+            System.out.println(ftp.exist("/test"));
             System.out.println(ftp.exist("/aaa/bbb"));
             System.out.println(ftp.exist("/aaa/ccc"));
             System.out.println(ftp.exist("/aaa/attendance.html"));
@@ -148,10 +152,31 @@ public class FtpTest {
     @Test
     public void lsTest() {
         try (Ftp ftp = new Ftp(host, port, user, password)) {
-            System.out.println(ftp.ls("/"));
+            System.out.println(ftp.pwd());
+            System.out.println(ftp.ls("/test/css"));
+            System.out.println(ftp.pwd());
             System.out.println(ftp.ls());
-            ftp.cd("/aaa");
+            System.out.println(ftp.pwd());
+            ftp.cd("/test/css");
+            System.out.println(ftp.pwd());
             System.out.println(ftp.ls());
+            System.out.println(ftp.pwd());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void lsFileTest() {
+        try (Ftp ftp = new Ftp(host, port, user, password)) {
+            ftp.cd("/test");
+            System.out.println(ftp.pwd());
+            System.out.println(ftp.lsFile());
+            System.out.println(ftp.lsFile(file -> file.getName().contains("phone")));
+            System.out.println(ftp.pwd());
+            ftp.cd("/test/images");
+            System.out.println(ftp.lsFile());
+            System.out.println(ftp.lsFile(file -> file.getName().startsWith("phone")));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -160,12 +185,31 @@ public class FtpTest {
     @Test
     public void lsRecursiveTest() {
         try (Ftp ftp = new Ftp(host, port, user, password)) {
-            ftp.cd("/aaa");
+            ftp.cd("/test");
             System.out.println(ftp.pwd());
-            System.out.println(ftp.lsRecursive("bbb"));
+            System.out.println(ftp.lsRecursive());
+            System.out.println(ftp.lsRecursive(file -> file.isDirectory() || file.getName().contains("register")));
+            System.out.println(ftp.lsRecursive("css"));
+            System.out.println(ftp.lsRecursive("css", file -> file.isFile() && file.getName().contains("register")));
             System.out.println(ftp.pwd());
             ftp.cd("bbb/css");
             System.out.println(ftp.lsRecursive());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void lsFileRecursiveTest() {
+        try (Ftp ftp = new Ftp(host, port, user, password)) {
+            ftp.cd("/test");
+            System.out.println(ftp.pwd());
+            System.out.println(ftp.lsFileRecursive());
+            System.out.println(ftp.lsFileRecursive(file -> file.getName().endsWith(".css")));
+            System.out.println(ftp.pwd());
+            ftp.cd("/test/images");
+            System.out.println(ftp.lsFileRecursive());
+            System.out.println(ftp.lsFileRecursive(file -> file.getName().startsWith("phone")));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -298,7 +342,35 @@ public class FtpTest {
     @Test
     public void downloadRecursiveTest() {
         try (Ftp ftp = new Ftp(host, port, user, password)) {
-            ftp.downloadRecursive("/aaa/css", "d:/test/download");
+            ftp.downloadRecursive("/test", "d:/test/download");
+            ftp.downloadRecursive("/test", "d:/test/download2", file -> file.getName().contains("css"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void downloadRecursiveIgnoreDirectoryTest() {
+        try (Ftp ftp = new Ftp(host, port, user, password)) {
+            ftp.downloadRecursiveIgnoreDirectory("/test", "d:/test/download", file -> file.getName().endsWith(".css"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void readTest() {
+        try (Ftp ftp = new Ftp(host, port, user, password)) {
+            InputStream inputStream = ftp.read("/test/css", "logo.css");
+            String content = StreamUtils.read2Utf8String(inputStream);
+            System.out.println(content);
+            System.out.println(ftp.pwd());
+            System.out.println("----------------------------------------------------");
+            InputStream inputStream2 = ftp.read("/test/css/global.css");
+            List<String> list = new ArrayList<>();
+            list = StreamUtils.readUtf8Lines(inputStream2, list);
+            list.forEach(System.out::println);
+            System.out.println(ftp.pwd());
         } catch (IOException e) {
             e.printStackTrace();
         }

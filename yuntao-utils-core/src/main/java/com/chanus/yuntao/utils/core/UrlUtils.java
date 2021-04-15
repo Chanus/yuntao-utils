@@ -154,15 +154,19 @@ public class UrlUtils {
     public static String getParamValue(String url, String paramName) {
         String paramValue = null;
         int temp_index = url.indexOf(StringUtils.QUESTION_MARK);
-        if (temp_index != -1) {// 有 ? 有参数
-            int param_index = url.indexOf(paramName + StringUtils.EQUAL, temp_index + 1);
-            if (param_index != -1) {// 有 = 有参数
-                temp_index = url.indexOf(StringUtils.AMPERSAND, param_index + paramName.length() + 1);
-                if (temp_index != -1) {
-                    paramValue = url.substring(param_index + paramName.length() + 1, temp_index);
-                } else {
-                    paramValue = url.substring(param_index + paramName.length() + 1);
-                }
+        int param_index;
+        if (temp_index == -1) {// 没有 ?
+            param_index = url.indexOf(paramName + StringUtils.EQUAL);
+        } else {// 有 ?
+            param_index = url.indexOf(paramName + StringUtils.EQUAL, temp_index + 1);
+        }
+
+        if (param_index != -1) {// 有 = 有参数
+            temp_index = url.indexOf(StringUtils.AMPERSAND, param_index + paramName.length() + 1);
+            if (temp_index != -1) {
+                paramValue = url.substring(param_index + paramName.length() + 1, temp_index);
+            } else {
+                paramValue = url.substring(param_index + paramName.length() + 1);
             }
         }
 

@@ -15,13 +15,19 @@
  */
 package com.chanus.yuntao.utils.core;
 
+import com.chanus.yuntao.utils.core.codec.Base64;
+import com.chanus.yuntao.utils.core.function.Validator;
 import com.chanus.yuntao.utils.core.reflect.ReflectUtils;
 
 import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 对象工具类
@@ -291,6 +297,394 @@ public class ObjectUtils {
      */
     public static <T> T defaultIfNull(final T object, final T defaultValue) {
         return object != null ? object : defaultValue;
+    }
+
+    /**
+     * 校验对象是否满足条件
+     *
+     * @param <T>       对象类型
+     * @param object    被检查对象
+     * @param validator 验证器
+     * @return {@code true} 校验通过；{@code false} 校验不通过
+     * @since 1.6.0
+     */
+    public static <T> boolean verify(final T object, Validator<T> validator) {
+        return validator.verify(object);
+    }
+
+    /**
+     * 校验对象是否满足条件，满足则返回原值，否则返回默认值
+     *
+     * @param <T>          对象类型
+     * @param object       被检查对象
+     * @param defaultValue 默认值
+     * @param validator    验证器
+     * @return 被检查对象校验不通过返回默认值，否则返回原值
+     * @since 1.6.0
+     */
+    public static <T> T verify(final T object, final T defaultValue, Validator<T> validator) {
+        return validator.verify(object) ? object : defaultValue;
+    }
+
+    /**
+     * 对象转字符串
+     *
+     * @param value 对象
+     * @return {@link String}
+     * @since 1.6.0
+     */
+    public static String toString(Object value) {
+        return value == null ? null : value.toString();
+    }
+
+    /**
+     * 对象转 {@link Character}
+     *
+     * @param value 对象
+     * @return {@link Character}
+     * @since 1.6.0
+     */
+    public static Character toChar(Object value) {
+        if (value == null) {
+            return null;
+        } else if (value instanceof Character) {
+            return (Character) value;
+        } else if (value instanceof String) {
+            String strVal = (String) value;
+            if (strVal.length() == 0) {
+                return null;
+            } else if (strVal.length() == 1) {
+                return strVal.charAt(0);
+            } else {
+                throw new RuntimeException("can not cast to char, value : " + value);
+            }
+        } else {
+            throw new RuntimeException("can not cast to char, value : " + value);
+        }
+    }
+
+    /**
+     * 对象转 {@link Boolean}
+     *
+     * @param value 对象
+     * @return {@link Boolean}
+     * @since 1.6.0
+     */
+    public static Boolean toBoolean(Object value) {
+        if (value == null) {
+            return null;
+        } else if (value instanceof Boolean) {
+            return (Boolean) value;
+        } else if (value instanceof BigDecimal) {
+            BigDecimal decimal = (BigDecimal) value;
+            int scale = decimal.scale();
+            return (scale >= -100 && scale <= 100 ? decimal.intValue() : decimal.intValueExact()) == 1;
+        } else if (value instanceof Number) {
+            return ((Number) value).intValue() == 1;
+        } else if (value instanceof String) {
+            String strVal = (String) value;
+            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal))
+                return null;
+
+            if (!"true".equalsIgnoreCase(strVal) && !"1".equals(strVal)) {
+                if (!"false".equalsIgnoreCase(strVal) && !"0".equals(strVal)) {
+                    if (!"Y".equalsIgnoreCase(strVal) && !"T".equals(strVal)) {
+                        if (!"F".equalsIgnoreCase(strVal) && !"N".equals(strVal)) {
+                            throw new RuntimeException("can not cast to boolean, value : " + value);
+                        } else {
+                            return Boolean.FALSE;
+                        }
+                    } else {
+                        return Boolean.TRUE;
+                    }
+                } else {
+                    return Boolean.FALSE;
+                }
+            } else {
+                return Boolean.TRUE;
+            }
+        } else {
+            throw new RuntimeException("can not cast to boolean, value : " + value);
+        }
+    }
+
+    /**
+     * 对象转 {@link Byte}
+     *
+     * @param value 对象
+     * @return {@link Byte}
+     * @since 1.6.0
+     */
+    public static Byte toByte(Object value) {
+        if (value == null) {
+            return null;
+        } else if (value instanceof BigDecimal) {
+            BigDecimal decimal = (BigDecimal) value;
+            int scale = decimal.scale();
+            return (scale >= -100 && scale <= 100 ? decimal.byteValue() : decimal.byteValueExact());
+        } else if (value instanceof Number) {
+            return ((Number) value).byteValue();
+        } else if (value instanceof String) {
+            String strVal = (String) value;
+            return strVal.length() == 0 || "null".equalsIgnoreCase(strVal) ? null : Byte.parseByte(strVal);
+        } else if (value instanceof Boolean) {
+            return (byte) ((Boolean) value ? 1 : 0);
+        } else {
+            throw new RuntimeException("can not cast to byte, value : " + value);
+        }
+    }
+
+    /**
+     * 对象转 {@link Short}
+     *
+     * @param value 对象
+     * @return {@link Short}
+     * @since 1.6.0
+     */
+    public static Short toShort(Object value) {
+        if (value == null) {
+            return null;
+        } else if (value instanceof BigDecimal) {
+            BigDecimal decimal = (BigDecimal) value;
+            int scale = decimal.scale();
+            return scale >= -100 && scale <= 100 ? decimal.shortValue() : decimal.shortValueExact();
+        } else if (value instanceof Number) {
+            return ((Number) value).shortValue();
+        } else if (value instanceof String) {
+            String strVal = (String) value;
+            return strVal.length() == 0 || "null".equalsIgnoreCase(strVal) ? null : Short.parseShort(strVal);
+        } else if (value instanceof Boolean) {
+            return (short) ((Boolean) value ? 1 : 0);
+        } else {
+            throw new RuntimeException("can not cast to short, value : " + value);
+        }
+    }
+
+    /**
+     * 对象转 {@link BigDecimal}
+     *
+     * @param value 对象
+     * @return {@link BigDecimal}
+     * @since 1.6.0
+     */
+    public static BigDecimal toBigDecimal(Object value) {
+        if (value == null) {
+            return null;
+        } else {
+            if (value instanceof Float) {
+                if (Float.isNaN((Float) value) || Float.isInfinite((Float) value))
+                    return null;
+            } else if (value instanceof Double) {
+                if (Double.isNaN((Double) value) || Double.isInfinite((Double) value))
+                    return null;
+            } else {
+                if (value instanceof BigDecimal)
+                    return (BigDecimal) value;
+
+                if (value instanceof BigInteger)
+                    return new BigDecimal((BigInteger) value);
+            }
+
+            String strVal = value.toString();
+            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal))
+                return null;
+
+            if (strVal.indexOf(44) != -1)
+                strVal = strVal.replaceAll(StringUtils.COMMA, StringUtils.EMPTY);
+
+            if (strVal.length() > 65535) {
+                throw new RuntimeException("decimal overflow");
+            } else {
+                return new BigDecimal(strVal);
+            }
+        }
+    }
+
+    /**
+     * 对象转 {@link BigInteger}
+     *
+     * @param value 对象
+     * @return {@link BigInteger}
+     * @since 1.6.0
+     */
+    public static BigInteger toBigInteger(Object value) {
+        if (value == null) {
+            return null;
+        } else if (value instanceof Float) {
+            float floatValue = (Float) value;
+            return !Float.isNaN(floatValue) && !Float.isInfinite(floatValue) ? BigInteger.valueOf((long) floatValue) : null;
+        } else if (value instanceof Double) {
+            double doubleValue = (Double) value;
+            return !Double.isNaN(doubleValue) && !Double.isInfinite(doubleValue) ? BigInteger.valueOf((long) doubleValue) : null;
+        } else if (value instanceof BigInteger) {
+            return (BigInteger) value;
+        } else {
+            if (value instanceof BigDecimal) {
+                BigDecimal decimal = (BigDecimal) value;
+                int scale = decimal.scale();
+                if (scale > -1000 && scale < 1000) {
+                    return ((BigDecimal) value).toBigInteger();
+                }
+            }
+
+            String strVal = value.toString();
+            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal))
+                return null;
+
+            if (strVal.indexOf(44) != -1)
+                strVal = strVal.replaceAll(StringUtils.COMMA, StringUtils.EMPTY);
+
+            if (strVal.length() > 65535) {
+                throw new RuntimeException("decimal overflow");
+            } else {
+                return new BigInteger(strVal);
+            }
+        }
+    }
+
+    /**
+     * 对象转 {@link Integer}
+     *
+     * @param value 对象
+     * @return {@link Integer}
+     * @since 1.6.0
+     */
+    public static Integer toInteger(Object value) {
+        if (value == null) {
+            return null;
+        } else if (value instanceof Integer) {
+            return (Integer) value;
+        } else if (value instanceof BigDecimal) {
+            BigDecimal decimal = (BigDecimal) value;
+            int scale = decimal.scale();
+            return scale >= -100 && scale <= 100 ? decimal.intValue() : decimal.intValueExact();
+        } else if (value instanceof Number) {
+            return ((Number) value).intValue();
+        } else if (value instanceof String) {
+            String strVal = (String) value;
+            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal))
+                return null;
+
+            if (strVal.indexOf(44) != -1)
+                strVal = strVal.replaceAll(StringUtils.COMMA, StringUtils.EMPTY);
+
+            Matcher matcher = Pattern.compile("\\.0*$").matcher(strVal);
+            if (matcher.find()) {
+                strVal = matcher.replaceAll("");
+            }
+
+            return Integer.parseInt(strVal);
+        } else if (value instanceof Boolean) {
+            return (Boolean) value ? 1 : 0;
+        } else {
+            throw new RuntimeException("can not cast to int, value : " + value);
+        }
+    }
+
+    /**
+     * 对象转 {@link Long}
+     *
+     * @param value 对象
+     * @return {@link Long}
+     * @since 1.6.0
+     */
+    public static Long toLong(Object value) {
+        if (value == null) {
+            return null;
+        } else if (value instanceof BigDecimal) {
+            BigDecimal decimal = (BigDecimal) value;
+            int scale = decimal.scale();
+            return scale >= -100 && scale <= 100 ? decimal.longValue() : decimal.longValueExact();
+        } else if (value instanceof Number) {
+            return ((Number) value).longValue();
+        } else if (value instanceof String) {
+            String strVal = (String) value;
+            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal)) {
+                return null;
+            }
+
+            if (strVal.indexOf(44) != -1)
+                strVal = strVal.replaceAll(StringUtils.COMMA, StringUtils.EMPTY);
+
+            return Long.parseLong(strVal);
+        } else if (value instanceof Boolean) {
+            return (Boolean) value ? 1L : 0L;
+        } else {
+            throw new RuntimeException("can not cast to long, value : " + value);
+        }
+    }
+
+    /**
+     * 对象转 {@link Float}
+     *
+     * @param value 对象
+     * @return {@link Float}
+     * @since 1.6.0
+     */
+    public static Float toFloat(Object value) {
+        if (value == null) {
+            return null;
+        } else if (value instanceof Number) {
+            return ((Number) value).floatValue();
+        } else if (value instanceof String) {
+            String strVal = value.toString();
+            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal))
+                return null;
+
+            if (strVal.indexOf(44) != -1)
+                strVal = strVal.replaceAll(StringUtils.COMMA, StringUtils.EMPTY);
+
+            return Float.parseFloat(strVal);
+        } else if (value instanceof Boolean) {
+            return (Boolean) value ? 1.0F : 0.0F;
+        } else {
+            throw new RuntimeException("can not cast to float, value : " + value);
+        }
+    }
+
+    /**
+     * 对象转 {@link Double}
+     *
+     * @param value 对象
+     * @return {@link Double}
+     * @since 1.6.0
+     */
+    public static Double toDouble(Object value) {
+        if (value == null) {
+            return null;
+        } else if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        } else if (value instanceof String) {
+            String strVal = value.toString();
+            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal))
+                return null;
+
+            if (strVal.indexOf(44) != -1)
+                strVal = strVal.replaceAll(StringUtils.COMMA, StringUtils.EMPTY);
+
+            return Double.parseDouble(strVal);
+        } else if (value instanceof Boolean) {
+            return (Boolean) value ? 1.0D : 0.0D;
+        } else {
+            throw new RuntimeException("can not cast to double, value : " + value);
+        }
+    }
+
+    /**
+     * 对象转字节数组
+     *
+     * @param value 对象
+     * @return 字节数组
+     * @since 1.6.0
+     */
+    public static byte[] toBytes(Object value) {
+        if (value instanceof byte[]) {
+            return (byte[]) value;
+        } else if (value instanceof String) {
+            return Base64.decode((String) value);
+        } else {
+            throw new RuntimeException("can not cast to byte[], value : " + value);
+        }
     }
 
     /**

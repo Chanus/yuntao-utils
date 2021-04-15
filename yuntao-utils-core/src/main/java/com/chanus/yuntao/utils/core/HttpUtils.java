@@ -810,9 +810,6 @@ public class HttpUtils {
      */
     public static HttpURLConnection getPostConnection(String url, int connectTimeout, int readTimeout, Map<String, String> headers,
                                                       Map<String, Object> queries, String body) throws IOException {
-        // 将请求参数追加到 url 中
-        if (MapUtils.isNotEmpty(queries))
-            url = UrlUtils.setParam(url, queries);
         // 创建 URL 对象
         URL connURL = new URL(url);
         // URL 连接
@@ -837,6 +834,18 @@ public class HttpUtils {
         connection.setReadTimeout(readTimeout);
         // 建立实际的连接
         connection.connect();
+
+        // 设置 queries 参数
+        if (MapUtils.isNotEmpty(queries)) {
+            String uri = UrlUtils.getParamsUri(queries);
+            if (uri != null) {
+                // 写入参数输出流
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8));
+                bufferedWriter.write(uri);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+            }
+        }
 
         // 设置 body 内的参数
         if (StringUtils.isNotBlank(body)) {

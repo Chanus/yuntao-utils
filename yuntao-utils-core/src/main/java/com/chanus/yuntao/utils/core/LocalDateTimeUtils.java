@@ -402,12 +402,23 @@ public class LocalDateTimeUtils {
     }
 
     /**
+     * {@code ZonedDateTime} 转 {@code Date}
+     *
+     * @param zonedDateTime {@code ZonedDateTime} 对象
+     * @return {@code Date} 对象
+     * @since 1.6.0
+     */
+    public static Date convertToDate(ZonedDateTime zonedDateTime) {
+        return zonedDateTime == null ? null : Date.from(zonedDateTime.toInstant());
+    }
+
+    /**
      * {@code Date} 转 {@code LocalDateTime}
      *
      * @param date {@code Date} 对象
      * @return {@code LocalDateTime} 对象
      */
-    public static LocalDateTime convertToLocalDateTimeFromDate(Date date) {
+    public static LocalDateTime convertToLocalDateTime(Date date) {
         return date == null ? null : LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
 
@@ -417,7 +428,7 @@ public class LocalDateTimeUtils {
      * @param timestamp 时间戳
      * @return {@code LocalDateTime} 对象
      */
-    public static LocalDateTime convertToLocalDateTimeFromTimestamp(long timestamp) {
+    public static LocalDateTime convertToLocalDateTime(long timestamp) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
     }
 
@@ -427,7 +438,7 @@ public class LocalDateTimeUtils {
      * @param date {@code Date} 对象
      * @return {@code LocalDate} 对象
      */
-    public static LocalDate convertToLocalDateFromDate(Date date) {
+    public static LocalDate convertToLocalDate(Date date) {
         return date == null ? null : LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()).toLocalDate();
     }
 
@@ -437,28 +448,258 @@ public class LocalDateTimeUtils {
      * @param timestamp 时间戳
      * @return {@code LocalDate} 对象
      */
-    public static LocalDate convertToLocalDateFromTimestamp(long timestamp) {
+    public static LocalDate convertToLocalDate(long timestamp) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault()).toLocalDate();
     }
 
     /**
-     * 获取指定时间 {@code localDateTime} 的秒数
+     * {@code Date} 转 {@code ZonedDateTime}
+     *
+     * @param date {@code Date} 对象
+     * @return {@code ZonedDateTime} 对象
+     * @since 1.6.0
+     */
+    public static ZonedDateTime convertToZonedDateTime(Date date) {
+        return date == null ? null : Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault())
+                                            .toLocalDateTime().atZone(ZoneId.systemDefault());
+    }
+
+    /**
+     * {@code Date} 转 {@code ZonedDateTime}
+     *
+     * @param date   {@code Date} 对象
+     * @param zoneId 时区
+     * @return {@code ZonedDateTime} 对象
+     * @since 1.6.0
+     */
+    public static ZonedDateTime convertToZonedDateTime(Date date, ZoneId zoneId) {
+        return date == null ? null : Instant.ofEpochMilli(date.getTime()).atZone(zoneId).toLocalDateTime().atZone(zoneId);
+    }
+
+    /**
+     * {@code Date} 转 {@code ZonedDateTime}
+     *
+     * @param date   {@code Date} 对象
+     * @param zoneId 时区
+     * @return {@code ZonedDateTime} 对象
+     * @since 1.6.0
+     */
+    public static ZonedDateTime convertToZonedDateTime(Date date, String zoneId) {
+        return convertToZonedDateTime(date, ZoneId.of(zoneId));
+    }
+
+    /**
+     * {@code LocalDateTime} 转 {@code ZonedDateTime}
+     *
+     * @param localDateTime {@code LocalDateTime} 对象
+     * @return {@code ZonedDateTime} 对象
+     * @since 1.6.0
+     */
+    public static ZonedDateTime convertToZonedDateTime(LocalDateTime localDateTime) {
+        return localDateTime == null ? null : localDateTime.atZone(ZoneId.systemDefault());
+    }
+
+    /**
+     * {@code LocalDateTime} 转 {@code ZonedDateTime}
+     *
+     * @param localDateTime {@code LocalDateTime} 对象
+     * @param zoneId        时区
+     * @return {@code ZonedDateTime} 对象
+     * @since 1.6.0
+     */
+    public static ZonedDateTime convertToZonedDateTime(LocalDateTime localDateTime, ZoneId zoneId) {
+        return localDateTime == null ? null : localDateTime.atZone(zoneId);
+    }
+
+    /**
+     * {@code LocalDateTime} 转 {@code ZonedDateTime}
+     *
+     * @param localDateTime {@code LocalDateTime} 对象
+     * @param zoneId        时区
+     * @return {@code ZonedDateTime} 对象
+     * @since 1.6.0
+     */
+    public static ZonedDateTime convertToZonedDateTime(LocalDateTime localDateTime, String zoneId) {
+        return convertToZonedDateTime(localDateTime, ZoneId.of(zoneId));
+    }
+
+    /**
+     * {@code LocalDate} 转 {@code ZonedDateTime}
+     *
+     * @param localDate {@code LocalDate} 对象
+     * @return {@code ZonedDateTime} 对象
+     * @since 1.6.0
+     */
+    public static ZonedDateTime convertToZonedDateTime(LocalDate localDate) {
+        return localDate == null ? null : localDate.atStartOfDay().atZone(ZoneId.systemDefault());
+    }
+
+    /**
+     * {@code LocalDate} 转 {@code ZonedDateTime}
+     *
+     * @param localDate {@code LocalDate} 对象
+     * @param zoneId    时区
+     * @return {@code ZonedDateTime} 对象
+     * @since 1.6.0
+     */
+    public static ZonedDateTime convertToZonedDateTime(LocalDate localDate, ZoneId zoneId) {
+        return localDate == null ? null : localDate.atStartOfDay().atZone(zoneId);
+    }
+
+    /**
+     * {@code LocalDate} 转 {@code ZonedDateTime}
+     *
+     * @param localDate {@code LocalDate} 对象
+     * @param zoneId    时区
+     * @return {@code ZonedDateTime} 对象
+     * @since 1.6.0
+     */
+    public static ZonedDateTime convertToZonedDateTime(LocalDate localDate, String zoneId) {
+        return convertToZonedDateTime(localDate, ZoneId.of(zoneId));
+    }
+
+    /**
+     * 转换时区
+     *
+     * @param zonedDateTime {@code ZonedDateTime} 对象
+     * @param zoneId        时区
+     * @return 转换时区后的时间
+     * @since 1.6.0
+     */
+    public static ZonedDateTime convertTimeZone(ZonedDateTime zonedDateTime, ZoneId zoneId) {
+        return zonedDateTime == null ? null : zonedDateTime.withZoneSameInstant(zoneId);
+    }
+
+    /**
+     * 转换时区
+     *
+     * @param zonedDateTime {@code ZonedDateTime} 对象
+     * @param zoneId        时区
+     * @return 转换时区后的时间
+     * @since 1.6.0
+     */
+    public static ZonedDateTime convertTimeZone(ZonedDateTime zonedDateTime, String zoneId) {
+        return convertTimeZone(zonedDateTime, ZoneId.of(zoneId));
+    }
+
+    /**
+     * 将系统时区日期时间转换到指定时区日期时间
+     *
+     * @param localDateTime {@code LocalDateTime} 对象
+     * @param zoneId        时区
+     * @return 转换时区后的日期时间
+     * @since 1.6.0
+     */
+    public static LocalDateTime convertTimeZone(LocalDateTime localDateTime, ZoneId zoneId) {
+        return localDateTime == null ? null : localDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(zoneId)
+                                                           .toLocalDateTime();
+    }
+
+    /**
+     * 将系统时区日期时间转换到指定时区日期时间
+     *
+     * @param localDateTime {@code LocalDateTime} 对象
+     * @param zoneId        时区
+     * @return 转换时区后的日期时间
+     * @since 1.6.0
+     */
+    public static LocalDateTime convertTimeZone(LocalDateTime localDateTime, String zoneId) {
+        return convertTimeZone(localDateTime, ZoneId.of(zoneId));
+    }
+
+    /**
+     * 将某时区日期时间转换到指定时区日期时间
+     *
+     * @param localDateTime {@code LocalDateTime} 对象
+     * @param sourceZoneId  原时区
+     * @param targetZoneId  目标时区
+     * @return 转换时区后的日期时间
+     * @since 1.6.0
+     */
+    public static LocalDateTime convertTimeZone(LocalDateTime localDateTime, ZoneId sourceZoneId, ZoneId targetZoneId) {
+        return localDateTime == null ? null : localDateTime.atZone(sourceZoneId).withZoneSameInstant(targetZoneId)
+                                                           .toLocalDateTime();
+    }
+
+    /**
+     * 将某时区日期时间转换到指定时区日期时间
+     *
+     * @param localDateTime {@code LocalDateTime} 对象
+     * @param sourceZoneId  原时区
+     * @param targetZoneId  目标时区
+     * @return 转换时区后的日期时间
+     * @since 1.6.0
+     */
+    public static LocalDateTime convertTimeZone(LocalDateTime localDateTime, String sourceZoneId, String targetZoneId) {
+        return convertTimeZone(localDateTime, ZoneId.of(sourceZoneId), ZoneId.of(targetZoneId));
+    }
+
+    /**
+     * 获取指定时间 {@code localDateTime} 在系统时区的秒数
      *
      * @param localDateTime 日期时间
-     * @return 指定时间 {@code localDateTime} 的秒数
+     * @return 指定时间 {@code localDateTime} 在系统时区的秒数
      */
     public static long getSeconds(LocalDateTime localDateTime) {
         return localDateTime.atZone(ZoneId.systemDefault()).toInstant().getEpochSecond();
     }
 
     /**
-     * 获取指定时间 {@code localDateTime} 的毫秒数
+     * 获取指定时间 {@code localDateTime} 在指定时区的秒数
      *
      * @param localDateTime 日期时间
-     * @return 指定时间{@code localDateTime} 的毫秒数
+     * @param zoneId        时区
+     * @return 指定时间 {@code localDateTime} 在指定时区 {@code zoneId} 的秒数
+     * @since 1.6.0
+     */
+    public static long getSeconds(LocalDateTime localDateTime, ZoneId zoneId) {
+        return localDateTime.atZone(zoneId).toInstant().getEpochSecond();
+    }
+
+    /**
+     * 获取指定时间 {@code localDateTime} 在指定时区的秒数
+     *
+     * @param localDateTime 日期时间
+     * @param zoneId        时区
+     * @return 指定时间 {@code localDateTime} 在指定时区 {@code zoneId} 的秒数
+     * @since 1.6.0
+     */
+    public static long getSeconds(LocalDateTime localDateTime, String zoneId) {
+        return getSeconds(localDateTime, ZoneId.of(zoneId));
+    }
+
+    /**
+     * 获取指定时间 {@code localDateTime} 在系统时区的毫秒数
+     *
+     * @param localDateTime 日期时间
+     * @return 指定时间{@code localDateTime} 在系统时区的毫秒数
      */
     public static long getMillis(LocalDateTime localDateTime) {
         return localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    }
+
+    /**
+     * 获取指定时间 {@code localDateTime} 在指定时区的毫秒数
+     *
+     * @param localDateTime 日期时间
+     * @param zoneId        时区
+     * @return 指定时间 {@code localDateTime} 在指定时区 {@code zoneId} 的毫秒数
+     * @since 1.6.0
+     */
+    public static long getMillis(LocalDateTime localDateTime, ZoneId zoneId) {
+        return localDateTime.atZone(zoneId).toInstant().toEpochMilli();
+    }
+
+    /**
+     * 获取指定时间 {@code localDateTime} 在指定时区的毫秒数
+     *
+     * @param localDateTime 日期时间
+     * @param zoneId        时区
+     * @return 指定时间 {@code localDateTime} 在指定时区 {@code zoneId} 的毫秒数
+     * @since 1.6.0
+     */
+    public static long getMillis(LocalDateTime localDateTime, String zoneId) {
+        return getMillis(localDateTime, ZoneId.of(zoneId));
     }
 
     /**
@@ -848,7 +1089,7 @@ public class LocalDateTimeUtils {
     }
 
     /**
-     * 比较日期时间是否在指定日期时间范围之类
+     * 比较日期时间是否在指定日期时间范围之内
      *
      * @param localDateTime 待比较日期时间
      * @param start         开始日期时间
@@ -860,7 +1101,7 @@ public class LocalDateTimeUtils {
     }
 
     /**
-     * 比较日期是否在指定日期范围之类
+     * 比较日期是否在指定日期范围之内
      *
      * @param localDate 待比较日期
      * @param start     开始日期
@@ -872,7 +1113,7 @@ public class LocalDateTimeUtils {
     }
 
     /**
-     * 比较时间是否在指定时间范围之类
+     * 比较时间是否在指定时间范围之内
      *
      * @param localTime 待比较时间
      * @param start     开始时间
