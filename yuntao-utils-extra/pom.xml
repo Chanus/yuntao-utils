@@ -15,7 +15,7 @@
   <properties>
     <quartz.version>2.3.2</quartz.version>
     <zxing.version>3.4.1</zxing.version>
-    <commons.net.version>3.8.0</commons.net.version>
+    <commons.net.version>3.9.0</commons.net.version>
   </properties>
 
   <dependencies>
