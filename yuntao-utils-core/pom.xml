@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.chanus.utils</groupId>
     <artifactId>yuntao-utils</artifactId>
-    <version>1.6.0</version>
+    <version>1.7.0</version>
   </parent>
 
   <artifactId>yuntao-utils-core</artifactId>
@@ -26,6 +26,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
+        <version>3.2.1</version>
         <configuration>
           <attach>true</attach>
         </configuration>

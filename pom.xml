@@ -6,7 +6,7 @@
 
   <groupId>com.chanus.utils</groupId>
   <artifactId>yuntao-utils</artifactId>
-  <version>1.6.0</version>
+  <version>1.7.0</version>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
 
@@ -50,7 +50,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <!-- <version>3.0.2</version> -->
+        <version>3.3.0</version>
         <configuration>
           <encoding>${project.encoding}</encoding>
         </configuration>
@@ -59,7 +59,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <!-- <version>3.6.2</version> -->
+        <version>3.8.1</version>
         <configuration>
           <compilerVersion>${jdk.version}</compilerVersion>
           <source>${jdk.version}</source> <!-- 源代码使用的开发版本 -->
@@ -72,7 +72,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <!-- <version>3.0.2</version> -->
+        <version>3.3.0</version>
         <configuration>
           <archive>
             <index>true</index>
