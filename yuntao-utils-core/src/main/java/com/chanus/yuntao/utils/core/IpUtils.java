@@ -15,8 +15,7 @@
  */
 package com.chanus.yuntao.utils.core;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.Serializable;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * IP 地址工具类
@@ -27,6 +26,7 @@ import java.io.Serializable;
  */
 public class IpUtils {
     private IpUtils() {
+        throw new IllegalStateException("Utility class");
     }
 
     /**
@@ -41,11 +41,6 @@ public class IpUtils {
      * 本地 IP（ipv6）
      */
     private static final String LOCALHOST_IPV6 = "0:0:0:0:0:0:0:1";
-
-    /**
-     * IP 地址查询
-     */
-    public static final String IP_URL = "http://whois.pconline.com.cn/ipJson.jsp";
 
     /**
      * 获取当前网络 IP 地址
@@ -155,7 +150,7 @@ public class IpUtils {
      */
     private static byte[] ipToByte(String ip) {
         if (ip.length() == 0) {
-            return null;
+            return new byte[0];
         }
 
         byte[] bytes = new byte[4];
@@ -167,7 +162,7 @@ public class IpUtils {
                 case 1:
                     l = Long.parseLong(elements[0]);
                     if ((l < 0L) || (l > 4294967295L)) {
-                        return null;
+                        return new byte[0];
                     }
                     bytes[0] = (byte) (int) (l >> 24 & 0xFF);
                     bytes[1] = (byte) (int) ((l & 0xFFFFFF) >> 16 & 0xFF);
@@ -177,12 +172,12 @@ public class IpUtils {
                 case 2:
                     l = Integer.parseInt(elements[0]);
                     if ((l < 0L) || (l > 255L)) {
-                        return null;
+                        return new byte[0];
                     }
                     bytes[0] = (byte) (int) (l & 0xFF);
                     l = Integer.parseInt(elements[1]);
                     if ((l < 0L) || (l > 16777215L)) {
-                        return null;
+                        return new byte[0];
                     }
                     bytes[1] = (byte) (int) (l >> 16 & 0xFF);
                     bytes[2] = (byte) (int) ((l & 0xFFFF) >> 8 & 0xFF);
@@ -192,13 +187,13 @@ public class IpUtils {
                     for (i = 0; i < 2; ++i) {
                         l = Integer.parseInt(elements[i]);
                         if ((l < 0L) || (l > 255L)) {
-                            return null;
+                            return new byte[0];
                         }
                         bytes[i] = (byte) (int) (l & 0xFF);
                     }
                     l = Integer.parseInt(elements[2]);
                     if ((l < 0L) || (l > 65535L)) {
-                        return null;
+                        return new byte[0];
                     }
                     bytes[2] = (byte) (int) (l >> 8 & 0xFF);
                     bytes[3] = (byte) (int) (l & 0xFF);
@@ -207,116 +202,17 @@ public class IpUtils {
                     for (i = 0; i < 4; ++i) {
                         l = Integer.parseInt(elements[i]);
                         if ((l < 0L) || (l > 255L)) {
-                            return null;
+                            return new byte[0];
                         }
                         bytes[i] = (byte) (int) (l & 0xFF);
                     }
                     break;
                 default:
-                    return null;
+                    return new byte[0];
             }
         } catch (NumberFormatException e) {
-            return null;
+            return new byte[0];
         }
         return bytes;
-    }
-
-    /**
-     * IP 物理地址
-     * 由于没有找到稳定的免费的获取 IP 物理地址的接口，所以废弃掉该类
-     */
-    @Deprecated
-    public static class IpAddress implements Serializable {
-        private static final long serialVersionUID = -1L;
-
-        /**
-         * 状态码，0标识成功 ，非0表示失败
-         */
-        private int code;
-
-        /**
-         * IP地址
-         */
-        private String ip;
-
-        /**
-         * 国家
-         */
-        private String country;
-
-        /**
-         * 省
-         */
-        private String province;
-
-        /**
-         * 城市
-         */
-        private String city;
-
-        /**
-         * 运营商
-         */
-        private String isp;
-
-        public int getCode() {
-            return code;
-        }
-
-        public void setCode(int code) {
-            this.code = code;
-        }
-
-        public String getIp() {
-            return ip;
-        }
-
-        public void setIp(String ip) {
-            this.ip = ip;
-        }
-
-        public String getCountry() {
-            return country;
-        }
-
-        public void setCountry(String country) {
-            this.country = country;
-        }
-
-        public String getProvince() {
-            return province;
-        }
-
-        public void setProvince(String province) {
-            this.province = province;
-        }
-
-        public String getCity() {
-            return city;
-        }
-
-        public void setCity(String city) {
-            this.city = city;
-        }
-
-        public String getIsp() {
-            return isp;
-        }
-
-        public void setIsp(String isp) {
-            this.isp = isp;
-        }
-
-        @Override
-        public String toString() {
-            return "IpAddress [" +
-                    "code=" + code +
-                    ", ip=" + ip +
-                    ", country=" + country +
-                    ", province=" + province +
-                    ", city=" + city +
-                    ", isp=" + isp +
-                    "]";
-        }
     }
 }
