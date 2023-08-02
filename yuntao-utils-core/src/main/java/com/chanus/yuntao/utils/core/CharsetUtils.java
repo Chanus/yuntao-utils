@@ -55,13 +55,17 @@ public class CharsetUtils {
 
     static {
         // 避免不支持 GBK 的系统中运行报错
-        Charset _CHARSET_GBK = null;
+        Charset gbk = null;
         try {
-            _CHARSET_GBK = Charset.forName(GBK);
+            gbk = Charset.forName(GBK);
         } catch (UnsupportedCharsetException e) {
             //ignore
         }
-        CHARSET_GBK = _CHARSET_GBK;
+        CHARSET_GBK = gbk;
+    }
+
+    private CharsetUtils() {
+        throw new IllegalStateException("Utility class");
     }
 
     /**

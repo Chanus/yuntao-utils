@@ -32,21 +32,27 @@ import java.util.zip.*;
  * @since 1.0.0
  */
 public class ZipUtils {
+    private ZipUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 递归压缩文件夹
      *
      * @param srcRootDir 压缩文件夹根目录的子路径
      * @param file       当前递归压缩的文件或目录对象
      * @param zos        压缩文件存储对象
-     * @throws IOException {@link IOException}
+     * @throws IOException {@link IOException} IO 异常
      */
     private static void compress(String srcRootDir, File file, ZipOutputStream zos) throws IOException {
-        if (file == null)
+        if (file == null) {
             return;
+        }
 
         // 如果是文件，则直接压缩该文件
         if (file.isFile()) {
-            int count, bufferLen = 1024;
+            int count;
+            int bufferLen = 1024;
             byte[] data = new byte[bufferLen];
 
             // 获取文件相对于压缩文件夹根目录的子路径
@@ -83,8 +89,9 @@ public class ZipUtils {
      * @param zipFileName 压缩文件名
      */
     public static void compress(String srcPath, String zipPath, String zipFileName) {
-        if (StringUtils.isBlank(srcPath) || StringUtils.isBlank(zipPath) || StringUtils.isBlank(zipFileName))
+        if (StringUtils.isBlank(srcPath) || StringUtils.isBlank(zipPath) || StringUtils.isBlank(zipFileName)) {
             return;
+        }
 
         CheckedOutputStream cos = null;
         ZipOutputStream zos = null;
@@ -98,7 +105,9 @@ public class ZipUtils {
 
             // 判断压缩文件保存的路径是否存在，如果不存在，则创建目录
             File zipDir = new File(zipPath);
-            if (!zipDir.exists() || !zipDir.isDirectory()) zipDir.mkdirs();
+            if (!zipDir.exists() || !zipDir.isDirectory()) {
+                zipDir.mkdirs();
+            }
 
             // 创建压缩文件保存的文件对象
             String zipFilePath = zipPath + File.separator + zipFileName;
@@ -141,8 +150,9 @@ public class ZipUtils {
      */
     @SuppressWarnings("unchecked")
     public static void decompress(String zipFilePath, String decompressFilePath, boolean includeZipFileName) {
-        if (StringUtils.isBlank(zipFilePath) || StringUtils.isBlank(decompressFilePath))
+        if (StringUtils.isBlank(zipFilePath) || StringUtils.isBlank(decompressFilePath)) {
             return;
+        }
 
         File zipFile = new File(zipFilePath);
         // 如果解压后的文件保存路径包含压缩文件的文件名，则追加该文件名到解压路径
@@ -156,7 +166,9 @@ public class ZipUtils {
 
         // 创建解压缩文件保存的路径
         File decompressFileDir = new File(decompressFilePath);
-        if (!decompressFileDir.exists() || !decompressFileDir.isDirectory()) decompressFileDir.mkdirs();
+        if (!decompressFileDir.exists() || !decompressFileDir.isDirectory()) {
+            decompressFileDir.mkdirs();
+        }
 
         // 开始解压
         ZipEntry entry;
@@ -185,7 +197,9 @@ public class ZipUtils {
                 }
                 entryDir = new File(entryDirPath);
                 // 如果文件夹路径不存在，则创建文件夹
-                if (!entryDir.exists() || !entryDir.isDirectory()) entryDir.mkdirs();
+                if (!entryDir.exists() || !entryDir.isDirectory()) {
+                    entryDir.mkdirs();
+                }
 
                 // 创建解压文件
                 entryFile = new File(entryFilePath);
@@ -208,8 +222,9 @@ public class ZipUtils {
             e.printStackTrace();
         } finally {
             try {
-                if (bos != null)
+                if (bos != null) {
                     bos.flush();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -228,8 +243,9 @@ public class ZipUtils {
      */
     @SuppressWarnings("unchecked")
     public static void decompress(String zipFilePath, String decompressFilePath, boolean includeZipFileName, boolean isCover) {
-        if (StringUtils.isBlank(zipFilePath) || StringUtils.isBlank(decompressFilePath))
+        if (StringUtils.isBlank(zipFilePath) || StringUtils.isBlank(decompressFilePath)) {
             return;
+        }
 
         File zipFile = new File(zipFilePath);
         // 如果解压后的文件保存路径包含压缩文件的文件名，则追加该文件名到解压路径
@@ -243,7 +259,9 @@ public class ZipUtils {
 
         // 创建解压缩文件保存的路径
         File decompressFileDir = new File(decompressFilePath);
-        if (!decompressFileDir.exists() || !decompressFileDir.isDirectory()) decompressFileDir.mkdirs();
+        if (!decompressFileDir.exists() || !decompressFileDir.isDirectory()) {
+            decompressFileDir.mkdirs();
+        }
 
         // 开始解压
         ZipEntry entry;
@@ -272,7 +290,9 @@ public class ZipUtils {
                 }
                 entryDir = new File(entryDirPath);
                 // 如果文件夹路径不存在，则创建文件夹
-                if (!entryDir.exists() || !entryDir.isDirectory()) entryDir.mkdirs();
+                if (!entryDir.exists() || !entryDir.isDirectory()) {
+                    entryDir.mkdirs();
+                }
 
                 // 创建解压文件
                 entryFile = new File(entryFilePath);
@@ -300,8 +320,9 @@ public class ZipUtils {
             e.printStackTrace();
         } finally {
             try {
-                if (bos != null)
+                if (bos != null) {
                     bos.flush();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -706,8 +727,9 @@ public class ZipUtils {
      */
     @SuppressWarnings("unchecked")
     public static File unzip(ZipFile zipFile, File outFile) {
-        if (outFile.exists() && outFile.isFile())
+        if (outFile.exists() && outFile.isFile()) {
             throw new RuntimeException(StringUtils.format("Target path [{}] exist!", outFile.getAbsolutePath()));
+        }
 
         try {
             final Enumeration<ZipEntry> em = (Enumeration<ZipEntry>) zipFile.entries();
@@ -716,10 +738,11 @@ public class ZipUtils {
             while (em.hasMoreElements()) {
                 zipEntry = em.nextElement();
                 outItemFile = buildFile(outFile, zipEntry.getName());
-                if (zipEntry.isDirectory()) {// 创建对应目录
-                    //noinspection ResultOfMethodCallIgnored
+                if (zipEntry.isDirectory()) {
+                    // 创建对应目录
                     outItemFile.mkdirs();
-                } else {// 写出文件
+                } else {
+                    // 写出文件
                     write(zipFile, zipEntry, outItemFile);
                 }
             }
@@ -739,8 +762,9 @@ public class ZipUtils {
      * @since 1.3.0
      */
     public static File unzip(InputStream in, File outFile, Charset charset) {
-        if (charset == null)
+        if (charset == null) {
             charset = Charset.defaultCharset();
+        }
 
         return unzip(new ZipInputStream(in, charset), outFile);
     }
@@ -759,10 +783,11 @@ public class ZipUtils {
             File outItemFile;
             while (null != (zipEntry = zipStream.getNextEntry())) {
                 outItemFile = FileUtils.newFile(outFile, zipEntry.getName());
-                if (zipEntry.isDirectory()) {// 目录
-                    //noinspection ResultOfMethodCallIgnored
+                if (zipEntry.isDirectory()) {
+                    // 目录
                     outItemFile.mkdirs();
-                } else {// 文件
+                } else {
+                    // 文件
                     FileUtils.writeFromStream(outItemFile, zipStream, false);
                 }
             }
@@ -1170,8 +1195,9 @@ public class ZipUtils {
      * @since 1.3.0
      */
     private static ZipOutputStream getZipOutputStream(OutputStream out, Charset charset) {
-        if (out instanceof ZipOutputStream)
+        if (out instanceof ZipOutputStream) {
             return (ZipOutputStream) out;
+        }
 
         return new ZipOutputStream(out, ObjectUtils.defaultIfNull(charset, Charset.defaultCharset()));
     }
@@ -1188,11 +1214,14 @@ public class ZipUtils {
      * @since 1.3.0
      */
     private static void zip(File file, String srcRootDir, ZipOutputStream out, FileFilter filter) {
-        if (file == null || (filter != null && !filter.accept(file)))
+        if (file == null || (filter != null && !filter.accept(file))) {
             return;
+        }
 
-        final String subPath = FileUtils.subPath(srcRootDir, file); // 获取文件相对于压缩文件夹根目录的子路径
-        if (file.isDirectory()) {// 如果是目录，则压缩压缩目录中的文件或子目录
+        // 获取文件相对于压缩文件夹根目录的子路径
+        final String subPath = FileUtils.subPath(srcRootDir, file);
+        if (file.isDirectory()) {
+            // 如果是目录，则压缩压缩目录中的文件或子目录
             final File[] files = file.listFiles();
             if (ArrayUtils.isEmpty(files) && StringUtils.isNotEmpty(subPath)) {
                 // 加入目录，只有空目录时才加入目录，非空时会在创建文件时自动添加父级目录
@@ -1202,7 +1231,8 @@ public class ZipUtils {
             for (File childFile : files) {
                 zip(childFile, srcRootDir, out, filter);
             }
-        } else {// 如果是文件或其它符号，则直接压缩该文件
+        } else {
+            // 如果是文件或其它符号，则直接压缩该文件
             addFile(file, subPath, out);
         }
     }
@@ -1228,8 +1258,9 @@ public class ZipUtils {
      * @since 1.3.0
      */
     private static void addFile(InputStream in, String path, ZipOutputStream out) {
-        if (in == null)
+        if (in == null) {
             return;
+        }
 
         try {
             out.putNextEntry(new ZipEntry(path));
@@ -1250,8 +1281,9 @@ public class ZipUtils {
      * @since 1.3.0
      */
     private static void addDir(String path, ZipOutputStream out) {
-        if (!path.endsWith(StringUtils.SLASH))
+        if (!path.endsWith(StringUtils.SLASH)) {
             path = path.concat(StringUtils.SLASH);
+        }
 
         try {
             out.putNextEntry(new ZipEntry(path));
@@ -1270,21 +1302,25 @@ public class ZipUtils {
      * @since 1.3.0
      */
     private static void validateFiles(File zipFile, File... srcFiles) {
-        if (zipFile.isDirectory())
+        if (zipFile.isDirectory()) {
             throw new RuntimeException(StringUtils.format("Zip file [{}] must not be a directory !", zipFile.getAbsoluteFile()));
+        }
 
         for (File srcFile : srcFiles) {
-            if (srcFile == null)
+            if (srcFile == null) {
                 continue;
+            }
 
-            if (!srcFile.exists())
+            if (!srcFile.exists()) {
                 throw new RuntimeException(StringUtils.format("File [{}] not exist!", srcFile.getAbsolutePath()));
+            }
 
             try {
                 final File parentFile = zipFile.getCanonicalFile().getParentFile();
                 // 压缩文件不能位于被压缩的目录内
-                if (srcFile.isDirectory() && parentFile.getCanonicalPath().contains(srcFile.getCanonicalPath()))
+                if (srcFile.isDirectory() && parentFile.getCanonicalPath().contains(srcFile.getCanonicalPath())) {
                     throw new RuntimeException(StringUtils.format("Zip file path [{}] must not be the child directory of [{}] !", zipFile.getCanonicalPath(), srcFile.getCanonicalPath()));
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -1374,18 +1410,17 @@ public class ZipUtils {
     private static File buildFile(File outFile, String fileName) {
         // 替换 Windows 路径分隔符为 Linux 路径分隔符，便于统一处理
         fileName = fileName.replace(CharUtils.BACKSLASH, CharUtils.SLASH);
-        if (!FileUtils.isWindows()
-                // 检查文件名中是否包含"/"，不考虑以"/"结尾的情况
-                && fileName.lastIndexOf(CharUtils.SLASH, fileName.length() - 2) > 0) {
+        // 检查文件名中是否包含"/"，不考虑以"/"结尾的情况
+        if (!FileUtils.isWindows() && fileName.lastIndexOf(CharUtils.SLASH, fileName.length() - 2) > 0) {
             // 在 Linux 下多层目录创建存在问题，/会被当成文件名的一部分，此处做处理
             // 使用/拆分路径（zip中无\），级联创建父目录
             final List<String> pathParts = StringUtils.split(fileName, CharUtils.SLASH, 0, false, true, false);
-            final int lastPartIndex = pathParts.size() - 1; //目录个数
+            //目录个数
+            final int lastPartIndex = pathParts.size() - 1;
             for (int i = 0; i < lastPartIndex; i++) {
                 // 由于路径拆分，slip 不检查，在最后一步检查
                 outFile = FileUtils.checkSlip(outFile, new File(outFile, pathParts.get(i)));
             }
-            //noinspection ResultOfMethodCallIgnored
             outFile.mkdirs();
             // 最后一个部分如果非空，作为文件名
             fileName = pathParts.get(lastPartIndex);

@@ -40,7 +40,11 @@ public class FileUtils {
     /**
      * 文件名和扩展名的分隔符
      */
-    private final static String FILE_EXTENSION_SEPARATOR = ".";
+    private static final String FILE_EXTENSION_SEPARATOR = ".";
+
+    private FileUtils() {
+        throw new IllegalStateException("Utility class");
+    }
 
     /**
      * 判断当前环境是否为 Windows 环境
@@ -61,12 +65,14 @@ public class FileUtils {
      * @since 1.2.1
      */
     public static File[] ls(String path) {
-        if (path == null)
+        if (path == null) {
             return null;
+        }
 
         File file = new File(path);
-        if (file.isDirectory())
+        if (file.isDirectory()) {
             return file.listFiles();
+        }
 
         throw new RuntimeException(String.format("Path [%s] is not directory!", path));
     }
@@ -80,8 +86,9 @@ public class FileUtils {
      * @since 1.2.1
      */
     public static boolean isEmpty(File file) {
-        if (file == null)
+        if (file == null) {
             return true;
+        }
 
         if (file.isDirectory()) {
             String[] subFiles = file.list();
@@ -151,8 +158,9 @@ public class FileUtils {
      */
     public static List<File> loopFiles(File file, FileFilter fileFilter) {
         final List<File> fileList = new ArrayList<>();
-        if (file == null || !file.exists())
+        if (file == null || !file.exists()) {
             return fileList;
+        }
 
         if (file.isDirectory()) {
             final File[] subFiles = file.listFiles();
@@ -304,12 +312,14 @@ public class FileUtils {
      * @since 1.4.0
      */
     public static byte[] readBytes(File file) throws IOException {
-        if (file == null)
+        if (file == null) {
             return null;
+        }
 
         long len = file.length();
-        if (len >= Integer.MAX_VALUE)
+        if (len >= Integer.MAX_VALUE) {
             throw new IOException("File is larger then max array size");
+        }
 
         byte[] bytes = new byte[(int) len];
         FileInputStream in = null;
@@ -377,8 +387,9 @@ public class FileUtils {
      * @since 1.4.0
      */
     public static String readString(URL url, Charset charset) throws IOException {
-        if (url == null)
+        if (url == null) {
             throw new NullPointerException("Empty url provided!");
+        }
 
         InputStream inputStream = null;
         try {
@@ -622,8 +633,9 @@ public class FileUtils {
      * @since 1.4.0
      */
     public static File write(File file, String content, Charset charset, boolean isAppend) {
-        if (file == null || StringUtils.isBlank(content))
+        if (file == null || StringUtils.isBlank(content)) {
             return file;
+        }
 
         BufferedWriter bufferedWriter = null;
         try {
@@ -739,8 +751,9 @@ public class FileUtils {
      * @since 1.4.0
      */
     public static File write(File file, List<String> contents, Charset charset, boolean isAppend) {
-        if (file == null || CollectionUtils.isEmpty(contents))
+        if (file == null || CollectionUtils.isEmpty(contents)) {
             return file;
+        }
 
         PrintWriter printWriter = null;
         try {
@@ -856,8 +869,9 @@ public class FileUtils {
      * @since 1.2.1
      */
     public static File write(File file, byte[] data, boolean isAppend) {
-        if (file == null || data == null)
+        if (file == null || data == null) {
             return file;
+        }
 
         FileOutputStream fileOutputStream = null;
         try {
@@ -974,8 +988,9 @@ public class FileUtils {
      * @since 1.2.1
      */
     public static void writeToStream(String path, OutputStream outputStream) {
-        if (StringUtils.isBlank(path))
+        if (StringUtils.isBlank(path)) {
             return;
+        }
 
         writeToStream(new File(path), outputStream);
     }
@@ -1121,12 +1136,14 @@ public class FileUtils {
      * @return 文件名，包含扩展名
      */
     public static String getFileName(String path) {
-        if (path == null)
+        if (path == null) {
             return null;
+        }
 
         int len = path.length();
-        if (len == 0)
+        if (len == 0) {
             return path;
+        }
 
         if (CharUtils.isFileSeparator(path.charAt(len - 1))) {
             // 以分隔符结尾的去掉结尾分隔符
@@ -1168,13 +1185,15 @@ public class FileUtils {
      */
     public static String getFileNameWithoutExtension(File file) {
         String fileName = getFileName(file);
-        if (fileName == null)
+        if (fileName == null) {
             return null;
+        }
 
-        if (fileName.contains(FILE_EXTENSION_SEPARATOR))
+        if (fileName.contains(FILE_EXTENSION_SEPARATOR)) {
             return fileName.substring(0, fileName.lastIndexOf(FILE_EXTENSION_SEPARATOR));
-        else
+        } else {
             return fileName;
+        }
     }
 
     /**
@@ -1195,8 +1214,9 @@ public class FileUtils {
      */
     public static String getFileExtension(File file) {
         String fileName = getFileName(file);
-        if (fileName == null || !fileName.contains(FILE_EXTENSION_SEPARATOR))
+        if (fileName == null || !fileName.contains(FILE_EXTENSION_SEPARATOR)) {
             return null;
+        }
 
         return fileName.substring(fileName.lastIndexOf(FILE_EXTENSION_SEPARATOR) + 1);
     }
@@ -1219,8 +1239,9 @@ public class FileUtils {
      * @since 1.2.6
      */
     public static String getFileExtension(BufferedInputStream bufferedInputStream) {
-        if (bufferedInputStream == null)
+        if (bufferedInputStream == null) {
             return null;
+        }
 
         try {
             String mimeType = URLConnection.guessContentTypeFromStream(bufferedInputStream);
@@ -1237,8 +1258,9 @@ public class FileUtils {
      * @return 文件目录
      */
     public static String getFolderName(File file) {
-        if (file == null)
+        if (file == null) {
             return null;
+        }
 
         String filePath = file.getAbsolutePath();
         int filePosi = filePath.lastIndexOf(File.separator);
@@ -1253,8 +1275,9 @@ public class FileUtils {
      * @return 文件目录
      */
     public static String getFolderName(String path) {
-        if (StringUtils.isBlank(path))
+        if (StringUtils.isBlank(path)) {
             return null;
+        }
 
         return getFolderName(new File(path));
     }
@@ -1266,8 +1289,9 @@ public class FileUtils {
      * @return 返回文件字节数，若文件不存在则返回0
      */
     public static long getFileSize(File file) {
-        if (file == null || !file.exists())
+        if (file == null || !file.exists()) {
             return 0L;
+        }
 
         if (file.isDirectory()) {
             long size = 0L;
@@ -1291,8 +1315,9 @@ public class FileUtils {
      * @return 返回文件字节数，若文件不存在则返回0
      */
     public static long getFileSize(String path) {
-        if (StringUtils.isBlank(path))
+        if (StringUtils.isBlank(path)) {
             return 0L;
+        }
 
         return getFileSize(new File(path));
     }
@@ -1304,8 +1329,9 @@ public class FileUtils {
      * @return 文件 MD5 值
      */
     public static String getFileMD5(File file) {
-        if (file == null || !file.exists() || !file.isFile())
+        if (file == null || !file.exists() || !file.isFile()) {
             return null;
+        }
 
         FileInputStream fis = null;
         try {
@@ -1344,8 +1370,9 @@ public class FileUtils {
      * @return 文件的 Mime 类型
      */
     public static String getFileMimeType(String path) {
-        if (StringUtils.isBlank(path))
+        if (StringUtils.isBlank(path)) {
             return null;
+        }
 
         return URLConnection.getFileNameMap().getContentTypeFor(path);
     }
@@ -1357,8 +1384,9 @@ public class FileUtils {
      * @return 文件的 Mime 类型
      */
     public static String getFileMimeType(File file) {
-        if (file == null)
+        if (file == null) {
             return null;
+        }
 
         return getFileMimeType(file.getAbsolutePath());
     }
@@ -1370,8 +1398,9 @@ public class FileUtils {
      * @return 文件最后的修改时间
      */
     public static Date getFileLastModifyTime(File file) {
-        if (!isFileExist(file))
+        if (!isFileExist(file)) {
             return null;
+        }
 
         return new Date(file.lastModified());
     }
@@ -1383,8 +1412,9 @@ public class FileUtils {
      * @return 文件最后的修改时间
      */
     public static Date getFileLastModifyTime(String path) {
-        if (!isFileExist(path))
+        if (!isFileExist(path)) {
             return null;
+        }
 
         return getFileLastModifyTime(new File(path));
     }
@@ -1396,12 +1426,14 @@ public class FileUtils {
      * @return 创建的目录
      */
     public static File mkdirs(File dir) {
-        if (dir == null)
+        if (dir == null) {
             return null;
+        }
 
-        if (!dir.exists())
+        if (!dir.exists()) {
             //noinspection ResultOfMethodCallIgnored
             dir.mkdirs();
+        }
 
         return dir;
     }
@@ -1413,8 +1445,9 @@ public class FileUtils {
      * @return 创建的目录
      */
     public static File mkdirs(String dir) {
-        if (StringUtils.isBlank(dir))
+        if (StringUtils.isBlank(dir)) {
             return null;
+        }
 
         return mkdirs(new File(dir));
     }
@@ -1443,8 +1476,9 @@ public class FileUtils {
      * @since 1.5.0
      */
     public static File mkParentDirs(String path) {
-        if (path == null)
+        if (path == null) {
             return null;
+        }
 
         return mkParentDirs(new File(path));
     }
@@ -1455,15 +1489,17 @@ public class FileUtils {
      * @param file 文件
      */
     public static File createFile(File file) {
-        if (file == null)
+        if (file == null) {
             return null;
+        }
 
         if (!file.exists()) {
             mkParentDirs(file);
             try {
-                if (!file.isFile())
-                    //noinspection ResultOfMethodCallIgnored
+                if (!file.isFile()) {
+                    // noinspection ResultOfMethodCallIgnored
                     file.createNewFile();
+                }
             } catch (IOException e) {
                 throw new RuntimeException("IOException occurred.", e);
             }
@@ -1478,8 +1514,9 @@ public class FileUtils {
      * @param path 文件路径
      */
     public static File createFile(String path) {
-        if (StringUtils.isBlank(path))
+        if (StringUtils.isBlank(path)) {
             return null;
+        }
 
         return createFile(new File(path));
     }
@@ -1492,8 +1529,9 @@ public class FileUtils {
      * @since 1.2.1
      */
     public static File createFile(String parent, String path) {
-        if (StringUtils.isBlank(parent) || StringUtils.isBlank(path))
+        if (StringUtils.isBlank(parent) || StringUtils.isBlank(path)) {
             return null;
+        }
 
         return createFile(newFile(parent, path));
     }
@@ -1530,8 +1568,9 @@ public class FileUtils {
      * @since 1.3.0
      */
     public static File newFile(File parent, String path) {
-        if (StringUtils.isBlank(path))
+        if (StringUtils.isBlank(path)) {
             throw new NullPointerException("File path is blank!");
+        }
 
         return checkSlip(parent, new File(parent, path));
     }
@@ -1543,8 +1582,9 @@ public class FileUtils {
      * @return {@code true} 文件存在；{@code false} 文件不存在
      */
     public static boolean isFileExist(File file) {
-        if (file == null)
+        if (file == null) {
             return false;
+        }
 
         return file.exists() && file.isFile();
     }
@@ -1556,8 +1596,9 @@ public class FileUtils {
      * @return {@code true} 文件存在；{@code false} 文件不存在
      */
     public static boolean isFileExist(String path) {
-        if (StringUtils.isBlank(path))
+        if (StringUtils.isBlank(path)) {
             return false;
+        }
 
         return isFileExist(new File(path));
     }
@@ -1569,8 +1610,9 @@ public class FileUtils {
      * @return {@code true} 文件目录存在；{@code false} 文件目录不存在
      */
     public static boolean isFolderExist(File dir) {
-        if (dir == null)
+        if (dir == null) {
             return false;
+        }
 
         return dir.exists() && dir.isDirectory();
     }
@@ -1582,8 +1624,9 @@ public class FileUtils {
      * @return {@code true} 文件目录存在；{@code false} 文件目录不存在
      */
     public static boolean isFolderExist(String dir) {
-        if (StringUtils.isBlank(dir))
+        if (StringUtils.isBlank(dir)) {
             return false;
+        }
 
         return isFolderExist(new File(dir));
     }
@@ -1654,20 +1697,25 @@ public class FileUtils {
      * @param files 文件
      */
     public static void delete(File... files) {
-        if (files == null)
+        if (files == null) {
             return;
+        }
 
         for (File file : files) {
-            if (file == null || !file.exists())
+            if (file == null || !file.exists()) {
                 break;
-            if (file.isFile()) {// 是文件
+            }
+            if (file.isFile()) {
+                // 是文件
                 file.delete();
-            } else if (file.isDirectory()) {// 是目录
+            } else if (file.isDirectory()) {
+                // 是目录
                 for (File f : file.listFiles()) {
-                    if (f.isFile())
+                    if (f.isFile()) {
                         f.delete();
-                    else if (f.isDirectory())
+                    } else if (f.isDirectory()) {
                         delete(f);
+                    }
                 }
             }
             file.delete();
@@ -1684,24 +1732,30 @@ public class FileUtils {
      * @param paths 文件路径
      */
     public static void delete(String... paths) {
-        if (paths == null)
+        if (paths == null) {
             return;
+        }
 
         File file;
         for (String path : paths) {
-            if (StringUtils.isBlank(path))
+            if (StringUtils.isBlank(path)) {
                 break;
+            }
             file = new File(path);
-            if (!file.exists())
+            if (!file.exists()) {
                 break;
-            if (file.isFile()) {// 是文件
+            }
+            if (file.isFile()) {
+                // 是文件
                 file.delete();
-            } else if (file.isDirectory()) {// 是目录
+            } else if (file.isDirectory()) {
+                // 是目录
                 for (File f : file.listFiles()) {
-                    if (f.isFile())
+                    if (f.isFile()) {
                         f.delete();
-                    else if (f.isDirectory())
+                    } else if (f.isDirectory()) {
                         delete(f.getAbsolutePath());
+                    }
                 }
             }
             file.delete();
@@ -1748,14 +1802,18 @@ public class FileUtils {
      */
     public static File copyFile(File sourceFile, File targetFile, boolean isCover) {
         try {
-            if (sourceFile == null || !sourceFile.exists())
+            if (sourceFile == null || !sourceFile.exists()) {
                 throw new IOException("The source file is not exist!");
-            if (!sourceFile.isFile())
+            }
+            if (!sourceFile.isFile()) {
                 throw new IOException("The source file is not a file!");
-            if (targetFile == null)
+            }
+            if (targetFile == null) {
                 throw new IOException("The directory file or directory is null!");
-            if (equals(sourceFile, targetFile))
+            }
+            if (equals(sourceFile, targetFile)) {
                 throw new IOException("Files source file and target file are equal!");
+            }
 
             internalCopyFile(sourceFile, targetFile, isCover);
             return targetFile;
@@ -1836,18 +1894,24 @@ public class FileUtils {
      */
     public static File copyDir(File sourceDir, File targetDir, boolean isCover, boolean isOnlyCopyFile, boolean isCopyContentIfDir) {
         try {
-            if (sourceDir == null || !sourceDir.exists())
+            if (sourceDir == null || !sourceDir.exists()) {
                 throw new IOException("The source directory is not exist!");
-            if (!sourceDir.isDirectory())
+            }
+            if (!sourceDir.isDirectory()) {
                 throw new IOException("The source directory is not a directory!");
-            if (targetDir == null)
+            }
+            if (targetDir == null) {
                 throw new IOException("The destination directory is null!");
-            if (targetDir.exists() && !targetDir.isDirectory())
+            }
+            if (targetDir.exists() && !targetDir.isDirectory()) {
                 throw new IOException("The destination directory is not a directory!");
-            if (equals(sourceDir, targetDir))
+            }
+            if (equals(sourceDir, targetDir)) {
                 throw new IOException("Directories source directory and target directory are equal!");
-            if (isSub(sourceDir, targetDir))
+            }
+            if (isSub(sourceDir, targetDir)) {
                 throw new IOException("The destination directory is a sub directory of the source directory!");
+            }
 
             final File subDir = isCopyContentIfDir ? targetDir : mkdirs(new File(targetDir, sourceDir.getName()));
             internalCopyDirContent(sourceDir, subDir, isCover, isOnlyCopyFile);
@@ -1934,14 +1998,18 @@ public class FileUtils {
      * @since 1.2.1
      */
     public static File copy(File source, File target, boolean isCover, boolean isOnlyCopyFile, boolean isCopyContentIfDir) throws IOException {
-        if (source == null || !source.exists())
+        if (source == null || !source.exists()) {
             throw new IOException("The source file or directory is not exist!");
-        if (target == null)
+        }
+        if (target == null) {
             throw new IOException("The destination file or directory is null!");
-        if (equals(source, target))
+        }
+        if (equals(source, target)) {
             throw new IOException("Files source and target are equal!");
+        }
 
-        if (source.isDirectory()) {// 复制目录
+        if (source.isDirectory()) {
+            // 复制目录
             if (target.exists() && !target.isDirectory()) {
                 // 源为目录，目标为文件，抛出IO异常
                 throw new IOException("The source is a directory but the destination is a file!");
@@ -1991,17 +2059,20 @@ public class FileUtils {
      * @since 1.2.1
      */
     public static void move(File source, File target, boolean isCover) throws IOException {
-        if (source == null || !source.exists())
+        if (source == null || !source.exists()) {
             throw new IOException("The source file or directory is not exist!");
+        }
 
         // 来源为文件夹，目标为文件
-        if (source.isDirectory() && target.isFile())
+        if (source.isDirectory() && target.isFile()) {
             throw new IOException(String.format("Can not move directory [%s] to file [%s]", source.getPath(), target.getPath()));
+        }
 
         // 只有目标为文件的情况下覆盖之
-        if (isCover && target.isFile())
+        if (isCover && target.isFile()) {
             // noinspection ResultOfMethodCallIgnored
             target.delete();
+        }
 
         // 来源为文件，目标为文件夹
         if (source.isFile() && target.isDirectory()) {
@@ -2039,8 +2110,9 @@ public class FileUtils {
      * @throws IOException IO异常
      */
     public static void move(String sourcePath, String targetPath) throws IOException {
-        if (StringUtils.isBlank(sourcePath) || StringUtils.isBlank(targetPath))
+        if (StringUtils.isBlank(sourcePath) || StringUtils.isBlank(targetPath)) {
             return;
+        }
         move(new File(sourcePath), new File(targetPath));
     }
 
@@ -2103,8 +2175,9 @@ public class FileUtils {
      * @param path 待处理文件全路径
      */
     public static void clean(String path) {
-        if (StringUtils.isNotBlank(path))
+        if (StringUtils.isNotBlank(path)) {
             clean(new File(path));
+        }
     }
 
     /**
@@ -2116,8 +2189,9 @@ public class FileUtils {
      * @since 1.2.1
      */
     public static boolean isSub(File parent, File sub) {
-        if (parent == null || sub == null)
+        if (parent == null || sub == null) {
             return false;
+        }
 
         return sub.toPath().startsWith(parent.toPath());
     }
@@ -2196,12 +2270,12 @@ public class FileUtils {
     /**
      * 在线文件转换成 Base64 字符串
      *
-     * @param fileURL 在线文件路径
+     * @param fileUrl 在线文件路径
      * @return Base64 编码的字符串
      * @since 1.2.4
      */
-    public static String toBase64Online(String fileURL) {
-        BufferedInputStream bis = HttpUtils.downloadGet(fileURL);
+    public static String toBase64Online(String fileUrl) {
+        BufferedInputStream bis = HttpUtils.downloadGet(fileUrl);
         byte[] data = StreamUtils.read2Byte(bis);
         // 对字节数组进行 Base64 编码，得到 Base64 编码的字符串
         return Base64.getEncoder().encodeToString(data);
@@ -2309,8 +2383,9 @@ public class FileUtils {
         }
 
         final ArrayList<CopyOption> copyOptions = new ArrayList<>(2);
-        if (isCover)
+        if (isCover) {
             copyOptions.add(StandardCopyOption.REPLACE_EXISTING);
+        }
 
         Files.copy(source.toPath(), target.toPath(), copyOptions.toArray(new CopyOption[0]));
     }
@@ -2366,8 +2441,9 @@ public class FileUtils {
      * @since 1.3.0
      */
     public static File getParent(File file, int level) {
-        if (level < 1 || file == null)
+        if (level < 1 || file == null) {
             return file;
+        }
 
         try {
             File parentFile = file.getCanonicalFile().getParentFile();

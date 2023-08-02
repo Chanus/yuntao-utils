@@ -32,6 +32,10 @@ public class PropertiesUtils {
      */
     private static final String PROPERTIES_NAME = "config.properties";
 
+    private PropertiesUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 从属性文件中读取属性值
      *
@@ -67,7 +71,7 @@ public class PropertiesUtils {
             is = new FileInputStream(filePath);
             properties.load(is);
             Enumeration<?> en = properties.propertyNames();
-            Map<String, String> map = new HashMap<>();
+            Map<String, String> map = new HashMap<>(8);
             String key;
             while (en.hasMoreElements()) {
                 key = (String) en.nextElement();
@@ -76,10 +80,10 @@ public class PropertiesUtils {
             return map;
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
         } finally {
             IOUtils.closeQuietly(is);
         }
+        return null;
     }
 
     /**
@@ -115,7 +119,7 @@ public class PropertiesUtils {
             is = PropertiesUtils.class.getClassLoader().getResourceAsStream(PROPERTIES_NAME);
             properties.load(is);
             Enumeration<?> en = properties.propertyNames();
-            Map<String, String> map = new HashMap<>();
+            Map<String, String> map = new HashMap<>(8);
             String key;
             while (en.hasMoreElements()) {
                 key = (String) en.nextElement();
@@ -166,8 +170,9 @@ public class PropertiesUtils {
         OutputStream os = null;
         try {
             URL url = PropertiesUtils.class.getClassLoader().getResource(PROPERTIES_NAME);
-            if (url == null)
+            if (url == null) {
                 throw new RuntimeException("default properties file is not exist");
+            }
             String propertiesFile = PropertiesUtils.class.getClassLoader().getResource(PROPERTIES_NAME).getFile();
             is = new FileInputStream(propertiesFile);
             properties.load(is);

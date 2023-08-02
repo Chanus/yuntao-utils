@@ -53,6 +53,10 @@ public class StreamUtils {
      */
     public static final int EOF = -1;
 
+    private StreamUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 将 Reader 中的内容复制到 Writer 中 使用默认缓存大小，拷贝后不关闭 Reader
      *
@@ -112,8 +116,9 @@ public class StreamUtils {
      * @since 1.2.1
      */
     public static long copy(InputStream inputStream, OutputStream outputStream, int bufferSize) {
-        if (bufferSize <= 0)
+        if (bufferSize <= 0) {
             bufferSize = DEFAULT_BUFFER_SIZE;
+        }
 
         byte[] buffer = new byte[bufferSize];
         long size = 0;
@@ -325,8 +330,9 @@ public class StreamUtils {
             throw new RuntimeException("IOException occurred.", e);
         } finally {
             IOUtils.close(outputStream);
-            if (isCloseStream)
+            if (isCloseStream) {
                 IOUtils.close(inputStream);
+            }
         }
     }
 
@@ -349,11 +355,13 @@ public class StreamUtils {
      * @since 1.3.0
      */
     public static byte[] read2Byte(InputStream inputStream, int length) {
-        if (inputStream == null)
+        if (inputStream == null) {
             return null;
+        }
 
-        if (length <= 0)
+        if (length <= 0) {
             return new byte[0];
+        }
 
         byte[] b = new byte[length];
         int readLength;
@@ -490,13 +498,15 @@ public class StreamUtils {
      */
     public static void write(final byte[] data, final OutputStream outputStream, boolean isCloseOut) {
         try {
-            if (data != null)
+            if (data != null) {
                 outputStream.write(data);
+            }
         } catch (IOException e) {
             throw new RuntimeException("IOException occurred.", e);
         } finally {
-            if (isCloseOut)
+            if (isCloseOut) {
                 IOUtils.close(outputStream);
+            }
         }
     }
 
@@ -532,8 +542,9 @@ public class StreamUtils {
         } catch (IOException e) {
             throw new RuntimeException("IOException occurred.", e);
         } finally {
-            if (isCloseOut)
+            if (isCloseOut) {
                 IOUtils.close(outputStreamWriter);
+            }
         }
     }
 
@@ -568,8 +579,9 @@ public class StreamUtils {
      * @return 字节流
      */
     public static ByteArrayInputStream toStream(String content, Charset charset) {
-        if (content == null)
+        if (content == null) {
             return null;
+        }
 
         return toStream(content.getBytes(charset));
     }
@@ -605,8 +617,9 @@ public class StreamUtils {
      * @return 字节流
      */
     public static ByteArrayInputStream toStream(byte[] content) {
-        if (content == null)
+        if (content == null) {
             return null;
+        }
 
         return new ByteArrayInputStream(content);
     }
@@ -642,8 +655,9 @@ public class StreamUtils {
      * @since 1.3.0
      */
     public static InputStream toMarkSupportStream(InputStream inputStream) {
-        if (inputStream == null)
+        if (inputStream == null) {
             return null;
+        }
 
         return inputStream.markSupported() ? inputStream : new BufferedInputStream(inputStream);
     }
@@ -670,8 +684,9 @@ public class StreamUtils {
      * @since 1.3.0
      */
     public static BufferedReader getReader(InputStream in, Charset charset) {
-        if (in == null)
+        if (in == null) {
             return null;
+        }
 
         InputStreamReader reader;
         if (charset == null) {
@@ -714,8 +729,9 @@ public class StreamUtils {
      * @since 1.3.0
      */
     public static BufferedReader getReader(Reader reader) {
-        if (reader == null)
+        if (reader == null) {
             return null;
+        }
 
         return (reader instanceof BufferedReader) ? (BufferedReader) reader : new BufferedReader(reader);
     }
@@ -741,8 +757,9 @@ public class StreamUtils {
      * @since 1.2.1
      */
     public static OutputStreamWriter getWriter(OutputStream outputStream, Charset charset) {
-        if (outputStream == null)
+        if (outputStream == null) {
             return null;
+        }
 
         if (charset == null) {
             return new OutputStreamWriter(outputStream);

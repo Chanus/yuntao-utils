@@ -56,6 +56,10 @@ public class LocalDateTimeUtils {
      */
     private static final DateTimeFormatter ORIGINAL_DATETIME_FORMATTER = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
 
+    private LocalDateTimeUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 获取 DateTimeFormatter 对象
      *
@@ -1015,12 +1019,13 @@ public class LocalDateTimeUtils {
      * @return {@code source} 大于 {@code target} 返回1，{@code source} 小于 {@code target} 返回-1，{@code source} 等于 {@code target} 返回0
      */
     public static int compare(LocalDateTime source, LocalDateTime target) {
-        if (source.isBefore(target))
+        if (source.isBefore(target)) {
             return -1;
-        else if (source.isAfter(target))
+        } else if (source.isAfter(target)) {
             return 1;
-        else
+        } else {
             return 0;
+        }
     }
 
     /**
@@ -1031,12 +1036,13 @@ public class LocalDateTimeUtils {
      * @return {@code source} 大于 {@code target} 返回1，{@code source} 小于 {@code target} 返回-1，{@code source} 等于 {@code target} 返回0
      */
     public static int compare(LocalDate source, LocalDate target) {
-        if (source.isBefore(target))
+        if (source.isBefore(target)) {
             return -1;
-        else if (source.isAfter(target))
+        } else if (source.isAfter(target)) {
             return 1;
-        else
+        } else {
             return 0;
+        }
     }
 
     /**
@@ -1047,12 +1053,13 @@ public class LocalDateTimeUtils {
      * @return {@code source} 大于 {@code target} 返回1，{@code source} 小于 {@code target} 返回-1，{@code source} 等于 {@code target} 返回0
      */
     public static int compare(LocalTime source, LocalTime target) {
-        if (source.isBefore(target))
+        if (source.isBefore(target)) {
             return -1;
-        else if (source.isAfter(target))
+        } else if (source.isAfter(target)) {
             return 1;
-        else
+        } else {
             return 0;
+        }
     }
 
     /**
@@ -1164,8 +1171,9 @@ public class LocalDateTimeUtils {
      * @return 指定日期是指定时间周期内的第几天，如果指定日期小于周期开始日期，则返回0
      */
     public static int dayOfCycle(LocalDate date, int cycle, LocalDate beginDate) {
-        if (compare(date, beginDate) == -1)
+        if (compare(date, beginDate) == -1) {
             return 0;
+        }
         return (int) (interval(beginDate, date, ChronoUnit.DAYS) % cycle + 1);
     }
 

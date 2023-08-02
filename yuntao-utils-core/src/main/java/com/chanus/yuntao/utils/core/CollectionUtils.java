@@ -30,6 +30,10 @@ import java.util.function.Predicate;
  * @since 1.0.0
  */
 public class CollectionUtils {
+    private CollectionUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 判断 Collection 集合是否为空
      *
@@ -203,8 +207,9 @@ public class CollectionUtils {
      * @since 1.4.0
      */
     public static <T> boolean contains(Collection<T> collection, Predicate<? super T> predicate) {
-        if (isEmpty(collection))
+        if (isEmpty(collection)) {
             return false;
+        }
 
         for (T t : collection) {
             if (predicate.test(t)) {
@@ -224,8 +229,9 @@ public class CollectionUtils {
      * @since 1.4.0
      */
     public static <T> String join(Iterable<T> iterable, String separator) {
-        if (iterable == null)
+        if (iterable == null) {
             return null;
+        }
 
         return join(iterable.iterator(), separator);
     }
@@ -240,8 +246,9 @@ public class CollectionUtils {
      * @since 1.4.0
      */
     public static <T> String join(Iterator<T> iterator, String separator) {
-        if (iterator == null)
+        if (iterator == null) {
             return null;
+        }
 
         final StringBuilder stringBuilder = new StringBuilder();
         boolean isFirst = true;
@@ -277,8 +284,9 @@ public class CollectionUtils {
      * @since 1.4.0
      */
     public static <T> Collection<T> filter(Collection<T> collection, Filter<T> filter) {
-        if (collection == null || filter == null)
+        if (collection == null || filter == null) {
             return collection;
+        }
 
         Collection<T> collection2 = ObjectUtils.clone(collection);
         try {
@@ -306,8 +314,9 @@ public class CollectionUtils {
      * @since 1.4.0
      */
     public static <T> List<T> filter(List<T> list, Filter<T> filter) {
-        if (list == null || filter == null)
+        if (list == null || filter == null) {
             return list;
+        }
 
         final List<T> list2 = (list instanceof LinkedList) ? new LinkedList<>() : new ArrayList<>(list.size());
         for (T t : list) {
@@ -328,8 +337,9 @@ public class CollectionUtils {
      * @since 1.4.0
      */
     public static <T> Collection<T> edit(Collection<T> collection, Editor<T, T> editor) {
-        if (collection == null || editor == null)
+        if (collection == null || editor == null) {
             return collection;
+        }
 
         Collection<T> collection2 = ObjectUtils.clone(collection);
         try {
@@ -355,12 +365,11 @@ public class CollectionUtils {
      * @since 1.4.0
      */
     public static <T> List<T> edit(List<T> list, Editor<T, T> editor) {
-        if (list == null || editor == null)
+        if (list == null || editor == null) {
             return list;
-
-        for (int i = 0; i < list.size(); i++) {
-            list.set(i, editor.edit(list.get(i)));
         }
+
+        list.replaceAll(editor::edit);
 
         return list;
     }
@@ -376,8 +385,9 @@ public class CollectionUtils {
      * @since 1.4.0
      */
     public static <T extends Collection<E>, E> T remove(T collection, Filter<E> filter) {
-        if (collection == null || filter == null)
+        if (collection == null || filter == null) {
             return collection;
+        }
 
         collection.removeIf(filter::accept);
 
@@ -449,19 +459,23 @@ public class CollectionUtils {
      * @since 1.4.0
      */
     public static <T> T get(Collection<T> collection, int index) {
-        if (collection == null)
+        if (collection == null) {
             return null;
+        }
 
         final int size = collection.size();
-        if (size == 0)
+        if (size == 0) {
             return null;
+        }
 
-        if (index < 0)
+        if (index < 0) {
             index += size;
+        }
 
         // 检查越界
-        if (index >= size || index < 0)
+        if (index >= size || index < 0) {
             return null;
+        }
 
         if (collection instanceof List) {
             final List<T> list = ((List<T>) collection);

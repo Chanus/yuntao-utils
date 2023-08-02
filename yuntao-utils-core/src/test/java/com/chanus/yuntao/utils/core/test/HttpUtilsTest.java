@@ -53,11 +53,19 @@ public class HttpUtilsTest {
     public void getAsyncTest() {
         String url = "http://pv.sohu.com/cityjson?ie=utf-8";
         String ip = "125.78.96.179";
-        HttpUtils.getAsync(url + "&ip=" + ip, result -> System.out.println("result == " + result));
+        HttpUtils.getAsync(url + "?ip=" + ip, result -> System.out.println("result == " + result));
 
         Map<String, Object> params = new HashMap<>();
         params.put("ip", ip);
         HttpUtils.getAsync(url, params, result -> System.out.println("result == " + result));
+
+        System.out.println("end");
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
@@ -81,10 +89,20 @@ public class HttpUtilsTest {
         String url = "http://pv.sohu.com/cityjson?ie=utf-8";
         String ip = "125.78.96.179";
         HttpUtils.postAsync(url, "{\"ip\":\"" + ip + "\"}", result -> System.out.println("result == " + result));
+
         HttpUtils.postAsync(url + "&ip=" + ip, result -> System.out.println("result == " + result));
+
         Map<String, Object> params = new HashMap<>();
         params.put("ip", ip);
         HttpUtils.postAsync(url, params, result -> System.out.println("result == " + result));
+
+        System.out.println("end");
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test

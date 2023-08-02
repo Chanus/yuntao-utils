@@ -28,6 +28,10 @@ import java.awt.image.BufferedImage;
  * @since 1.0.0
  */
 public class GraphicsUtils {
+    private GraphicsUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 创建 {@link Graphics2D}
      *

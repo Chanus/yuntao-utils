@@ -48,7 +48,7 @@ public class SystemUtils {
     /**
      * 主机架构
      */
-    public static String OS_ARCH = System.getProperty("os.arch");
+    public static final String OS_ARCH = System.getProperty("os.arch");
     /**
      * 当前用户
      */
@@ -63,7 +63,7 @@ public class SystemUtils {
      */
     public static long totalPhysicalMemorySize;
 
-    private static final OperatingSystemMXBean osmxb;
+    private static final OperatingSystemMXBean OSMXB;
 
     /**
      * 1KB = 1024B
@@ -84,11 +84,15 @@ public class SystemUtils {
 
     static {
         try {
-            osmxb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-            totalPhysicalMemorySize = osmxb.getTotalPhysicalMemorySize();
+            OSMXB = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+            totalPhysicalMemorySize = OSMXB.getTotalPhysicalMemorySize();
         } catch (Exception e) {
             throw new RuntimeException("获取系统物理内存失败", e);
         }
+    }
+
+    private SystemUtils() {
+        throw new IllegalStateException("Utility class");
     }
 
     /**
@@ -147,7 +151,7 @@ public class SystemUtils {
      *
      * @return 主机所有网卡 IP
      */
-    public static List<String> getHostIP() {
+    public static List<String> getHostIp() {
         try {
             List<String> ips = new ArrayList<>();
             Enumeration<NetworkInterface> enumeration = NetworkInterface.getNetworkInterfaces();
@@ -178,7 +182,7 @@ public class SystemUtils {
      * @return 可用的物理内存
      */
     public static long getFreePhysicalMemorySize() {
-        return osmxb == null ? 0L : osmxb.getFreePhysicalMemorySize();
+        return OSMXB == null ? 0L : OSMXB.getFreePhysicalMemorySize();
     }
 
     /**
@@ -187,7 +191,7 @@ public class SystemUtils {
      * @return 已使用的物理内存
      */
     public static long getUsedPhysicalMemorySize() {
-        return osmxb == null ? 0L : (osmxb.getTotalPhysicalMemorySize() - osmxb.getFreePhysicalMemorySize());
+        return OSMXB == null ? 0L : (OSMXB.getTotalPhysicalMemorySize() - OSMXB.getFreePhysicalMemorySize());
     }
 
     /**

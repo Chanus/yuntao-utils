@@ -107,8 +107,9 @@ public class CustomMap extends HashMap<String, Object> {
      * @since 1.4.6
      */
     public CustomMap putNextIgnoreNull(String key, Object value) {
-        if (value != null)
+        if (value != null) {
             this.put(key, value);
+        }
 
         return this;
     }
@@ -122,8 +123,9 @@ public class CustomMap extends HashMap<String, Object> {
      * @since 1.4.6
      */
     public CustomMap putNextIgnoreEmpty(String key, CharSequence value) {
-        if (StringUtils.isNotEmpty(value))
+        if (StringUtils.isNotEmpty(value)) {
             this.put(key, value);
+        }
 
         return this;
     }
@@ -137,8 +139,9 @@ public class CustomMap extends HashMap<String, Object> {
      * @since 1.4.6
      */
     public CustomMap putNextIgnoreBlank(String key, CharSequence value) {
-        if (StringUtils.isNotBlank(value))
+        if (StringUtils.isNotBlank(value)) {
             this.put(key, value);
+        }
 
         return this;
     }

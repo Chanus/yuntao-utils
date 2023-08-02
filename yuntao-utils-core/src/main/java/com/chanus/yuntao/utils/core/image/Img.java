@@ -34,6 +34,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Objects;
 
 /**
  * 图像编辑工具类
@@ -274,7 +275,7 @@ public class Img implements Serializable {
         double heightRatio = NumberUtils.divide(height, srcHeight);
         double widthRatio = NumberUtils.divide(width, srcWidth);
 
-        if (widthRatio == heightRatio) {
+        if (Objects.equals(widthRatio, heightRatio)) {
             // 长宽都按照相同比例缩放时，返回缩放后的图片
             scale(width, height);
         } else if (widthRatio < heightRatio) {
@@ -561,11 +562,13 @@ public class Img implements Serializable {
      */
     public boolean write(File targetFile) {
         final String formatName = FileUtils.getFileExtension(targetFile);
-        if (StringUtils.isNotBlank(formatName))
+        if (StringUtils.isNotBlank(formatName)) {
             this.targetImageType = formatName;
+        }
 
-        if (targetFile.exists())
+        if (targetFile.exists()) {
             targetFile.delete();
+        }
 
         ImageOutputStream out = null;
         try {
@@ -587,7 +590,8 @@ public class Img implements Serializable {
     private static BufferedImage draw(BufferedImage backgroundImg, Image img, Rectangle rectangle, float alpha) {
         final Graphics2D g = backgroundImg.createGraphics();
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, alpha));
-        g.drawImage(img, rectangle.x, rectangle.y, rectangle.width, rectangle.height, null); // 绘制切割后的图
+        // 绘制切割后的图
+        g.drawImage(img, rectangle.x, rectangle.y, rectangle.width, rectangle.height, null);
         g.dispose();
         return backgroundImg;
     }
@@ -624,8 +628,8 @@ public class Img implements Serializable {
         if (this.positionBaseCentre) {
             // 修正图片位置从背景的中心计算
             rectangle.setLocation(//
-                    rectangle.x + (Math.abs(baseWidth - rectangle.width) / 2), //
-                    rectangle.y + (Math.abs(baseHeight - rectangle.height) / 2)//
+                    rectangle.x + (Math.abs(baseWidth - rectangle.width) / 2),
+                    rectangle.y + (Math.abs(baseHeight - rectangle.height) / 2)
             );
         }
         return rectangle;
@@ -655,14 +659,14 @@ public class Img implements Serializable {
         }
         double r = Math.sqrt(height * height + width * width) / 2;
         double len = 2 * Math.sin(Math.toRadians(degree) / 2) * r;
-        double angel_alpha = (Math.PI - Math.toRadians(degree)) / 2;
-        double angel_dalta_width = Math.atan((double) height / width);
-        double angel_dalta_height = Math.atan((double) width / height);
-        int len_dalta_width = (int) (len * Math.cos(Math.PI - angel_alpha - angel_dalta_width));
-        int len_dalta_height = (int) (len * Math.cos(Math.PI - angel_alpha - angel_dalta_height));
-        int des_width = width + len_dalta_width * 2;
-        int des_height = height + len_dalta_height * 2;
+        double angelAlpha = (Math.PI - Math.toRadians(degree)) / 2;
+        double angelDaltaWidth = Math.atan((double) height / width);
+        double angelDaltaHeight = Math.atan((double) width / height);
+        int lenDaltaWidth = (int) (len * Math.cos(Math.PI - angelAlpha - angelDaltaWidth));
+        int lenDaltaHeight = (int) (len * Math.cos(Math.PI - angelAlpha - angelDaltaHeight));
+        int desWidth = width + lenDaltaWidth * 2;
+        int desHeight = height + lenDaltaHeight * 2;
 
-        return new Rectangle(des_width, des_height);
+        return new Rectangle(desWidth, desHeight);
     }
 }

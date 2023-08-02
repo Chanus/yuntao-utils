@@ -30,15 +30,25 @@ import java.util.Objects;
  * @since 1.1.0
  */
 public class HMACUtils {
+    private HMACUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * HMAC 加密方式
      */
     public enum HMACEnum {
+        // HmacSHA1
         HMAC_SHA1("HmacSHA1"),
+        // HmacSHA224
         HMAC_SHA224("HmacSHA224"),
+        // HmacSHA256
         HMAC_SHA256("HmacSHA256"),
+        // HmacSHA384
         HMAC_SHA384("HmacSHA384"),
+        // HmacSHA512
         HMAC_SHA512("HmacSHA512"),
+        // HmacMD5
         HMAC_MD5("HmacMD5");
 
         private final String hmacType;

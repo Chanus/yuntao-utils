@@ -119,7 +119,7 @@ public class VerifyCodeUtils {
         g.setColor(Color.WHITE);
         g.drawRect(0, 0, width - 1, height - 1);
         // randomCode用于保存随机产生的验证码，以便用户登录后进行验证。
-        StringBuffer randomCode = new StringBuffer();
+        StringBuilder randomCode = new StringBuilder();
         // 随机产生codeCount数字的验证码。
         char randomChar;
         for (int i = 0; i < codeCount; i++) {
@@ -132,7 +132,7 @@ public class VerifyCodeUtils {
             randomCode.append(randomChar);
         }
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(8);
         map.put("randomCode", randomCode);
         map.put("buffImg", buffImg);
         return map;

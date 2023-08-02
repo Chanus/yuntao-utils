@@ -37,6 +37,12 @@ import java.util.regex.Pattern;
  * @since 1.0.0
  */
 public class ObjectUtils {
+    private static final Pattern PATTERN = Pattern.compile("\\.0*$");
+
+    private ObjectUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 比较两个对象是否相等，相同的条件有两个，满足其一即可：
      * <ol>
@@ -197,8 +203,9 @@ public class ObjectUtils {
      */
     @SuppressWarnings("rawtypes")
     public static boolean isEmpty(Object obj) {
-        if (obj == null)
+        if (obj == null) {
             return true;
+        }
 
         if (obj instanceof Optional) {
             return !((Optional) obj).isPresent();
@@ -225,8 +232,9 @@ public class ObjectUtils {
     public static boolean isAllEmpty(Object... objects) {
         if (ArrayUtils.isNotEmpty(objects)) {
             for (Object object : objects) {
-                if (isNotEmpty(object))
+                if (isNotEmpty(object)) {
                     return false;
+                }
             }
         }
         return true;
@@ -258,12 +266,14 @@ public class ObjectUtils {
      * @since 1.2.6
      */
     public static boolean hasEmpty(Object... objects) {
-        if (ArrayUtils.isEmpty(objects))
+        if (ArrayUtils.isEmpty(objects)) {
             return true;
+        }
 
         for (Object object : objects) {
-            if (isEmpty(object))
+            if (isEmpty(object)) {
                 return true;
+            }
         }
         return false;
     }
@@ -383,8 +393,9 @@ public class ObjectUtils {
             return ((Number) value).intValue() == 1;
         } else if (value instanceof String) {
             String strVal = (String) value;
-            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal))
+            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal)) {
                 return null;
+            }
 
             if (!"true".equalsIgnoreCase(strVal) && !"1".equals(strVal)) {
                 if (!"false".equalsIgnoreCase(strVal) && !"0".equals(strVal)) {
@@ -472,25 +483,31 @@ public class ObjectUtils {
             return null;
         } else {
             if (value instanceof Float) {
-                if (Float.isNaN((Float) value) || Float.isInfinite((Float) value))
+                if (Float.isNaN((Float) value) || Float.isInfinite((Float) value)) {
                     return null;
+                }
             } else if (value instanceof Double) {
-                if (Double.isNaN((Double) value) || Double.isInfinite((Double) value))
+                if (Double.isNaN((Double) value) || Double.isInfinite((Double) value)) {
                     return null;
+                }
             } else {
-                if (value instanceof BigDecimal)
+                if (value instanceof BigDecimal) {
                     return (BigDecimal) value;
+                }
 
-                if (value instanceof BigInteger)
+                if (value instanceof BigInteger) {
                     return new BigDecimal((BigInteger) value);
+                }
             }
 
             String strVal = value.toString();
-            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal))
+            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal)) {
                 return null;
+            }
 
-            if (strVal.indexOf(44) != -1)
+            if (strVal.indexOf(44) != -1) {
                 strVal = strVal.replaceAll(StringUtils.COMMA, StringUtils.EMPTY);
+            }
 
             if (strVal.length() > 65535) {
                 throw new RuntimeException("decimal overflow");
@@ -528,11 +545,13 @@ public class ObjectUtils {
             }
 
             String strVal = value.toString();
-            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal))
+            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal)) {
                 return null;
+            }
 
-            if (strVal.indexOf(44) != -1)
+            if (strVal.indexOf(44) != -1) {
                 strVal = strVal.replaceAll(StringUtils.COMMA, StringUtils.EMPTY);
+            }
 
             if (strVal.length() > 65535) {
                 throw new RuntimeException("decimal overflow");
@@ -562,13 +581,15 @@ public class ObjectUtils {
             return ((Number) value).intValue();
         } else if (value instanceof String) {
             String strVal = (String) value;
-            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal))
+            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal)) {
                 return null;
+            }
 
-            if (strVal.indexOf(44) != -1)
+            if (strVal.indexOf(44) != -1) {
                 strVal = strVal.replaceAll(StringUtils.COMMA, StringUtils.EMPTY);
+            }
 
-            Matcher matcher = Pattern.compile("\\.0*$").matcher(strVal);
+            Matcher matcher = PATTERN.matcher(strVal);
             if (matcher.find()) {
                 strVal = matcher.replaceAll("");
             }
@@ -603,8 +624,9 @@ public class ObjectUtils {
                 return null;
             }
 
-            if (strVal.indexOf(44) != -1)
+            if (strVal.indexOf(44) != -1) {
                 strVal = strVal.replaceAll(StringUtils.COMMA, StringUtils.EMPTY);
+            }
 
             return Long.parseLong(strVal);
         } else if (value instanceof Boolean) {
@@ -628,11 +650,13 @@ public class ObjectUtils {
             return ((Number) value).floatValue();
         } else if (value instanceof String) {
             String strVal = value.toString();
-            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal))
+            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal)) {
                 return null;
+            }
 
-            if (strVal.indexOf(44) != -1)
+            if (strVal.indexOf(44) != -1) {
                 strVal = strVal.replaceAll(StringUtils.COMMA, StringUtils.EMPTY);
+            }
 
             return Float.parseFloat(strVal);
         } else if (value instanceof Boolean) {
@@ -656,11 +680,13 @@ public class ObjectUtils {
             return ((Number) value).doubleValue();
         } else if (value instanceof String) {
             String strVal = value.toString();
-            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal))
+            if (strVal.length() == 0 || "null".equalsIgnoreCase(strVal)) {
                 return null;
+            }
 
-            if (strVal.indexOf(44) != -1)
+            if (strVal.indexOf(44) != -1) {
                 strVal = strVal.replaceAll(StringUtils.COMMA, StringUtils.EMPTY);
+            }
 
             return Double.parseDouble(strVal);
         } else if (value instanceof Boolean) {
@@ -696,7 +722,7 @@ public class ObjectUtils {
      * @since 1.1.0
      */
     public static <T> Map<String, Object> toMap(T object) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(8);
         Object o;
         for (Field field : object.getClass().getDeclaredFields()) {
             try {
@@ -721,7 +747,7 @@ public class ObjectUtils {
      * @since 1.1.0
      */
     public static <T> Map<String, Object> toMapWithNull(T object) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(object.getClass().getDeclaredFields().length);
         for (Field field : object.getClass().getDeclaredFields()) {
             try {
                 field.setAccessible(true);
@@ -743,8 +769,9 @@ public class ObjectUtils {
      * @since 1.1.0
      */
     public static <T> T mapToObject(Map<String, Object> map, Class<T> clazz) {
-        if (MapUtils.isEmpty(map))
+        if (MapUtils.isEmpty(map)) {
             return null;
+        }
 
         T object = null;
         try {
@@ -815,8 +842,9 @@ public class ObjectUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> T cloneByStream(T obj) {
-        if (!(obj instanceof Serializable))
+        if (!(obj instanceof Serializable)) {
             return null;
+        }
 
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream out = null;

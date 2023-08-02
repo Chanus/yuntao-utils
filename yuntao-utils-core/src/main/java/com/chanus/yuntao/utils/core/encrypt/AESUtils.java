@@ -49,6 +49,10 @@ public class AESUtils {
      */
     private static final String INIT_VECTOR = "yuntao0123456789";
 
+    private AESUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 生成 AES 加密密钥字符串，种子相同则生成的密钥字符串相同
      *

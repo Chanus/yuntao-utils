@@ -43,6 +43,10 @@ public class SHAUtils {
 
     private static final String SHA512 = "SHA-512";
 
+    private SHAUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * SHA1、SHA2 摘要加密算法
      *
@@ -51,8 +55,9 @@ public class SHAUtils {
      * @return 加密后的密文字符串
      */
     private static String digest(String text, String digestType) {
-        if (StringUtils.isBlank(text) || StringUtils.isBlank(digestType))
+        if (StringUtils.isBlank(text) || StringUtils.isBlank(digestType)) {
             return null;
+        }
 
         try {
             // 获得摘要算法的 MessageDigest 对象

@@ -104,8 +104,9 @@ public final class Singleton {
      * @param clazz 类
      */
     public static void remove(Class<?> clazz) {
-        if (clazz != null)
+        if (clazz != null) {
             remove(clazz.getName());
+        }
     }
 
     /**
@@ -132,8 +133,9 @@ public final class Singleton {
      * @return key
      */
     private static String buildKey(String className, Object... params) {
-        if (ArrayUtils.isEmpty(params))
+        if (ArrayUtils.isEmpty(params)) {
             return className;
+        }
 
         return className + "#" + ArrayUtils.joinIgnoreNull(params, StringUtils.UNDERSCORE);
     }
