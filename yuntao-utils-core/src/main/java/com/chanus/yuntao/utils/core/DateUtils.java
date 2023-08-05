@@ -55,6 +55,10 @@ public class DateUtils {
      */
     private static final String END_TIME = " 23:59:59";
 
+    private DateUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 获取 SimpleDateFormat 对象
      *
@@ -117,8 +121,9 @@ public class DateUtils {
      * @return 转换后的时间对象，若 {@code dateStr} 或 {@code format} 为空，则返回 null
      */
     public static Date parse(String dateStr, String format) {
-        if (StringUtils.isBlank(dateStr) || StringUtils.isBlank(format))
+        if (StringUtils.isBlank(dateStr) || StringUtils.isBlank(format)) {
             return null;
+        }
 
         try {
             return getDateFormat(format).parse(dateStr);
@@ -168,8 +173,9 @@ public class DateUtils {
      * @return 时间对象，若 {@code dateStr} 为空，则返回null
      */
     public static Date parseOriginalDateTime(String dateStr) {
-        if (StringUtils.isBlank(dateStr))
+        if (StringUtils.isBlank(dateStr)) {
             return null;
+        }
 
         try {
             return new SimpleDateFormat(ORIGINAL_DATETIME_FORMAT, Locale.ENGLISH).parse(dateStr);
@@ -282,8 +288,9 @@ public class DateUtils {
      * @return 指定时间按照 {@code unit} 偏移 {@code offset} 的时间
      */
     public static Date offset(Date date, int offset, int unit) {
-        if (date == null)
+        if (date == null) {
             return null;
+        }
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -516,10 +523,11 @@ public class DateUtils {
         while (sourceCalendar.get(Calendar.YEAR) != targetCalendar.get(Calendar.YEAR)
                 || sourceCalendar.get(Calendar.MONTH) != targetCalendar.get(Calendar.MONTH)
                 || sourceCalendar.get(Calendar.DAY_OF_MONTH) != targetCalendar.get(Calendar.DAY_OF_MONTH)) {
-            if (b)
+            if (b) {
                 sourceCalendar.add(Calendar.DATE, 1);
-            else
+            } else {
                 targetCalendar.add(Calendar.DATE, 1);
+            }
             n++;
         }
 
@@ -541,10 +549,11 @@ public class DateUtils {
 
         int n = (targetCalendar.get(Calendar.YEAR) - sourceCalendar.get(Calendar.YEAR)) * 12 + targetCalendar.get(Calendar.MONTH) - sourceCalendar.get(Calendar.MONTH);
 
-        if (n >= 0)
+        if (n >= 0) {
             return targetCalendar.get(Calendar.DAY_OF_MONTH) >= sourceCalendar.get(Calendar.DAY_OF_MONTH) ? n : (n - 1);
-        else
+        } else {
             return targetCalendar.get(Calendar.DAY_OF_MONTH) <= sourceCalendar.get(Calendar.DAY_OF_MONTH) ? n : (n + 1);
+        }
     }
 
     /**
@@ -561,18 +570,20 @@ public class DateUtils {
         targetCalendar.setTime(targetDate);
 
         int n = targetCalendar.get(Calendar.YEAR) - sourceCalendar.get(Calendar.YEAR);
-        if (n == 0)
+        if (n == 0) {
             return n;
+        }
 
         int sourceMonth = sourceCalendar.get(Calendar.MONTH);
         int sourceDay = sourceCalendar.get(Calendar.DAY_OF_MONTH);
         int targetMonth = targetCalendar.get(Calendar.MONTH);
         int targetDay = targetCalendar.get(Calendar.DAY_OF_MONTH);
 
-        if (n >= 0)
+        if (n >= 0) {
             return (targetMonth > sourceMonth || (targetMonth == sourceMonth && targetDay >= sourceDay)) ? n : (n - 1);
-        else
+        } else {
             return (targetMonth < sourceMonth || (targetMonth == sourceMonth && targetDay <= sourceDay)) ? n : (n + 1);
+        }
     }
 
     /**
@@ -650,8 +661,9 @@ public class DateUtils {
      * @return 转换后的时间
      */
     public static Date convertByTimeZone(Date date, TimeZone sourceTimeZone, TimeZone targetTimeZone) {
-        if (sourceTimeZone == null || targetTimeZone == null)
+        if (sourceTimeZone == null || targetTimeZone == null) {
             return date;
+        }
 
         return new Date(date.getTime() - sourceTimeZone.getRawOffset() + targetTimeZone.getRawOffset());
     }
@@ -698,8 +710,9 @@ public class DateUtils {
      * @return 指定日期是指定时间周期内的第几天，如果指定时间小于周期开始时间，则返回0
      */
     public static int dayOfCycle(Date date, int cycle, Date beginDate) {
-        if (DateUtils.compare(date, beginDate) == -1)
+        if (DateUtils.compare(date, beginDate) == -1) {
             return 0;
+        }
         return diffDays(beginDate, date) % cycle + 1;
     }
 

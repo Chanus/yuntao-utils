@@ -27,6 +27,10 @@ import java.io.IOException;
  * @since 1.0.0
  */
 public class IOUtils {
+    private IOUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 关闭资源
      *

@@ -106,12 +106,12 @@ public class RandomUtilsTest {
 
     @Test
     public void getLowercaseUUIDTest() {
-        System.out.println(RandomUtils.getLowercaseUUID());
+        System.out.println(RandomUtils.getLowerCaseUUID());
     }
 
     @Test
     public void getUppercaseUUIDTest() {
-        System.out.println(RandomUtils.getUppercaseUUID());
+        System.out.println(RandomUtils.getUpperCaseUUID());
     }
 
     @Test

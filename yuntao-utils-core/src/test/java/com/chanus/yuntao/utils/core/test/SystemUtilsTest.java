@@ -67,7 +67,7 @@ public class SystemUtilsTest {
 
     @Test
     public void getHostIPTest() {
-        List<String> ips = SystemUtils.getHostIP();
+        List<String> ips = SystemUtils.getHostIp();
         ips.forEach(System.out::println);
     }
 

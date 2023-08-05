@@ -16,13 +16,11 @@
 package com.chanus.yuntao.utils.extra.ftp;
 
 import com.chanus.yuntao.utils.core.*;
-import com.chanus.yuntao.utils.core.function.Filter;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
-import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.net.ftp.*;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,9 +34,13 @@ import java.util.List;
  */
 public class Ftp implements Closeable {
     /**
+     * 路径格式化字符串
+     */
+    private static final String PATH_FORMATTER = "{}/{}";
+    /**
      * 默认端口
      */
-    public static final int DEFAULT_PORT = 21;
+    private static final int DEFAULT_PORT = 21;
 
     /**
      * FTP 配置项
@@ -150,39 +152,39 @@ public class Ftp implements Closeable {
      * @return this
      */
     public Ftp init(FtpConfig config, FtpMode mode) {
-        final FTPClient client = new FTPClient();
+        final FTPClient ftpClient = new FTPClient();
         // 设置文件传输的编码
-        client.setControlEncoding(config.getCharset().toString());
+        ftpClient.setControlEncoding(config.getCharset().toString());
         // 设置连接超时时长
-        client.setConnectTimeout(config.getConnectionTimeout());
+        ftpClient.setConnectTimeout(config.getConnectionTimeout());
         try {
             // 连接 FTP 服务器
-            client.connect(config.getHost(), config.getPort());
+            ftpClient.connect(config.getHost(), config.getPort());
             // 设置 defaultTimeout
-            client.setDefaultTimeout(config.getDefaultTimeout());
+            ftpClient.setDefaultTimeout(config.getDefaultTimeout());
             // 设置 Socket 连接超时时长
-            client.setSoTimeout(config.getSoTimeout());
+            ftpClient.setSoTimeout(config.getSoTimeout());
             // 设置 dataTimeout
-            client.setDataTimeout(config.getDataTimeout());
+            ftpClient.setDataTimeout(Duration.ofMillis(config.getDataTimeout()));
             // 登录 FTP 服务器
-            client.login(config.getUser(), config.getPassword());
+            ftpClient.login(config.getUser(), config.getPassword());
         } catch (IOException e) {
             throw new FtpException(e);
         }
         // 确认应答状态码是否正确完成响应，判断是否成功登录服务器，凡是2开头的 isPositiveCompletion 都会返回 true
-        final int replyCode = client.getReplyCode();
+        final int replyCode = ftpClient.getReplyCode();
         if (!FTPReply.isPositiveCompletion(replyCode)) {
             try {
                 // 中断文件正在进行的文件传输，成功时返回 true，否则返回 false
-                client.abort();
+                ftpClient.abort();
                 // 断开与服务器的连接，并恢复默认参数值
-                client.disconnect();
+                ftpClient.disconnect();
             } catch (IOException e) {
                 // ignore
             }
             throw new FtpException("Login failed for user [{}], reply code is: [{}]", config.getUser(), replyCode);
         }
-        this.client = client;
+        this.client = ftpClient;
         if (mode != null) {
             setMode(mode);
         }
@@ -197,14 +199,12 @@ public class Ftp implements Closeable {
      */
     public Ftp setMode(FtpMode mode) {
         this.mode = mode;
-        switch (mode) {
-            case Active:
-                this.client.enterLocalActiveMode();
-                break;
-            case Passive:
-                this.client.enterLocalPassiveMode();
-                break;
+        if (mode == FtpMode.ACTIVE) {
+            this.client.enterLocalActiveMode();
+        } else if (mode == FtpMode.PASSIVE) {
+            this.client.enterLocalPassiveMode();
         }
+
         return this;
     }
 
@@ -250,8 +250,9 @@ public class Ftp implements Closeable {
      * @return {@code true} 打开指定目录成功；{@code false} 打开指定目录失败
      */
     public boolean cd(String directory) {
-        if (StringUtils.isBlank(directory))
+        if (StringUtils.isBlank(directory)) {
             return false;
+        }
 
         try {
             return client.changeWorkingDirectory(directory);
@@ -311,8 +312,9 @@ public class Ftp implements Closeable {
      * @param dir 文件夹路径，绝对路径
      */
     public void mkdirs(String dir) {
-        if (StringUtils.isBlank(dir))
+        if (StringUtils.isBlank(dir)) {
             return;
+        }
 
         final String[] dirs = dir.split("[\\\\/]+");
 
@@ -322,12 +324,10 @@ public class Ftp implements Closeable {
             this.cd(StringUtils.SLASH);
         }
         for (String s : dirs) {
-            if (StringUtils.isNotEmpty(s)) {
-                if (!cd(s)) {
+            if (StringUtils.isNotEmpty(s) && (!cd(s))) {
                     // 目录不存在时创建
                     mkdir(s);
                     cd(s);
-                }
             }
         }
         // 切换回工作目录
@@ -342,8 +342,9 @@ public class Ftp implements Closeable {
      */
     public boolean exist(String path) {
         final String fileName = FileUtils.getFileName(path);
-        if (StringUtils.isEmpty(fileName))
+        if (StringUtils.isEmpty(fileName)) {
             return false;
+        }
 
         final String dir = StringUtils.removeSuffix(path, fileName);
         final List<String> names = ls(dir);
@@ -356,7 +357,18 @@ public class Ftp implements Closeable {
      * @return 文件和目录列表
      */
     public List<String> ls() {
-        return ls(null);
+        return ls(null, null);
+    }
+
+    /**
+     * 遍历当前目录下所有文件和目录，不会递归遍历
+     *
+     * @param filter 过滤器
+     * @return 文件和目录列表
+     * @since 1.6.0
+     */
+    public List<String> ls(FTPFileFilter filter) {
+        return ls(null, filter);
     }
 
     /**
@@ -366,11 +378,75 @@ public class Ftp implements Closeable {
      * @return 文件和目录列表
      */
     public List<String> ls(String path) {
-        final FTPFile[] ftpFiles = lsFiles(path);
+        return ls(path, null);
+    }
+
+    /**
+     * 遍历某个目录下所有文件和目录，不会递归遍历
+     *
+     * @param path   需要遍历的目录
+     * @param filter 过滤器
+     * @return 文件和目录列表
+     * @since 1.6.0
+     */
+    public List<String> ls(String path, FTPFileFilter filter) {
+        final FTPFile[] ftpFiles = lsFiles(path, filter);
 
         final List<String> fileNames = new ArrayList<>();
         for (FTPFile ftpFile : ftpFiles) {
             fileNames.add(ftpFile.getName());
+        }
+        return fileNames;
+    }
+
+    /**
+     * 遍历当前目录下所有文件，不会递归遍历
+     *
+     * @return 文件列表
+     * @since 1.6.0
+     */
+    public List<String> lsFile() {
+        return lsFile(null, null);
+    }
+
+    /**
+     * 遍历当前目录下所有文件，不会递归遍历
+     *
+     * @param filter 过滤器
+     * @return 文件列表
+     * @since 1.6.0
+     */
+    public List<String> lsFile(FTPFileFilter filter) {
+        return lsFile(null, filter);
+    }
+
+    /**
+     * 遍历某个目录下所有文件，不会递归遍历
+     *
+     * @param path 需要遍历的目录
+     * @return 文件列表
+     * @since 1.6.0
+     */
+    public List<String> lsFile(String path) {
+        return lsFile(path, null);
+    }
+
+    /**
+     * 遍历某个目录下所有文件，不会递归遍历
+     *
+     * @param path   需要遍历的目录
+     * @param filter 过滤器
+     * @return 文件列表
+     * @since 1.6.0
+     */
+    public List<String> lsFile(String path, FTPFileFilter filter) {
+        final FTPFile[] ftpFiles = lsFiles(path, filter);
+
+        final List<String> fileNames = new ArrayList<>();
+        for (FTPFile ftpFile : ftpFiles) {
+            if (ftpFile.isFile()) {
+                fileNames.add(ftpFile.getName());
+            }
         }
         return fileNames;
     }
@@ -381,7 +457,18 @@ public class Ftp implements Closeable {
      * @return 文件和目录列表
      */
     public List<String> lsRecursive() {
-        return lsRecursive(null);
+        return lsRecursive(null, null);
+    }
+
+    /**
+     * 递归遍历当前目录下所有文件和目录
+     *
+     * @param filter 过滤器
+     * @return 文件和目录列表
+     * @since 1.6.0
+     */
+    public List<String> lsRecursive(FTPFileFilter filter) {
+        return lsRecursive(null, filter);
     }
 
     /**
@@ -391,14 +478,84 @@ public class Ftp implements Closeable {
      * @return 文件和目录列表
      */
     public List<String> lsRecursive(String path) {
-        final FTPFile[] ftpFiles = lsFiles(path);
+        return lsRecursive(path, null);
+    }
+
+    /**
+     * 递归遍历某个目录下所有文件和目录
+     *
+     * @param path   需要遍历的目录
+     * @param filter 过滤器
+     * @return 文件和目录列表
+     * @since 1.6.0
+     */
+    public List<String> lsRecursive(String path, FTPFileFilter filter) {
+        final FTPFile[] ftpFiles = lsFiles(path, filter);
 
         final List<String> fileNames = new ArrayList<>();
         path = StringUtils.isBlank(path) ? StringUtils.EMPTY : (path + File.separator);
         for (FTPFile ftpFile : ftpFiles) {
             fileNames.add(path + ftpFile.getName());
-            if (ftpFile.isDirectory())
-                fileNames.addAll(lsRecursive(path + ftpFile.getName()));
+            if (ftpFile.isDirectory()) {
+                fileNames.addAll(lsRecursive(path + ftpFile.getName(), filter));
+            }
+        }
+        return fileNames;
+    }
+
+    /**
+     * 递归遍历当前目录下所有文件
+     *
+     * @return 文件列表
+     * @since 1.6.0
+     */
+    public List<String> lsFileRecursive() {
+        return lsFileRecursive(null, null);
+    }
+
+    /**
+     * 递归遍历当前目录下所有文件
+     *
+     * @param filter 过滤器
+     * @return 文件列表
+     * @since 1.6.0
+     */
+    public List<String> lsFileRecursive(FTPFileFilter filter) {
+        return lsFileRecursive(null, filter);
+    }
+
+    /**
+     * 递归遍历某个目录下所有文件
+     *
+     * @param path 需要遍历的目录
+     * @return 文件列表
+     * @since 1.6.0
+     */
+    public List<String> lsFileRecursive(String path) {
+        return lsFileRecursive(path, null);
+    }
+
+    /**
+     * 递归遍历某个目录下所有文件
+     *
+     * @param path   需要遍历的目录
+     * @param filter 过滤器
+     * @return 文件列表
+     * @since 1.6.0
+     */
+    public List<String> lsFileRecursive(String path, FTPFileFilter filter) {
+        final FTPFile[] ftpFiles = lsFiles(path);
+
+        final List<String> fileNames = new ArrayList<>();
+        path = StringUtils.isBlank(path) ? StringUtils.EMPTY : (path + File.separator);
+        for (FTPFile ftpFile : ftpFiles) {
+            if (ftpFile.isDirectory()) {
+                fileNames.addAll(lsFileRecursive(path + ftpFile.getName(), filter));
+            } else {
+                if (filter == null || filter.accept(ftpFile)) {
+                    fileNames.add(path + ftpFile.getName());
+                }
+            }
         }
         return fileNames;
     }
@@ -409,7 +566,18 @@ public class Ftp implements Closeable {
      * @return 文件和目录列表
      */
     public FTPFile[] lsFiles() {
-        return lsFiles(null);
+        return lsFiles(null, null);
+    }
+
+    /**
+     * 遍历当前工作目录下所有文件和目录，不会递归遍历
+     *
+     * @param filter 过滤器
+     * @return 文件和目录列表
+     * @since 1.6.0
+     */
+    public FTPFile[] lsFiles(FTPFileFilter filter) {
+        return lsFiles(null, filter);
     }
 
     /**
@@ -419,49 +587,68 @@ public class Ftp implements Closeable {
      * @return 文件和目录列表
      */
     public FTPFile[] lsFiles(String path) {
-        String pwd = null;
-        if (StringUtils.isNotBlank(path)) {
-            pwd = pwd();
-            cd(path);
-        }
-
-        FTPFile[] ftpFiles;
         try {
-            ftpFiles = this.client.listFiles();
+            return StringUtils.isBlank(path) ? this.client.listFiles() : this.client.listFiles(path);
         } catch (IOException e) {
             throw new FtpException(e);
-        } finally {
-            // 回到原目录
-            cd(pwd);
         }
-
-        return ftpFiles;
     }
 
     /**
-     * 遍历某个目录下所有文件和目录，不会递归遍历<br>
-     * 此方法自动过滤"."和".."两种目录
+     * 遍历某个目录下所有文件和目录，不会递归遍历
      *
      * @param path   需要遍历的目录
-     * @param filter 过滤器，{@code null}表示不过滤，默认去掉"."和".."两种目录
+     * @param filter 过滤器
      * @return 文件和目录列表
      */
-    public List<FTPFile> lsFiles(String path, Filter<FTPFile> filter) {
-        final FTPFile[] ftpFiles = lsFiles(path);
-        if (ArrayUtils.isEmpty(ftpFiles))
-            return new ArrayList<>();
+    public FTPFile[] lsFiles(String path, FTPFileFilter filter) {
+        try {
+            if (StringUtils.isBlank(path)) {
+                path = client.printWorkingDirectory();
+            }
+            return filter == null ? this.client.listFiles(path) : this.client.listFiles(path, filter);
+        } catch (IOException e) {
+            throw new FtpException(e);
+        }
+    }
 
-        final List<FTPFile> result = new ArrayList<>(ftpFiles.length - 2 <= 0 ? ftpFiles.length : ftpFiles.length - 2);
-        String fileName;
-        for (FTPFile ftpFile : ftpFiles) {
-            fileName = ftpFile.getName();
-            if (!StringUtils.DOT.equals(fileName) && !StringUtils.DOUBLE_DOT.equals(fileName)) {
-                if (filter == null || filter.accept(ftpFile)) {
-                    result.add(ftpFile);
+    /**
+     * 遍历当前工作目录下所有文件和目录，过滤器忽略文件目录，不会递归遍历
+     *
+     * @param filter 过滤器
+     * @return 文件和目录列表
+     * @since 1.6.0
+     */
+    public List<FTPFile> lsFilesIgnoreDirectory(FTPFileFilter filter) {
+        return lsFilesIgnoreDirectory(null, filter);
+    }
+
+    /**
+     * 遍历某个目录下所有文件和目录，过滤器忽略文件目录，不会递归遍历
+     *
+     * @param path   需要遍历的目录
+     * @param filter 过滤器
+     * @return 文件和目录列表
+     * @since 1.6.0
+     */
+    public List<FTPFile> lsFilesIgnoreDirectory(String path, FTPFileFilter filter) {
+        try {
+            if (StringUtils.isBlank(path)) {
+                path = client.printWorkingDirectory();
+            }
+
+            List<FTPFile> ftpFileList = new ArrayList<>();
+            FTPFile[] ftpFiles = this.client.listFiles(path);
+            for (FTPFile ftpFile : ftpFiles) {
+                if (ftpFile.isDirectory() || (filter != null && filter.accept(ftpFile))) {
+                    ftpFileList.add(ftpFile);
                 }
             }
+
+            return ftpFileList;
+        } catch (IOException e) {
+            throw new FtpException(e);
         }
-        return result;
     }
 
     /**
@@ -532,7 +719,7 @@ public class Ftp implements Closeable {
         String childPath;
         for (FTPFile ftpFile : dirs) {
             name = ftpFile.getName();
-            childPath = StringUtils.format("{}/{}", dirPath, name);
+            childPath = StringUtils.format(PATH_FORMATTER, dirPath, name);
             if (ftpFile.isDirectory()) {
                 // 上级和本级目录除外
                 if (!StringUtils.DOT.equals(name) && !StringUtils.DOUBLE_DOT.equals(name)) {
@@ -558,8 +745,9 @@ public class Ftp implements Closeable {
      * @return {@code true} 上传成功；{@code false} 上传失败
      */
     public boolean uploadToPwd(File file) {
-        if (file == null || !file.exists())
+        if (file == null || !file.exists()) {
             return false;
+        }
 
         return uploadToPwd(file, file.getName());
     }
@@ -588,8 +776,9 @@ public class Ftp implements Closeable {
      * @return {@code true} 上传成功；{@code false} 上传失败
      */
     public boolean upload(File file, String destPath) {
-        if (file == null || !file.exists())
+        if (file == null || !file.exists()) {
             return false;
+        }
 
         return upload(file, destPath, file.getName());
     }
@@ -608,8 +797,9 @@ public class Ftp implements Closeable {
      * @return {@code true} 上传成功；{@code false} 上传失败
      */
     public boolean upload(File file, String destPath, String fileName) {
-        if (file == null || !file.exists())
+        if (file == null || !file.exists()) {
             return false;
+        }
 
         try (InputStream in = FileUtils.getInputStream(file)) {
             return upload(in, destPath, fileName);
@@ -632,11 +822,12 @@ public class Ftp implements Closeable {
      * @return {@code true} 上传成功；{@code false} 上传失败
      */
     public boolean upload(InputStream inputStream, String destPath, String fileName) {
-        if (inputStream == null)
+        if (inputStream == null) {
             return false;
+        }
 
         // 设置文件传输类型
-        setFileType(FTPClient.BINARY_FILE_TYPE);
+        setFileType(FTP.BINARY_FILE_TYPE);
         // 当前工作目录
         final String pwd = pwd();
         // 如果目标目录不为空，创建目录并变更工作目录到新目录
@@ -704,15 +895,16 @@ public class Ftp implements Closeable {
      */
     public void uploadRecursive(File file, String destPath) {
         // 设置文件传输类型
-        setFileType(FTPClient.BINARY_FILE_TYPE);
+        setFileType(FTP.BINARY_FILE_TYPE);
         // 当前工作目录
         final String pwd = pwd();
         // 如果目标目录不为空，创建目录并变更工作目录到新目录
         if (StringUtils.isNotBlank(destPath)) {
             mkdirs(destPath);
             boolean isOk = cd(destPath);
-            if (!isOk)
+            if (!isOk) {
                 return;
+            }
         }
 
         // 上传文件
@@ -732,18 +924,21 @@ public class Ftp implements Closeable {
      * @throws IOException {@link IOException}
      */
     private void uploadRecursive(File file) throws IOException {
-        if (file == null || !file.exists())
+        if (file == null || !file.exists()) {
             return;
+        }
 
-        if (file.isDirectory()) {// 上传目录
+        // 上传目录
+        if (file.isDirectory()) {
             // 创建目录
             client.makeDirectory(file.getName());
             // 变更工作目录
             client.changeWorkingDirectory(file.getName());
 
             File[] files = file.listFiles();
-            if (ArrayUtils.isEmpty(files))
+            if (ArrayUtils.isEmpty(files)) {
                 return;
+            }
 
             for (File loopFile : files) {
                 if (loopFile.isDirectory()) {
@@ -773,8 +968,9 @@ public class Ftp implements Closeable {
      * @return {@code true} 下载文件成功；{@code false} 下载文件失败
      */
     public boolean download(String remoteFilePath, String outFilePath) {
-        if (StringUtils.isBlank(outFilePath))
+        if (StringUtils.hasBlank(remoteFilePath, outFilePath)) {
             return false;
+        }
 
         return download(remoteFilePath, new File(outFilePath));
     }
@@ -787,8 +983,9 @@ public class Ftp implements Closeable {
      * @return {@code true} 下载文件成功；{@code false} 下载文件失败
      */
     public boolean download(String remoteFilePath, File outFile) {
-        if (StringUtils.isBlank(remoteFilePath))
+        if (StringUtils.isBlank(remoteFilePath)) {
             return false;
+        }
 
         final String fileName = FileUtils.getFileName(remoteFilePath);
         final String dir = StringUtils.removeSuffix(remoteFilePath, fileName);
@@ -829,10 +1026,12 @@ public class Ftp implements Closeable {
      * @return {@code true} 下载文件成功；{@code false} 下载文件失败
      */
     public boolean download(String remotePath, String fileName, File outFile) {
-        if (outFile.isDirectory())
+        if (outFile.isDirectory()) {
             outFile = new File(outFile, fileName);
-        if (!outFile.exists())
+        }
+        if (!outFile.exists()) {
             FileUtils.createFile(outFile);
+        }
 
         try (OutputStream outputStream = FileUtils.getOutputStream(outFile)) {
             return download(remotePath, fileName, outputStream);
@@ -851,14 +1050,15 @@ public class Ftp implements Closeable {
      */
     public boolean download(String remotePath, String fileName, OutputStream outputStream) {
         // 设置文件传输类型
-        setFileType(FTPClient.BINARY_FILE_TYPE);
+        setFileType(FTP.BINARY_FILE_TYPE);
         // 当前工作目录
         final String pwd = pwd();
-        // 如果文件路径不为空，变更工作目录
+        // 如果文件目录不为空，变更工作目录
         if (StringUtils.isNotBlank(remotePath)) {
             boolean isOk = cd(remotePath);
-            if (!isOk)
+            if (!isOk) {
                 return false;
+            }
         }
 
         // 下载文件
@@ -868,6 +1068,26 @@ public class Ftp implements Closeable {
             throw new FtpException(e);
         } finally {
             cd(pwd);
+        }
+    }
+
+    /**
+     * 下载文件到输出流
+     *
+     * @param remoteFilePath FTP 服务器文件路径
+     * @param outputStream   输出流
+     * @return {@code true} 下载文件成功；{@code false} 下载文件失败
+     * @since 1.6.0
+     */
+    public boolean download(String remoteFilePath, OutputStream outputStream) {
+        // 设置文件传输类型
+        setFileType(FTP.BINARY_FILE_TYPE);
+
+        // 下载文件
+        try {
+            return client.retrieveFile(remoteFilePath, outputStream);
+        } catch (IOException e) {
+            throw new FtpException(e);
         }
     }
 
@@ -885,32 +1105,161 @@ public class Ftp implements Closeable {
      * 递归下载 FTP 服务器上文件到本地（文件目录和服务器同步），服务器上有新文件会覆盖本地文件
      *
      * @param remotePath FTP 服务器目录
+     * @param destPath   本地目录
+     * @param filter     过滤器
+     * @since 1.6.0
+     */
+    public void downloadRecursive(String remotePath, String destPath, FTPFileFilter filter) {
+        downloadRecursive(remotePath, FileUtils.mkdirs(destPath), filter);
+    }
+
+    /**
+     * 递归下载 FTP 服务器上文件到本地（文件目录和服务器同步），服务器上有新文件会覆盖本地文件
+     *
+     * @param remotePath FTP 服务器目录
      * @param destDir    本地目录
      */
     public void downloadRecursive(String remotePath, File destDir) {
-        if (destDir == null)
+        downloadRecursive(remotePath, destDir, null);
+    }
+
+    /**
+     * 递归下载 FTP 服务器上文件到本地（文件目录和服务器同步），服务器上有新文件会覆盖本地文件
+     *
+     * @param remotePath FTP 服务器目录
+     * @param destDir    本地目录
+     * @param filter     过滤器
+     * @since 1.6.0
+     */
+    public void downloadRecursive(String remotePath, File destDir, FTPFileFilter filter) {
+        if (destDir == null) {
             return;
-        if (!destDir.exists())
-            destDir.mkdirs();
+        }
 
         String fileName;
         String srcFile;
         File destFile;
-        for (FTPFile ftpFile : lsFiles(remotePath, null)) {
+        FTPFile[] ftpFiles = lsFiles(remotePath, filter);
+        if (ArrayUtils.isEmpty(ftpFiles)) {
+            return;
+        }
+        for (FTPFile ftpFile : ftpFiles) {
             fileName = ftpFile.getName();
-            srcFile = StringUtils.format("{}/{}", remotePath, fileName);
+            srcFile = StringUtils.format(PATH_FORMATTER, remotePath, fileName);
             destFile = FileUtils.newFile(destDir, fileName);
 
             if (ftpFile.isDirectory()) {
                 // 服务端依旧是目录，继续递归
-                FileUtils.mkdirs(destFile);
-                downloadRecursive(srcFile, destFile);
+                downloadRecursive(srcFile, destFile, filter);
             } else {
                 // 本地不存在文件或者 FTP 上文件有修改则下载
                 if (!FileUtils.isFileExist(destFile) || destFile.length() != ftpFile.getSize()
                         || (ftpFile.getTimestamp().getTimeInMillis() > destFile.lastModified())) {
                     download(srcFile, destFile);
                 }
+            }
+        }
+    }
+
+    /**
+     * 递归下载 FTP 服务器上文件到本地（文件目录和服务器同步），服务器上有新文件会覆盖本地文件，过滤器忽略文件目录
+     *
+     * @param remotePath FTP 服务器目录
+     * @param destPath   本地目录
+     * @param filter     过滤器
+     * @since 1.6.0
+     */
+    public void downloadRecursiveIgnoreDirectory(String remotePath, String destPath, FTPFileFilter filter) {
+        downloadRecursiveIgnoreDirectory(remotePath, FileUtils.mkdirs(destPath), filter);
+    }
+
+    /**
+     * 递归下载 FTP 服务器上文件到本地（文件目录和服务器同步），服务器上有新文件会覆盖本地文件，过滤器忽略文件目录
+     *
+     * @param remotePath FTP 服务器目录
+     * @param destDir    本地目录
+     * @param filter     过滤器
+     * @since 1.6.0
+     */
+    public void downloadRecursiveIgnoreDirectory(String remotePath, File destDir, FTPFileFilter filter) {
+        if (destDir == null) {
+            return;
+        }
+
+        String fileName;
+        String srcFile;
+        File destFile;
+        List<FTPFile> ftpFiles = lsFilesIgnoreDirectory(remotePath, filter);
+        for (FTPFile ftpFile : ftpFiles) {
+            fileName = ftpFile.getName();
+            srcFile = StringUtils.format(PATH_FORMATTER, remotePath, fileName);
+            destFile = FileUtils.newFile(destDir, fileName);
+
+            if (ftpFile.isDirectory()) {
+                // 服务端依旧是目录，继续递归
+                downloadRecursiveIgnoreDirectory(srcFile, destFile, filter);
+            } else {
+                // 本地不存在文件或者 FTP 上文件有修改则下载
+                if (!FileUtils.isFileExist(destFile) || destFile.length() != ftpFile.getSize()
+                        || (ftpFile.getTimestamp().getTimeInMillis() > destFile.lastModified())) {
+                    download(srcFile, destFile);
+                }
+            }
+        }
+    }
+
+    /**
+     * 读取 FTP 服务器上文件内容
+     *
+     * @param remotePath FTP 服务器文件目录，为 null 或""则表示当前工作目录
+     * @param fileName   文件名
+     * @return 文件流
+     * @since 1.6.0
+     */
+    public InputStream read(String remotePath, String fileName) {
+        // 当前工作目录
+        final String pwd = pwd();
+        // 如果文件目录不为空，变更工作目录
+        if (StringUtils.isNotBlank(remotePath)) {
+            boolean isOk = cd(remotePath);
+            if (!isOk) {
+                throw new FtpException("file path is null");
+            }
+        }
+
+        try {
+            setFileType(FTP.BINARY_FILE_TYPE);
+            return client.retrieveFileStream(fileName);
+        } catch (IOException e) {
+            throw new FtpException(e);
+        } finally {
+            cd(pwd);
+            try {
+                client.completePendingCommand();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 读取 FTP 服务器上文件内容
+     *
+     * @param remoteFileName FTP 服务器文件路径
+     * @return 文件流
+     * @since 1.6.0
+     */
+    public InputStream read(String remoteFileName) {
+        try {
+            setFileType(FTP.BINARY_FILE_TYPE);
+            return client.retrieveFileStream(remoteFileName);
+        } catch (IOException e) {
+            throw new FtpException(e);
+        } finally {
+            try {
+                client.completePendingCommand();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -923,16 +1272,18 @@ public class Ftp implements Closeable {
      * @return {@code true} 移动文件成功；{@code false} 移动文件失败
      */
     public boolean move(String fromFilePath, String toFilePath) {
-        if (StringUtils.hasBlank(fromFilePath, toFilePath))
+        if (StringUtils.hasBlank(fromFilePath, toFilePath)) {
             return false;
+        }
 
         // 当前工作目录
         final String pwd = pwd();
         // 如果移动后目录不为空，创建目录
         final String toName = FileUtils.getFileName(toFilePath);
         final String toPath = StringUtils.removeSuffix(toFilePath, toName);
-        if (StringUtils.isNotBlank(toPath))
+        if (StringUtils.isNotBlank(toPath)) {
             mkdirs(toPath);
+        }
 
         // 重命名文件
         try {
@@ -1004,6 +1355,5 @@ public class Ftp implements Closeable {
             }
             this.client = null;
         }
-        System.out.println("ftpClient is closed");
     }
 }

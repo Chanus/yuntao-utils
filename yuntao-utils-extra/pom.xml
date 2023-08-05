@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.chanus.utils</groupId>
     <artifactId>yuntao-utils</artifactId>
-    <version>1.5.0</version>
+    <version>1.7.0</version>
   </parent>
 
   <artifactId>yuntao-utils-extra</artifactId>
@@ -14,7 +14,7 @@
 
   <properties>
     <quartz.version>2.3.2</quartz.version>
-    <zxing.version>3.4.1</zxing.version>
+    <zxing.version>3.5.1</zxing.version>
     <commons.net.version>3.9.0</commons.net.version>
   </properties>
 
@@ -55,6 +55,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
+        <version>${maven-source-plugin.version}</version>
         <configuration>
           <attach>true</attach>
         </configuration>

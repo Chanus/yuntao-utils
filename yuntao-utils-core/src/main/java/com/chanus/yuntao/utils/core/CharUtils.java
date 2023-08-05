@@ -168,6 +168,10 @@ public class CharUtils {
      */
     public static final char LF = '\n';
 
+    private CharUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 给定对象对应的类是否为字符类，字符类包括：
      *

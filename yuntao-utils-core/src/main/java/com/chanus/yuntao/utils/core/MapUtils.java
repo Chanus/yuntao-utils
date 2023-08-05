@@ -27,6 +27,10 @@ import java.util.*;
  * @since 1.2.6
  */
 public class MapUtils {
+    private MapUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 判断 Map 集合是否为空
      *
@@ -73,8 +77,9 @@ public class MapUtils {
      * @return 连接后的字符串
      */
     public static <K, V> String join(Map<K, V> map, String separator, String keyValueSeparator, boolean isIgnoreNull) {
-        if (isEmpty(map))
+        if (isEmpty(map)) {
             return null;
+        }
 
         final StringBuilder stringBuilder = new StringBuilder();
         boolean isFirst = true;
@@ -131,8 +136,9 @@ public class MapUtils {
      * @since 1.4.0
      */
     public static <K, V> String keyJoin(Map<K, V> map, String separator, boolean isIgnoreNull) {
-        if (isEmpty(map))
+        if (isEmpty(map)) {
             return null;
+        }
 
         final StringBuilder stringBuilder = new StringBuilder();
         boolean isFirst = true;
@@ -176,8 +182,9 @@ public class MapUtils {
      * @since 1.4.0
      */
     public static <K, V> String valueJoin(Map<K, V> map, String separator, boolean isIgnoreNull) {
-        if (isEmpty(map))
+        if (isEmpty(map)) {
             return null;
+        }
 
         final StringBuilder stringBuilder = new StringBuilder();
         boolean isFirst = true;
@@ -219,12 +226,14 @@ public class MapUtils {
      * @return 过滤的新 Map 集合，类型与原 Map 集合保持一致
      */
     public static <K, V> Map<K, V> filter(Map<K, V> map, Filter<Map.Entry<K, V>> filter) {
-        if (map == null || filter == null)
+        if (map == null || filter == null) {
             return map;
+        }
 
         final Map<K, V> map2 = ObjectUtils.clone(map);
-        if (isEmpty(map2))
+        if (isEmpty(map2)) {
             return map2;
+        }
 
         map2.clear();
         for (Map.Entry<K, V> entry : map.entrySet()) {
@@ -247,8 +256,9 @@ public class MapUtils {
     @SuppressWarnings("unchecked")
     public static <K, V> Map<K, V> filter(Map<K, V> map, K... keys) {
         final Map<K, V> map2 = ObjectUtils.clone(map);
-        if (isEmpty(map2))
+        if (isEmpty(map2)) {
             return map2;
+        }
 
         map2.clear();
         for (K key : keys) {
@@ -281,8 +291,9 @@ public class MapUtils {
      * @return {@link TreeMap}
      */
     public static <K, V> TreeMap<K, V> sort(Map<K, V> map, Comparator<? super K> comparator) {
-        if (map == null)
+        if (map == null) {
             return null;
+        }
 
         TreeMap<K, V> result;
         if (map instanceof TreeMap) {
@@ -354,8 +365,9 @@ public class MapUtils {
      * @return 去除值为 {@code null} 的键值对后的 Map
      */
     public static <K, V> Map<K, V> removeNullValue(Map<K, V> map) {
-        if (isEmpty(map))
+        if (isEmpty(map)) {
             return map;
+        }
 
         final Iterator<Map.Entry<K, V>> iterator = map.entrySet().iterator();
         Map.Entry<K, V> entry;

@@ -15,7 +15,13 @@
  */
 package com.chanus.yuntao.utils.core.lang;
 
+import com.chanus.yuntao.utils.core.ObjectUtils;
+
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -314,6 +320,228 @@ public class Message implements Serializable {
     public Message setMap(Map<?, ?> map) {
         this.map = map;
         return this;
+    }
+
+    /**
+     * 获取 String 类型的 data
+     *
+     * @return String 类型的 data
+     * @since 1.6.0
+     */
+    public String getStringData() {
+        return data == null ? null : data.toString();
+    }
+
+    /**
+     * 获取指定类型的 data
+     *
+     * @param <T> 数据类型
+     * @return 指定类型的 data
+     * @since 1.6.0
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getObjectData() {
+        return data == null ? null : (T) data;
+    }
+
+    /**
+     * 获取 Byte 类型的 data
+     *
+     * @return Byte 类型的 data
+     * @since 1.6.0
+     */
+    public Byte getByteData() {
+        return data != null && data instanceof Byte ? (Byte) data : null;
+    }
+
+    /**
+     * 获取 byte 类型的 data
+     *
+     * @return byte 类型的 data
+     * @since 1.6.0
+     */
+    public byte getByteValueData() {
+        return ObjectUtils.defaultIfNull(getByteData(), (byte) 0);
+    }
+
+    /**
+     * 获取 Short 类型的 data
+     *
+     * @return Short 类型的 data
+     * @since 1.6.0
+     */
+    public Short getShortData() {
+        return data != null && data instanceof Short ? (Short) data : null;
+    }
+
+    /**
+     * 获取 short 类型的 data
+     *
+     * @return short 类型的 data
+     * @since 1.6.0
+     */
+    public short getShortValueData() {
+        return ObjectUtils.defaultIfNull(getShortData(), (short) 0);
+    }
+
+    /**
+     * 获取 Integer 类型的 data
+     *
+     * @return Integer 类型的 data
+     * @since 1.6.0
+     */
+    public Integer getIntegerData() {
+        return data != null && data instanceof Integer ? (Integer) data : null;
+    }
+
+    /**
+     * 获取 int 类型的 data
+     *
+     * @return int 类型的 data
+     * @since 1.6.0
+     */
+    public int getIntValueData() {
+        return ObjectUtils.defaultIfNull(getIntegerData(), 0);
+    }
+
+    /**
+     * 获取 Long 类型的 data
+     *
+     * @return Long 类型的 data
+     * @since 1.6.0
+     */
+    public Long getLongData() {
+        return data != null && data instanceof Long ? (Long) data : null;
+    }
+
+    /**
+     * 获取 long 类型的 data
+     *
+     * @return long 类型的 data
+     * @since 1.6.0
+     */
+    public long getLongValueData() {
+        return ObjectUtils.defaultIfNull(getLongData(), 0L);
+    }
+
+    /**
+     * 获取 Float 类型的 data
+     *
+     * @return Float 类型的 data
+     * @since 1.6.0
+     */
+    public Float getFloatData() {
+        return data != null && data instanceof Float ? (Float) data : null;
+    }
+
+    /**
+     * 获取 float 类型的 data
+     *
+     * @return float 类型的 data
+     * @since 1.6.0
+     */
+    public float getFloatValueData() {
+        return ObjectUtils.defaultIfNull(getFloatData(), 0.0f);
+    }
+
+    /**
+     * 获取 Double 类型的 data
+     *
+     * @return Double 类型的 data
+     * @since 1.6.0
+     */
+    public Double getDoubleData() {
+        return data != null && data instanceof Double ? (Double) data : null;
+    }
+
+    /**
+     * 获取 double 类型的 data
+     *
+     * @return double 类型的 data
+     * @since 1.6.0
+     */
+    public double getDoubleValueData() {
+        return ObjectUtils.defaultIfNull(getDoubleData(), 0.0d);
+    }
+
+    /**
+     * 获取 Character 类型的 data
+     *
+     * @return Character 类型的 data
+     * @since 1.6.0
+     */
+    public Character getCharacterData() {
+        return data != null && data instanceof Character ? (Character) data : null;
+    }
+
+    /**
+     * 获取 char 类型的 data
+     *
+     * @return char 类型的 data
+     * @since 1.6.0
+     */
+    public char getCharValueData() {
+        return ObjectUtils.defaultIfNull(getCharacterData(), '\u0000');
+    }
+
+    /**
+     * 获取 Boolean 类型的 data
+     *
+     * @return Boolean 类型的 data
+     * @since 1.6.0
+     */
+    public Boolean getBooleanData() {
+        return data != null && data instanceof Boolean ? (Boolean) data : null;
+    }
+
+    /**
+     * 获取 boolean 类型的 data
+     *
+     * @return boolean 类型的 data
+     * @since 1.6.0
+     */
+    public boolean getBooleanValueData() {
+        return ObjectUtils.defaultIfNull(getBooleanData(), false);
+    }
+
+    /**
+     * 获取 Date 类型的 data
+     *
+     * @return Date 类型的 data
+     * @since 1.6.0
+     */
+    public Date getDateData() {
+        return data != null && data instanceof Date ? (Date) data : null;
+    }
+
+    /**
+     * 获取 LocalDateTime 类型的 data
+     *
+     * @return LocalDateTime 类型的 data
+     * @since 1.6.0
+     */
+    public LocalDateTime getLocalDateTimeData() {
+        return data != null && data instanceof LocalDateTime ? (LocalDateTime) data : null;
+    }
+
+    /**
+     * 获取 LocalDate 类型的 data
+     *
+     * @return LocalDate 类型的 data
+     * @since 1.6.0
+     */
+    public LocalDate getLocalDateData() {
+        return data != null && data instanceof LocalDate ? (LocalDate) data : null;
+    }
+
+    /**
+     * 获取 LocalTime 类型的 data
+     *
+     * @return LocalTime 类型的 data
+     * @since 1.6.0
+     */
+    public LocalTime getLocalTimeData() {
+        return data != null && data instanceof LocalTime ? (LocalTime) data : null;
     }
 
     @Override

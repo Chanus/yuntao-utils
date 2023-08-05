@@ -30,15 +30,19 @@ public class RandomUtils {
     /**
      * 数字和大小写字母
      */
-    private static final String ALLCHAR = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String ALL_CHAR = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     /**
      * 大小写字母
      */
-    private static final String LETTERCHAR = "abcdefghijkllmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String LETTER_CHAR = "abcdefghijkllmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     /**
      * 数字
      */
-    private static final String NUMBERCHAR = "0123456789";
+    private static final String NUMBER_CHAR = "0123456789";
+
+    private RandomUtils() {
+        throw new IllegalStateException("Utility class");
+    }
 
     /**
      * 随机获取 {@code int} 类型数字
@@ -78,9 +82,9 @@ public class RandomUtils {
      */
     public static String getRandomDigits(int length) {
         StringBuilder result = new StringBuilder();
-        int bound = NUMBERCHAR.length();
+        int bound = NUMBER_CHAR.length();
         for (int i = 0; i < length; i++) {
-            result.append(NUMBERCHAR.charAt(ThreadLocalRandom.current().nextInt(bound)));
+            result.append(NUMBER_CHAR.charAt(ThreadLocalRandom.current().nextInt(bound)));
         }
         return result.toString();
     }
@@ -160,7 +164,7 @@ public class RandomUtils {
      * @return 0-9，a-z，A-Z 之间的字符
      */
     public static char getRandomNormalChar() {
-        return ALLCHAR.charAt(ThreadLocalRandom.current().nextInt(ALLCHAR.length()));
+        return ALL_CHAR.charAt(ThreadLocalRandom.current().nextInt(ALL_CHAR.length()));
     }
 
     /**
@@ -169,7 +173,7 @@ public class RandomUtils {
      * @return a-z，A-Z 之间的字符
      */
     public static char getRandomLetterChar() {
-        return LETTERCHAR.charAt(ThreadLocalRandom.current().nextInt(LETTERCHAR.length()));
+        return LETTER_CHAR.charAt(ThreadLocalRandom.current().nextInt(LETTER_CHAR.length()));
     }
 
     /**
@@ -239,7 +243,7 @@ public class RandomUtils {
      *
      * @return 无连接符"-"的小写 UUID
      */
-    public static String getLowercaseUUID() {
+    public static String getLowerCaseUUID() {
         return UUID.randomUUID().toString().replace("-", "");
     }
 
@@ -248,8 +252,8 @@ public class RandomUtils {
      *
      * @return 无连接符"-"的大写 UUID
      */
-    public static String getUppercaseUUID() {
-        return getLowercaseUUID().toUpperCase();
+    public static String getUpperCaseUUID() {
+        return getLowerCaseUUID().toUpperCase();
     }
 
     /**

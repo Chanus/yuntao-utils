@@ -54,6 +54,10 @@ public class DESedeUtils {
      */
     private static final String INIT_VECTOR = "12345678";
 
+    private DESedeUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * DESede 加密字符串
      *

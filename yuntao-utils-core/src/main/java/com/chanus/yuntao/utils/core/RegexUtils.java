@@ -28,24 +28,34 @@ import java.util.regex.Pattern;
  */
 public class RegexUtils {
     /**
+     * 正则表达式匹配数字
+     */
+    public static final Pattern NUMERIC_PATTERN = Pattern.compile("\\d+");
+    /**
+     * 正则表达式匹配数值
+     */
+    public static final Pattern NUMBER_PATTERN = Pattern.compile("^([+|-]?0|([+|-]?0\\.\\d+)|^([+|-]?[1-9]\\d*(\\.\\d+)?))$");
+    /**
      * 正则表达式匹配中文汉字
      */
-    public final static String REGEX_CHINESE = "[\u4E00-\u9FFF]";
+    public static final String REGEX_CHINESE = "[一-\u9FFF]";
     /**
      * 正则表达式匹配中文字符串
      */
-    public final static String RE_CHINESES = REGEX_CHINESE + "+";
+    public static final String RE_CHINESES = REGEX_CHINESE + "+";
 
     /**
      * 正则中需要被转义的关键字
      */
-    public final static Set<Character> REGEX_KEYS = new HashSet<Character>() {
-        private static final long serialVersionUID = 6621791963440385237L;
+    private static final Set<Character> REGEX_KEYS = new HashSet<>();
 
-        {
-            addAll(Arrays.asList('$', '(', ')', '*', '+', '.', '[', ']', '?', '\\', '^', '{', '}', '|'));
-        }
-    };
+    static {
+        REGEX_KEYS.addAll(Arrays.asList('$', '(', ')', '*', '+', '.', '[', ']', '?', '\\', '^', '{', '}', '|'));
+    }
+
+    private RegexUtils() {
+        throw new IllegalStateException("Utility class");
+    }
 
     /**
      * 获得匹配的字符串，获得正则中分组0的内容
@@ -78,8 +88,9 @@ public class RegexUtils {
      * @return 匹配后得到的字符串，未匹配返回 {@code null}
      */
     public static String get(String regex, CharSequence content, int groupIndex) {
-        if (regex == null || content == null)
+        if (regex == null || content == null) {
             return null;
+        }
 
         return get(Pattern.compile(regex, Pattern.DOTALL), content, groupIndex);
     }
@@ -115,8 +126,9 @@ public class RegexUtils {
      * @return 匹配后得到的字符串，未匹配返回 {@code null}
      */
     public static String get(Pattern pattern, CharSequence content, int groupIndex) {
-        if (pattern == null || content == null)
+        if (pattern == null || content == null) {
             return null;
+        }
 
         final Matcher matcher = pattern.matcher(content);
         if (matcher.find()) {
@@ -145,8 +157,9 @@ public class RegexUtils {
      * @return 匹配后得到的字符串数组，按照分组顺序依次列出，未匹配到返回空列表，任何一个参数为 {@code null} 返回  {@code null}
      */
     public static List<String> getAllGroups(Pattern pattern, CharSequence content, boolean withGroup0) {
-        if (pattern == null || content == null)
+        if (pattern == null || content == null) {
             return null;
+        }
 
         ArrayList<String> result = new ArrayList<>();
         final Matcher matcher = pattern.matcher(content);
@@ -168,8 +181,9 @@ public class RegexUtils {
      * @return 删除匹配的第一个内容后剩余的内容
      */
     public static String delFirst(String regex, CharSequence content) {
-        if (regex == null || content == null)
+        if (regex == null || content == null) {
             return StringUtils.toString(content);
+        }
 
         return delFirst(Pattern.compile(regex, Pattern.DOTALL), content);
     }
@@ -182,8 +196,9 @@ public class RegexUtils {
      * @return 删除匹配的第一个内容后剩余的内容
      */
     public static String delFirst(Pattern pattern, CharSequence content) {
-        if (pattern == null || content == null)
+        if (pattern == null || content == null) {
             return StringUtils.toString(content);
+        }
 
         return pattern.matcher(content).replaceFirst(StringUtils.EMPTY);
     }
@@ -196,8 +211,9 @@ public class RegexUtils {
      * @return 删除匹配内容后剩余的内容
      */
     public static String delAll(String regex, CharSequence content) {
-        if (regex == null || content == null)
+        if (regex == null || content == null) {
             return StringUtils.toString(content);
+        }
 
         return delAll(Pattern.compile(regex, Pattern.DOTALL), content);
     }
@@ -210,8 +226,9 @@ public class RegexUtils {
      * @return 删除匹配内容后剩余的内容
      */
     public static String delAll(Pattern pattern, CharSequence content) {
-        if (pattern == null || content == null)
+        if (pattern == null || content == null) {
             return StringUtils.toString(content);
+        }
 
         return pattern.matcher(content).replaceAll(StringUtils.EMPTY);
     }
@@ -227,8 +244,9 @@ public class RegexUtils {
      * @return 给定内容中匹配正则的结果集合
      */
     public static <T extends Collection<String>> T findAll(String regex, CharSequence content, int group, T collection) {
-        if (regex == null)
+        if (regex == null) {
             return collection;
+        }
 
         return findAll(Pattern.compile(regex, Pattern.DOTALL), content, group, collection);
     }
@@ -256,11 +274,13 @@ public class RegexUtils {
      * @return 给定内容中匹配正则的结果集合
      */
     public static <T extends Collection<String>> T findAll(Pattern pattern, CharSequence content, int group, T collection) {
-        if (pattern == null || content == null)
+        if (pattern == null || content == null) {
             return null;
+        }
 
-        if (collection == null)
+        if (collection == null) {
             throw new NullPointerException("Null collection param provided!");
+        }
 
         final Matcher matcher = pattern.matcher(content);
         while (matcher.find()) {
@@ -289,8 +309,9 @@ public class RegexUtils {
      * @return 匹配正则的个数
      */
     public static int count(String regex, CharSequence content) {
-        if (regex == null || content == null)
+        if (regex == null || content == null) {
             return 0;
+        }
 
         return count(Pattern.compile(regex, Pattern.DOTALL), content);
     }
@@ -303,8 +324,9 @@ public class RegexUtils {
      * @return 匹配正则的个数
      */
     public static int count(Pattern pattern, CharSequence content) {
-        if (pattern == null || content == null)
+        if (pattern == null || content == null) {
             return 0;
+        }
 
         int count = 0;
         final Matcher matcher = pattern.matcher(content);
@@ -376,8 +398,9 @@ public class RegexUtils {
      * @return 转义后的文本
      */
     public static String escape(CharSequence content) {
-        if (StringUtils.isBlank(content))
+        if (StringUtils.isBlank(content)) {
             return StringUtils.toString(content);
+        }
 
         return StringUtils.edit(content, c -> REGEX_KEYS.contains(c) ? (StringUtils.BACKSLASH + c) : String.valueOf(c));
     }

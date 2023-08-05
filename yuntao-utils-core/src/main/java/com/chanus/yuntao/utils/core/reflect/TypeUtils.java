@@ -34,6 +34,10 @@ import java.util.Map;
  * @since 1.2.5
  */
 public class TypeUtils {
+    private TypeUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 获得 {@link Type} 对应的原始类
      *
@@ -223,8 +227,9 @@ public class TypeUtils {
      * @return 指定类型中所有泛型参数类型
      */
     public static Type[] getTypeArguments(Type type) {
-        if (type == null)
+        if (type == null) {
             return null;
+        }
 
         final ParameterizedType parameterizedType = toParameterizedType(type);
         return parameterizedType == null ? null : parameterizedType.getActualTypeArguments();
@@ -279,13 +284,15 @@ public class TypeUtils {
 
         // 泛型参数标识符列表
         final TypeVariable<?>[] typeVars = typeDefineClass.getTypeParameters();
-        if (ArrayUtils.isEmpty(typeVars))
+        if (ArrayUtils.isEmpty(typeVars)) {
             return null;
+        }
 
         // 实际类型列表
         final Type[] actualTypeArguments = getTypeArguments(actualType);
-        if (ArrayUtils.isEmpty(actualTypeArguments))
+        if (ArrayUtils.isEmpty(actualTypeArguments)) {
             return null;
+        }
 
         int size = Math.min(actualTypeArguments.length, typeVars.length);
         final Map<TypeVariable<?>, Type> tableMap = new TableMap<>(typeVars, actualTypeArguments);
@@ -328,7 +335,7 @@ public class TypeUtils {
      * @param type 类型
      * @return {@code true} 是未知类型；{@code false} 不是未知类型
      */
-    public static boolean isUnknow(Type type) {
+    public static boolean isUnknown(Type type) {
         return type == null || type instanceof TypeVariable;
     }
 
@@ -338,7 +345,7 @@ public class TypeUtils {
      * @param types 泛型数组
      * @return {@code true} 含有泛型变量；{@code false} 不含有泛型变量
      */
-    public static boolean hasTypeVeriable(Type... types) {
+    public static boolean hasTypeVariable(Type... types) {
         for (Type type : types) {
             if (type instanceof TypeVariable) {
                 return true;

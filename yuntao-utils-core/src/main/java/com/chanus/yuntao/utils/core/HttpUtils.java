@@ -21,6 +21,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Http 请求工具类
@@ -72,10 +73,19 @@ public class HttpUtils {
      */
     public static final String CONTENT_TYPE_UPLOAD = "multipart/form-data; boundary=" + BOUNDARY;
 
+    private HttpUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 异步请求回调接口
      */
     public interface CallBack {
+        /**
+         * 请求完成后的处理方法
+         *
+         * @param result 请求结果
+         */
         void onRequestComplete(String result);
     }
 
@@ -96,8 +106,9 @@ public class HttpUtils {
         try {
             connection = getGetConnection(url, connectTimeout, readTimeout, headers, queries);
 
-            if (connection.getResponseCode() != 200)
+            if (connection.getResponseCode() != 200) {
                 throw new RuntimeException("response code is " + connection.getResponseCode());
+            }
 
             // 读取响应
             return StreamUtils.read2String(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
@@ -167,16 +178,12 @@ public class HttpUtils {
      */
     public static void getAsync(String url, int connectTimeout, int readTimeout, Map<String, String> headers,
                                 Map<String, Object> queries, CallBack callBack) {
-        new Thread(() -> {
-            try {
-                String result = get(url, connectTimeout, readTimeout, headers, queries);
-                if (callBack != null) {
-                    callBack.onRequestComplete(result);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException("Asynchronous request exception", e);
-            }
-        }).start();
+        CompletableFuture.supplyAsync(() -> get(url, connectTimeout, readTimeout, headers, queries))
+                .thenAcceptAsync(result -> {
+                    if (callBack != null) {
+                        callBack.onRequestComplete(result);
+                    }
+                });
     }
 
     /**
@@ -246,8 +253,9 @@ public class HttpUtils {
         try {
             connection = getPostConnection(url, connectTimeout, readTimeout, headers, queries, body);
 
-            if (connection.getResponseCode() != 200)
+            if (connection.getResponseCode() != 200) {
                 throw new RuntimeException("response code is " + connection.getResponseCode());
+            }
 
             // 读取响应
             return StreamUtils.read2String(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
@@ -368,16 +376,12 @@ public class HttpUtils {
      */
     public static void postAsync(String url, int connectTimeout, int readTimeout, Map<String, String> headers,
                                  Map<String, Object> queries, String body, CallBack callBack) {
-        new Thread(() -> {
-            try {
-                String result = post(url, connectTimeout, readTimeout, headers, queries, body);
-                if (callBack != null) {
-                    callBack.onRequestComplete(result);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException("Asynchronous request exception", e);
-            }
-        }).start();
+        CompletableFuture.supplyAsync(() -> post(url, connectTimeout, readTimeout, headers, queries, body))
+                .thenAcceptAsync(result -> {
+                    if (callBack != null) {
+                        callBack.onRequestComplete(result);
+                    }
+                });
     }
 
     /**
@@ -488,8 +492,9 @@ public class HttpUtils {
      * @return 远程资源的响应结果
      */
     public static String upload(String url, File file, String formName) {
-        if (StringUtils.isBlank(formName))
+        if (StringUtils.isBlank(formName)) {
             formName = "file";
+        }
 
         // 输出流
         DataOutputStream dataOutputStream = null;
@@ -561,8 +566,9 @@ public class HttpUtils {
 
             if (!fileName.contains(StringUtils.DOT)) {
                 String fileExtension = FileUtils.getFileExtension(bufferedInputStream);
-                if (StringUtils.isNotBlank(fileExtension))
+                if (StringUtils.isNotBlank(fileExtension)) {
                     fileName = fileName + StringUtils.DOT + fileExtension;
+                }
             }
 
             return FileUtils.writeFromStream(savePath + File.separatorChar + fileName, bufferedInputStream, false);
@@ -625,8 +631,9 @@ public class HttpUtils {
         BufferedInputStream bufferedInputStream = downloadGet(url);
         if (!fileName.contains(StringUtils.DOT)) {
             String fileExtension = FileUtils.getFileExtension(bufferedInputStream);
-            if (StringUtils.isNotBlank(fileExtension))
+            if (StringUtils.isNotBlank(fileExtension)) {
                 fileName = fileName + StringUtils.DOT + fileExtension;
+            }
         }
 
         return FileUtils.writeFromStream(savePath + File.separatorChar + fileName, bufferedInputStream, false);
@@ -655,8 +662,9 @@ public class HttpUtils {
             savePath = savePath.replace(File.separatorChar, CharUtils.SLASH) + CharUtils.SLASH + fileFullName;
             // 获取文件类型
             String fileExtension = FileUtils.getFileExtension(bufferedInputStream);
-            if (StringUtils.isNotBlank(fileExtension))
+            if (StringUtils.isNotBlank(fileExtension)) {
                 savePath = savePath + StringUtils.DOT + fileExtension;
+            }
 
             return FileUtils.writeFromStream(savePath, bufferedInputStream, false);
         } catch (Exception e) {
@@ -691,7 +699,7 @@ public class HttpUtils {
      * @since 1.4.5
      */
     public static Map<String, String> initialBasicHeader() {
-        Map<String, String> headers = new HashMap<>();
+        Map<String, String> headers = new HashMap<>(8);
         headers.put("Accept", "*/*");
         headers.put("Connection", "Keep-Alive");
         headers.put("User-Agent", "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)");
@@ -747,12 +755,13 @@ public class HttpUtils {
     public static HttpURLConnection getGetConnection(String url, int connectTimeout, int readTimeout, Map<String, String> headers,
                                                      Map<String, Object> queries) throws IOException {
         // 将请求参数追加到 url 中
-        if (MapUtils.isNotEmpty(queries))
+        if (MapUtils.isNotEmpty(queries)) {
             url = UrlUtils.setParam(url, queries);
+        }
         // 创建 URL 对象
-        URL connURL = new URL(url);
+        URL connUrl = new URL(url);
         // URL 连接
-        HttpURLConnection connection = (HttpURLConnection) connURL.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) connUrl.openConnection();
         // 设置请求头信息
         if (MapUtils.isEmpty(headers)) {
             headers = initialBasicHeader();
@@ -810,13 +819,10 @@ public class HttpUtils {
      */
     public static HttpURLConnection getPostConnection(String url, int connectTimeout, int readTimeout, Map<String, String> headers,
                                                       Map<String, Object> queries, String body) throws IOException {
-        // 将请求参数追加到 url 中
-        if (MapUtils.isNotEmpty(queries))
-            url = UrlUtils.setParam(url, queries);
         // 创建 URL 对象
-        URL connURL = new URL(url);
+        URL connUrl = new URL(url);
         // URL 连接
-        HttpURLConnection connection = (HttpURLConnection) connURL.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) connUrl.openConnection();
         // 设置请求头信息
         if (MapUtils.isEmpty(headers)) {
             headers = initialBasicHeader(CONTENT_TYPE_FORM);
@@ -837,6 +843,18 @@ public class HttpUtils {
         connection.setReadTimeout(readTimeout);
         // 建立实际的连接
         connection.connect();
+
+        // 设置 queries 参数
+        if (MapUtils.isNotEmpty(queries)) {
+            String uri = UrlUtils.getParamsUri(queries);
+            if (uri != null) {
+                // 写入参数输出流
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8));
+                bufferedWriter.write(uri);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+            }
+        }
 
         // 设置 body 内的参数
         if (StringUtils.isNotBlank(body)) {
@@ -910,7 +928,8 @@ public class HttpUtils {
      * @since 1.4.5
      */
     public static void closeConnection(HttpURLConnection connection) {
-        if (connection != null)
+        if (connection != null) {
             connection.disconnect();
+        }
     }
 }

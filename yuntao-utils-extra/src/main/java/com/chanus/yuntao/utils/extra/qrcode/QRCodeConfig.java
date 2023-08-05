@@ -21,7 +21,8 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import java.awt.*;
 import java.io.File;
-import java.util.HashMap;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * 二维码配置
@@ -179,8 +180,9 @@ public class QRCodeConfig {
     }
 
     public QRCodeConfig setForeColor(Color foreColor) {
-        if (foreColor != null)
+        if (foreColor != null) {
             this.foreColor = foreColor.getRGB();
+        }
 
         return this;
     }
@@ -190,10 +192,11 @@ public class QRCodeConfig {
     }
 
     public QRCodeConfig setBackColor(Color backColor) {
-        if (backColor == null)
+        if (backColor == null) {
             this.backColor = null;
-        else
+        } else {
             this.backColor = backColor.getRGB();
+        }
 
         return this;
     }
@@ -319,9 +322,9 @@ public class QRCodeConfig {
      *
      * @return 二维码配置
      */
-    public HashMap<EncodeHintType, Object> toHints() {
+    public Map<EncodeHintType, Object> toHints() {
         // 配置
-        final HashMap<EncodeHintType, Object> hints = new HashMap<>();
+        final Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
         if (this.charset != null) {
             hints.put(EncodeHintType.CHARACTER_SET, charset);
         }

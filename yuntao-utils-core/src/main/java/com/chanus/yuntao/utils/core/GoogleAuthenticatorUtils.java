@@ -32,14 +32,25 @@ import java.security.SecureRandom;
  * @since 1.0.0
  */
 public class GoogleAuthenticatorUtils {
-    // 生成的 key 长度（Generate secret key length）
+    /**
+     * 生成的 key 长度（Generate secret key length）
+     */
     private static final int SECRET_SIZE = 10;
 
     private static final String SEED = "g8GjEvTbW5oVSV7avL47357438reyhreyuryetredLDVKs2m0QN7vxRs2im5MDaNCWGmcD2rvcZx";
-    // Java 实现随机数算法
+    /**
+     * Java 实现随机数算法
+     */
     private static final String RANDOM_NUMBER_ALGORITHM = "SHA1PRNG";
-    // 最多可偏移的时间
-    public static int window_size = 3; // default 3 - max 17
+    /**
+     * 最多可偏移的时间<br>
+     * default 3 - max 17
+     */
+    private static int window_size = 3;
+
+    private GoogleAuthenticatorUtils() {
+        throw new IllegalStateException("Utility class");
+    }
 
     /**
      * set the windows size. This is an integer value representing the number of
@@ -49,8 +60,9 @@ public class GoogleAuthenticatorUtils {
      * @param s window size - must be >=1 and <=17. Other values are ignored
      */
     public void setWindowSize(int s) {
-        if (s >= 1 && s <= 17)
+        if (s >= 1 && s <= 17) {
             window_size = s;
+        }
     }
 
     /**
@@ -85,7 +97,7 @@ public class GoogleAuthenticatorUtils {
      * @param secret the secret that was previously generated for this user
      * @return the URL for the QR code to scan
      */
-    public static String getQRBarcodeURL(String user, String host, String secret) {
+    public static String getQRBarcodeUrl(String user, String host, String secret) {
         String format = "http://www.google.com/chart?chs=200x200&chld=M%%7C0&cht=qr&chl=otpauth://totp/%s@%s?secret=%s";
         return String.format(format, user, host, secret);
     }
@@ -95,7 +107,7 @@ public class GoogleAuthenticatorUtils {
      *
      * @param user   账号
      * @param secret 密钥
-     * @return
+     * @return Google 身份验证器
      */
     public static String getQRBarcode(String user, String secret) {
         String format = "otpauth://totp/%s?secret=%s";
@@ -108,7 +120,7 @@ public class GoogleAuthenticatorUtils {
      * @param secret   The users secret.
      * @param code     The code displayed on the users device.
      * @param timeMsec The time in msec (System.currentTimeMillis() for example)
-     * @return
+     * @return {@code true} if the code is valid, {@code false} otherwise
      */
     public static boolean checkCode(String secret, long code, long timeMsec) {
         byte[] decodedKey = Base32.decode2Bytes(secret);
@@ -143,7 +155,7 @@ public class GoogleAuthenticatorUtils {
      *
      * @param secret The users secret.
      * @param code   The code displayed on the users device.
-     * @return
+     * @return {@code true} if the code is valid, {@code false} otherwise.
      */
     public static boolean checkCode(String secret, long code) {
         window_size = 5;

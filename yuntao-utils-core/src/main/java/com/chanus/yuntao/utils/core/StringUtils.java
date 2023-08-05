@@ -24,7 +24,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -210,6 +209,10 @@ public class StringUtils {
 
     public static final int INDEX_NOT_FOUND = -1;
 
+    private StringUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 判断字符串是否为空或空白，空白的定义如下：
      * <pre>
@@ -261,12 +264,14 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static boolean isAllBlank(String... strs) {
-        if (strs == null)
+        if (strs == null) {
             return true;
+        }
 
         for (String str : strs) {
-            if (isNotBlank(str))
+            if (isNotBlank(str)) {
                 return false;
+            }
         }
         return true;
     }
@@ -279,12 +284,14 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static boolean isAllBlank(CharSequence... strs) {
-        if (strs == null)
+        if (strs == null) {
             return true;
+        }
 
         for (CharSequence str : strs) {
-            if (isNotBlank(str))
+            if (isNotBlank(str)) {
                 return false;
+            }
         }
         return true;
     }
@@ -327,12 +334,14 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static boolean isAllNotBlank(String... strs) {
-        if (strs == null)
+        if (strs == null) {
             return false;
+        }
 
         for (String str : strs) {
-            if (isBlank(str))
+            if (isBlank(str)) {
                 return false;
+            }
         }
         return true;
     }
@@ -345,12 +354,14 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static boolean isAllNotBlank(CharSequence... strs) {
-        if (strs == null)
+        if (strs == null) {
             return false;
+        }
 
         for (CharSequence str : strs) {
-            if (isBlank(str))
+            if (isBlank(str)) {
                 return false;
+            }
         }
         return true;
     }
@@ -363,12 +374,14 @@ public class StringUtils {
      * @since 1.2.5
      */
     public static boolean hasBlank(String... strs) {
-        if (strs == null)
+        if (strs == null) {
             return true;
+        }
 
         for (String str : strs) {
-            if (isBlank(str))
+            if (isBlank(str)) {
                 return true;
+            }
         }
         return false;
     }
@@ -381,12 +394,14 @@ public class StringUtils {
      * @since 1.2.5
      */
     public static boolean hasBlank(CharSequence... strs) {
-        if (strs == null)
+        if (strs == null) {
             return true;
+        }
 
         for (CharSequence str : strs) {
-            if (isBlank(str))
+            if (isBlank(str)) {
                 return true;
+            }
         }
         return false;
     }
@@ -427,12 +442,14 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static boolean isAllEmpty(String... strs) {
-        if (strs == null)
+        if (strs == null) {
             return true;
+        }
 
         for (String str : strs) {
-            if (isNotEmpty(str))
+            if (isNotEmpty(str)) {
                 return false;
+            }
         }
         return true;
     }
@@ -445,12 +462,14 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static boolean isAllEmpty(CharSequence... strs) {
-        if (strs == null)
+        if (strs == null) {
             return true;
+        }
 
         for (CharSequence str : strs) {
-            if (isNotEmpty(str))
+            if (isNotEmpty(str)) {
                 return false;
+            }
         }
         return true;
     }
@@ -491,12 +510,14 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static boolean isAllNotEmpty(String... strs) {
-        if (strs == null)
+        if (strs == null) {
             return false;
+        }
 
         for (String str : strs) {
-            if (isEmpty(str))
+            if (isEmpty(str)) {
                 return false;
+            }
         }
         return true;
     }
@@ -509,12 +530,14 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static boolean isAllNotEmpty(CharSequence... strs) {
-        if (strs == null)
+        if (strs == null) {
             return false;
+        }
 
         for (CharSequence str : strs) {
-            if (isEmpty(str))
+            if (isEmpty(str)) {
                 return false;
+            }
         }
         return true;
     }
@@ -527,12 +550,14 @@ public class StringUtils {
      * @since 1.2.5
      */
     public static boolean hasEmpty(String... strs) {
-        if (strs == null)
+        if (strs == null) {
             return true;
+        }
 
         for (String str : strs) {
-            if (isEmpty(str))
+            if (isEmpty(str)) {
                 return true;
+            }
         }
         return false;
     }
@@ -545,12 +570,14 @@ public class StringUtils {
      * @since 1.2.5
      */
     public static boolean hasEmpty(CharSequence... strs) {
-        if (strs == null)
+        if (strs == null) {
             return true;
+        }
 
         for (CharSequence str : strs) {
-            if (isEmpty(str))
+            if (isEmpty(str)) {
                 return true;
+            }
         }
         return false;
     }
@@ -610,8 +637,9 @@ public class StringUtils {
      * @since 1.3.0
      */
     public static String trim(CharSequence str, int mode) {
-        if (str == null)
+        if (str == null) {
             return null;
+        }
 
         int length = str.length();
         int start = 0;
@@ -737,11 +765,14 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static boolean equalsAny(final CharSequence s, final CharSequence... strs) {
-        if (strs == null)
+        if (strs == null) {
             return false;
+        }
 
         for (CharSequence str : strs) {
-            if (Objects.equals(s, str)) return true;
+            if (Objects.equals(s, str)) {
+                return true;
+            }
         }
         return false;
     }
@@ -754,8 +785,9 @@ public class StringUtils {
      * @return {@code true} 两个字符串相等；{@code false} 两个字符串不相等
      */
     public static boolean equalsIgnoreCase(final CharSequence s, final CharSequence t) {
-        if (s == null)
+        if (s == null) {
             return t == null;
+        }
 
         return t != null && s.toString().equalsIgnoreCase(t.toString());
     }
@@ -769,11 +801,14 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static boolean equalsAnyIgnoreCase(final CharSequence s, final CharSequence... strs) {
-        if (strs == null)
+        if (strs == null) {
             return false;
+        }
 
         for (CharSequence str : strs) {
-            if (equalsIgnoreCase(s, str)) return true;
+            if (equalsIgnoreCase(s, str)) {
+                return true;
+            }
         }
         return false;
     }
@@ -785,7 +820,7 @@ public class StringUtils {
      * @return {@code true} 字符串是纯数字；{@code false} 字符串不是纯数字
      */
     public static boolean isNumeric(final String s) {
-        return isNotBlank(s) && Pattern.compile("[0-9]+").matcher(s).matches();
+        return RegexUtils.isMatch(RegexUtils.NUMERIC_PATTERN, s);
     }
 
     /**
@@ -795,7 +830,7 @@ public class StringUtils {
      * @return {@code true} 字符串是数值；{@code false} 字符串不是数值
      */
     public static boolean isNumber(final String s) {
-        return isNotBlank(s) && Pattern.compile("^([+|-]?0|([+|-]?0\\.\\d+)|^([+|-]?[1-9]\\d*(\\.\\d+)?))$").matcher(s).matches();
+        return RegexUtils.isMatch(RegexUtils.NUMBER_PATTERN, s);
     }
 
     /**
@@ -815,8 +850,9 @@ public class StringUtils {
      * @return 压缩后的字节数组
      */
     public static byte[] compress(final String s) {
-        if (isBlank(s))
+        if (isBlank(s)) {
             return null;
+        }
 
         ByteArrayOutputStream baos = null;
         GZIPOutputStream gzos = null;
@@ -840,8 +876,9 @@ public class StringUtils {
      * @return 解压后的字节数组
      */
     public static byte[] decompress(byte[] b) {
-        if (b == null || b.length == 0)
+        if (b == null || b.length == 0) {
             return null;
+        }
 
         ByteArrayInputStream bais = null;
         ByteArrayOutputStream baos = null;
@@ -872,13 +909,20 @@ public class StringUtils {
      * @return 返回已生成的重复字符串
      */
     public static String repeat(final String s, final int num) {
-        if (s == null) return null;
-        if (num <= 0) return EMPTY;
-        if (num == 1) return s;
+        if (s == null) {
+            return null;
+        }
+        if (num <= 0) {
+            return EMPTY;
+        }
+        if (num == 1) {
+            return s;
+        }
 
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < num; i++)
+        for (int i = 0; i < num; i++) {
             sb.append(s);
+        }
         return sb.toString();
     }
 
@@ -891,24 +935,33 @@ public class StringUtils {
      * @return 返回已生成的重复字符串
      */
     public static String repeatWithSeparator(String s, int num, String separator) {
-        if (s == null) return null;
-        if (num <= 0) return EMPTY;
-        if (num == 1) return s;
+        if (s == null) {
+            return null;
+        }
+        if (num <= 0) {
+            return EMPTY;
+        }
+        if (num == 1) {
+            return s;
+        }
 
         boolean join = true, isFirst = true;
-        if (isEmpty(separator))
+        if (isEmpty(separator)) {
             join = false;
+        }
 
         StringBuilder sb = new StringBuilder();
         while (num-- > 0) {
-            if (isFirst)
+            if (isFirst) {
                 isFirst = false;
-            else if (join)
+            } else if (join) {
                 sb.append(separator);
+            }
             sb.append(s);
         }
-        for (int i = 0; i < num; i++)
+        for (int i = 0; i < num; i++) {
             sb.append(s);
+        }
         return sb.toString();
     }
 
@@ -948,13 +1001,15 @@ public class StringUtils {
      * @since 1.4.5
      */
     public static String replaceAny(String source, String target, String... replaced) {
-        if (source == null || target == null)
+        if (source == null || target == null) {
             return source;
+        }
 
         if (ArrayUtils.isNotEmpty(replaced)) {
             for (String s : replaced) {
-                if (s != null)
+                if (s != null) {
                     source = source.replace(s, target);
+                }
             }
         }
 
@@ -1051,8 +1106,9 @@ public class StringUtils {
      * @return 编码后的字节码
      */
     public static byte[] bytes(CharSequence str, Charset charset) {
-        if (str == null)
+        if (str == null) {
             return null;
+        }
 
         return charset == null ? str.toString().getBytes() : str.toString().getBytes(charset);
     }
@@ -1100,8 +1156,9 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static String toString(byte[] data, Charset charset) {
-        if (data == null)
+        if (data == null) {
             return null;
+        }
 
         return charset == null ? new String(data) : new String(data, charset);
     }
@@ -1127,8 +1184,9 @@ public class StringUtils {
      * @since 1.3.0
      */
     public static String toString(Byte[] data, Charset charset) {
-        if (data == null)
+        if (data == null) {
             return null;
+        }
 
         byte[] bytes = new byte[data.length];
         Byte dataByte;
@@ -1195,8 +1253,9 @@ public class StringUtils {
      * @since 1.3.0
      */
     public static String toString(Object obj, Charset charset) {
-        if (obj == null)
+        if (obj == null) {
             return null;
+        }
 
         if (obj instanceof String) {
             return (String) obj;
@@ -1233,8 +1292,9 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static String concat(boolean isNullToEmpty, CharSequence... strs) {
-        if (strs == null)
+        if (strs == null) {
             return null;
+        }
 
         final StringBuilder sb = new StringBuilder();
         for (CharSequence str : strs) {
@@ -1252,13 +1312,15 @@ public class StringUtils {
      * @since 1.3.0
      */
     public static String remove(String str, String... strsToRemove) {
-        if (isEmpty(str) || ArrayUtils.isEmpty(strsToRemove))
+        if (isEmpty(str) || ArrayUtils.isEmpty(strsToRemove)) {
             return str;
+        }
 
         String result = str;
         for (String strToRemove : strsToRemove) {
-            if (strToRemove != null)
+            if (strToRemove != null) {
                 result = result.replace(strToRemove, EMPTY);
+            }
         }
         return result;
     }
@@ -1283,8 +1345,9 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static String removePrefix(String s, String prefix) {
-        if (isEmpty(s) || isEmpty(prefix))
+        if (isEmpty(s) || isEmpty(prefix)) {
             return s;
+        }
 
         if (s.startsWith(prefix)) {
             return s.substring(prefix.length());
@@ -1301,8 +1364,9 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static String removePrefixIgnoreCase(String s, String prefix) {
-        if (isEmpty(s) || isEmpty(prefix))
+        if (isEmpty(s) || isEmpty(prefix)) {
             return s;
+        }
 
         if (s.toLowerCase().startsWith(prefix.toLowerCase())) {
             return s.substring(prefix.length());
@@ -1319,8 +1383,9 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static String removeSuffix(String s, String suffix) {
-        if (isEmpty(s) || isEmpty(suffix))
+        if (isEmpty(s) || isEmpty(suffix)) {
             return s;
+        }
 
         if (s.endsWith(suffix)) {
             return s.substring(0, s.length() - suffix.length());
@@ -1337,8 +1402,9 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static String removeSuffixIgnoreCase(String s, String suffix) {
-        if (isEmpty(s) || isEmpty(suffix))
+        if (isEmpty(s) || isEmpty(suffix)) {
             return s;
+        }
 
         if (s.toLowerCase().endsWith(suffix.toLowerCase())) {
             return s.substring(0, s.length() - suffix.length());
@@ -1354,16 +1420,18 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static String toUnderlineCase(CharSequence s) {
-        if (s == null)
+        if (s == null) {
             return null;
+        }
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
             final char c = s.charAt(i);
             final Character preChar = i > 0 ? s.charAt(i - 1) : null;
             if (Character.isUpperCase(c)) {
-                if (preChar != null && preChar != CharUtils.UNDERSCORE)
+                if (preChar != null && preChar != CharUtils.UNDERSCORE) {
                     sb.append(UNDERSCORE);
+                }
 
                 sb.append(Character.toLowerCase(c));
             } else {
@@ -1381,8 +1449,9 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static String toCamelCase(CharSequence s) {
-        if (s == null)
+        if (s == null) {
             return null;
+        }
 
         if (contains(s, UNDERSCORE)) {
             final StringBuilder sb = new StringBuilder(s.length());
@@ -1443,8 +1512,9 @@ public class StringUtils {
      */
     public static String fill(String s, String filledStr, int minLength, boolean isPre) {
         final int length = s.length();
-        if (length > minLength)
+        if (length > minLength) {
             return s;
+        }
 
         String filled = repeat(filledStr, minLength - length);
         return isPre ? filled.concat(s) : s.concat(filled);
@@ -1458,8 +1528,9 @@ public class StringUtils {
      * @since 1.1.0
      */
     public static String reverse(String s) {
-        if (s == null)
+        if (s == null) {
             return null;
+        }
 
         char[] chars = s.toCharArray();
         int length = chars.length;
@@ -1482,18 +1553,22 @@ public class StringUtils {
      * @since 1.2.2
      */
     public static int indexOf(final CharSequence str, final CharSequence searchStr, int fromIndex, boolean ignoreCase) {
-        if (str == null || searchStr == null)
+        if (str == null || searchStr == null) {
             return INDEX_NOT_FOUND;
+        }
 
-        if (fromIndex < 0)
+        if (fromIndex < 0) {
             fromIndex = 0;
+        }
 
         final int endLimit = str.length() - searchStr.length() + 1;
-        if (fromIndex > endLimit)
+        if (fromIndex > endLimit) {
             return INDEX_NOT_FOUND;
+        }
 
-        if (searchStr.length() == 0)
+        if (searchStr.length() == 0) {
             return fromIndex;
+        }
 
         if (!ignoreCase) {
             return str.toString().indexOf(searchStr.toString(), fromIndex);
@@ -1551,23 +1626,26 @@ public class StringUtils {
      * @since 1.2.2
      */
     public static String substring(CharSequence s, int beginIndex, int endIndex) {
-        if (s == null)
+        if (s == null) {
             return null;
+        }
 
         int len = s.length();
 
         if (beginIndex < 0) {
             beginIndex = len + beginIndex;
-            if (beginIndex < 0)
+            if (beginIndex < 0) {
                 beginIndex = 0;
+            }
         } else if (beginIndex > len) {
             beginIndex = len;
         }
 
         if (endIndex < 0) {
             endIndex = len + endIndex;
-            if (endIndex < 0)
+            if (endIndex < 0) {
                 return EMPTY;
+            }
         } else if (endIndex > len) {
             endIndex = len;
         }
@@ -1578,8 +1656,9 @@ public class StringUtils {
             endIndex = tmp;
         }
 
-        if (beginIndex == endIndex)
+        if (beginIndex == endIndex) {
             return EMPTY;
+        }
 
         return s.toString().substring(beginIndex, endIndex);
     }
@@ -1617,8 +1696,9 @@ public class StringUtils {
      * @since 1.2.2
      */
     public static String right(CharSequence s, int beginIndex) {
-        if (s == null)
+        if (s == null) {
             return null;
+        }
         return substring(s, beginIndex, s.length());
     }
 
@@ -1635,19 +1715,23 @@ public class StringUtils {
      * @since 1.2.2
      */
     public static List<String> split(String s, char separator, int limit, boolean isTrim, boolean ignoreEmpty, boolean ignoreCase) {
-        if (isEmpty(s))
-            return new ArrayList<>(0);
+        if (isEmpty(s)) {
+            return Collections.emptyList();
+        }
 
-        if (limit == 1)
+        if (limit == 1) {
             return addToList(new ArrayList<>(1), s, isTrim, ignoreEmpty);
+        }
 
         final ArrayList<String> list = new ArrayList<>(limit > 0 ? limit : 16);
         int len = s.length();
-        int start = 0;// 切分后每个部分的起始
+        // 切分后每个部分的起始
+        int start = 0;
         for (int i = 0; i < len; i++) {
             if (CharUtils.equals(separator, s.charAt(i), ignoreCase)) {
                 addToList(list, s.substring(start, i), isTrim, ignoreEmpty);
-                start = i + 1;// i + 1同时将 start 与 i 保持一致
+                // i + 1同时将 start 与 i 保持一致
+                start = i + 1;
 
                 // 检查是否超出范围（最大允许 limit - 1 个，剩下一个留给末尾字符串）
                 if (limit > 0 && list.size() > limit - 2) {
@@ -1694,23 +1778,28 @@ public class StringUtils {
      * @since 1.4.6
      */
     public static List<String> split(String s, int limit, boolean isTrim, boolean ignoreEmpty) {
-        if (isEmpty(s))
-            return new ArrayList<>(0);
+        if (isEmpty(s)) {
+            return Collections.emptyList();
+        }
 
-        if (limit == 1)
+        if (limit == 1) {
             return addToList(new ArrayList<>(1), s, isTrim, ignoreEmpty);
+        }
 
         final ArrayList<String> list = new ArrayList<>(limit > 0 ? limit : 16);
         int len = s.length();
-        int start = 0;// 切分后每个部分的起始
+        // 切分后每个部分的起始
+        int start = 0;
         for (int i = 0; i < len; i++) {
             if (CharUtils.isBlank(s.charAt(i))) {
                 addToList(list, s.substring(start, i), isTrim, ignoreEmpty);
-                start = i + 1;// i + 1 同时将 start 与 i 保持一致
+                // i + 1 同时将 start 与 i 保持一致
+                start = i + 1;
 
                 // 检查是否超出范围（最大允许 limit - 1 个，剩下一个留给末尾字符串）
-                if (limit > 0 && list.size() > limit - 2)
+                if (limit > 0 && list.size() > limit - 2) {
                     break;
+                }
             }
         }
         return addToList(list, s.substring(start, len), isTrim, ignoreEmpty);
@@ -1754,15 +1843,19 @@ public class StringUtils {
      * @since 1.2.2
      */
     public static List<String> split(String s, String separator, int limit, boolean isTrim, boolean ignoreEmpty, boolean ignoreCase) {
-        if (isEmpty(s))
-            return new ArrayList<>(0);
+        if (isEmpty(s)) {
+            return Collections.emptyList();
+        }
 
-        if (limit == 1)
+        if (limit == 1) {
             return addToList(new ArrayList<>(1), s, isTrim, ignoreEmpty);
+        }
 
-        if (isEmpty(separator)) {// 分隔符为空时按照空白符切分
+        if (isEmpty(separator)) {
+            // 分隔符为空时按照空白符切分
             return split(s, limit, isTrim, ignoreEmpty);
-        } else if (separator.length() == 1) {// 分隔符只有一个字符长度时按照单分隔符切分
+        } else if (separator.length() == 1) {
+            // 分隔符只有一个字符长度时按照单分隔符切分
             return split(s, separator.charAt(0), limit, isTrim, ignoreEmpty, ignoreCase);
         }
 
@@ -1955,23 +2048,29 @@ public class StringUtils {
      * @since 1.3.0
      */
     public static String format(String template, Object... params) {
-        if (template == null)
+        if (template == null) {
             return NULL;
+        }
 
-        if (isBlank(template) || ArrayUtils.isEmpty(params))
+        if (isBlank(template) || ArrayUtils.isEmpty(params)) {
             return template;
+        }
 
         final int length = template.length();
 
         // 初始化定义好的长度以获得更好的性能
         StringBuilder stringBuilder = new StringBuilder(length + 50);
 
-        int handledPosition = 0;// 记录已经处理到的位置
-        int delimIndex;// 占位符所在位置
+        // 记录已经处理到的位置
+        int handledPosition = 0;
+        // 占位符所在位置
+        int delimIndex;
         for (int argIndex = 0; argIndex < params.length; argIndex++) {
             delimIndex = template.indexOf(EMPTY_JSON, handledPosition);
-            if (delimIndex == -1) {// 剩余部分无占位符
-                if (handledPosition == 0) { // 不带占位符的模板直接返回
+            if (delimIndex == -1) {
+                // 剩余部分无占位符
+                if (handledPosition == 0) {
+                    // 不带占位符的模板直接返回
                     return template;
                 }
                 // 字符串模板剩余部分不再包含占位符，加入剩余部分后返回结果
@@ -1980,8 +2079,10 @@ public class StringUtils {
             }
 
             // 转义符
-            if (delimIndex > 0 && template.charAt(delimIndex - 1) == CharUtils.BACKSLASH) {// 转义符
-                if (delimIndex > 1 && template.charAt(delimIndex - 2) == CharUtils.BACKSLASH) {// 双转义符
+            if (delimIndex > 0 && template.charAt(delimIndex - 1) == CharUtils.BACKSLASH) {
+                // 转义符
+                if (delimIndex > 1 && template.charAt(delimIndex - 2) == CharUtils.BACKSLASH) {
+                    // 双转义符
                     // 转义符之前还有一个转义符，占位符依旧有效
                     stringBuilder.append(template, handledPosition, delimIndex - 1);
                     stringBuilder.append(toUtf8String(params[argIndex]));
@@ -1993,7 +2094,8 @@ public class StringUtils {
                     stringBuilder.append(CharUtils.OPEN_BRACE);
                     handledPosition = delimIndex + 1;
                 }
-            } else {// 正常占位符
+            } else {
+                // 正常占位符
                 stringBuilder.append(template, handledPosition, delimIndex);
                 stringBuilder.append(toUtf8String(params[argIndex]));
                 handledPosition = delimIndex + 2;
@@ -2015,8 +2117,9 @@ public class StringUtils {
      * @since 1.3.0
      */
     public static String filter(CharSequence str, final Filter<Character> filter) {
-        if (str == null || filter == null)
+        if (str == null || filter == null) {
             return toString(str);
+        }
 
         int length = str.length();
         final StringBuilder stringBuilder = new StringBuilder(length);
@@ -2039,8 +2142,9 @@ public class StringUtils {
      * @since 1.3.0
      */
     public static String edit(CharSequence str, final Editor<Character, String> editor) {
-        if (str == null || editor == null)
+        if (str == null || editor == null) {
             return toString(str);
+        }
 
         int length = str.length();
         final StringBuilder stringBuilder = new StringBuilder(length);
@@ -2066,15 +2170,19 @@ public class StringUtils {
      * @since 1.4.6
      */
     public static boolean numericVerification(String str, String separator, Integer count, Integer length, Integer min, Integer max, boolean isFixed, Boolean isIgnore0, boolean isAllowRepeat) {
-        if (isBlank(str))
+        if (isBlank(str)) {
             return false;
+        }
         String[] arr = separator == null ? new String[]{str} : splitToArray(str, separator, -1, false, false, false);
-        if (count != null && arr.length != count)// 分隔符分割的数字个数不匹配
+        if (count != null && arr.length != count) {
+            // 分隔符分割的数字个数不匹配
             return false;
+        }
         Set<String> set = new HashSet<>();
         for (String s : arr) {
-            if (!numericVerification(s, length, min, max, isFixed, isIgnore0))
+            if (!numericVerification(s, length, min, max, isFixed, isIgnore0)) {
                 return false;
+            }
             set.add(s);
         }
 
@@ -2094,19 +2202,27 @@ public class StringUtils {
      * @since 1.4.6
      */
     public static boolean numericVerification(String str, Integer length, Integer min, Integer max, boolean isFixed, Boolean isIgnore0) {
-        if (!isNumeric(str))
+        if (!isNumeric(str)) {
             return false;
+        }
 
-        if (length == null) {// 不限制数字长度
-            if (isIgnore0 != null && !isIgnore0 && str.charAt(0) == '0')
+        if (length == null) {
+            // 不限制数字长度
+            if (isIgnore0 != null && !isIgnore0 && str.charAt(0) == '0') {
                 return false;
+            }
         } else {
-            if (str.length() > length)// 数字长度大于最大长度
+            if (str.length() > length) {
+                // 数字长度大于最大长度
                 return false;
-            if (isFixed && str.length() != length)// 数字固定长度 length
+            }
+            if (isFixed && str.length() != length) {
+                // 数字固定长度 length
                 return false;
-            if (isIgnore0 != null && !isIgnore0 && str.length() > 1 && str.charAt(0) == '0')
+            }
+            if (isIgnore0 != null && !isIgnore0 && str.length() > 1 && str.charAt(0) == '0') {
                 return false;
+            }
         }
 
         int num = Integer.parseInt(str);

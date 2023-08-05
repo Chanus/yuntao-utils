@@ -33,6 +33,14 @@ public class NumberUtils {
      * 默认除法运算精度
      */
     private static final int DEFAULT_DIVIDE_SCALE = 10;
+    /**
+     * 金额数字格式化
+     */
+    private static final String MONEY_FORMATTER = ",##0.00";
+
+    private NumberUtils() {
+        throw new IllegalStateException("Utility class");
+    }
 
     /**
      * 提供精确的加法运算
@@ -88,12 +96,14 @@ public class NumberUtils {
     public static BigDecimal add(Number... values) {
         BigDecimal result = BigDecimal.ZERO;
 
-        if (ArrayUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values)) {
             return result;
+        }
 
         for (Number value : values) {
-            if (value != null)
+            if (value != null) {
                 result = result.add(new BigDecimal(value.toString()));
+            }
         }
 
         return result;
@@ -109,12 +119,14 @@ public class NumberUtils {
     public static BigDecimal add(String... values) {
         BigDecimal result = BigDecimal.ZERO;
 
-        if (ArrayUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values)) {
             return result;
+        }
 
         for (String value : values) {
-            if (StringUtils.isNotBlank(value))
+            if (StringUtils.isNotBlank(value)) {
                 result = result.add(new BigDecimal(value));
+            }
         }
 
         return result;
@@ -130,12 +142,14 @@ public class NumberUtils {
     public static BigDecimal add(BigDecimal... values) {
         BigDecimal result = BigDecimal.ZERO;
 
-        if (ArrayUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values)) {
             return result;
+        }
 
         for (BigDecimal value : values) {
-            if (value != null)
+            if (value != null) {
                 result = result.add(value);
+            }
         }
 
         return result;
@@ -195,18 +209,23 @@ public class NumberUtils {
     public static BigDecimal subtract(Number... values) {
         BigDecimal result = BigDecimal.ZERO;
 
-        if (ArrayUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values)) {
             return result;
+        }
 
-        if (values[0] != null)
+        if (values[0] != null) {
             result = new BigDecimal(values[0].toString());
+        }
 
         int length = values.length;
-        if (length == 1) return result;
+        if (length == 1) {
+            return result;
+        }
 
         for (int i = 1; i < length; i++) {
-            if (values[i] != null)
+            if (values[i] != null) {
                 result = result.subtract(new BigDecimal(values[i].toString()));
+            }
         }
 
         return result;
@@ -222,18 +241,23 @@ public class NumberUtils {
     public static BigDecimal subtract(String... values) {
         BigDecimal result = BigDecimal.ZERO;
 
-        if (ArrayUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values)) {
             return result;
+        }
 
-        if (StringUtils.isNotBlank(values[0]))
+        if (StringUtils.isNotBlank(values[0])) {
             result = new BigDecimal(values[0]);
+        }
 
         int length = values.length;
-        if (length == 1) return result;
+        if (length == 1) {
+            return result;
+        }
 
         for (int i = 1; i < length; i++) {
-            if (StringUtils.isNotBlank(values[i]))
+            if (StringUtils.isNotBlank(values[i])) {
                 result = result.subtract(new BigDecimal(values[i]));
+            }
         }
 
         return result;
@@ -249,18 +273,23 @@ public class NumberUtils {
     public static BigDecimal subtract(BigDecimal... values) {
         BigDecimal result = BigDecimal.ZERO;
 
-        if (ArrayUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values)) {
             return result;
+        }
 
-        if (values[0] != null)
+        if (values[0] != null) {
             result = values[0];
+        }
 
         int length = values.length;
-        if (length == 1) return result;
+        if (length == 1) {
+            return result;
+        }
 
         for (int i = 1; i < length; i++) {
-            if (values[i] != null)
+            if (values[i] != null) {
                 result = result.subtract(values[i]);
+            }
         }
 
         return result;
@@ -318,15 +347,18 @@ public class NumberUtils {
      * @return 积
      */
     public static BigDecimal multiply(Number... values) {
-        if (ArrayUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values)) {
             return BigDecimal.ZERO;
+        }
 
         BigDecimal result = BigDecimal.ONE;
         for (Number value : values) {
-            if (value == null)
+            if (value == null) {
                 continue;
-            if (isZero(value.toString()))
+            }
+            if (isZero(value.toString())) {
                 return BigDecimal.ZERO;
+            }
 
             result = result.multiply(new BigDecimal(value.toString()));
         }
@@ -342,15 +374,18 @@ public class NumberUtils {
      * @return 积
      */
     public static BigDecimal multiply(String... values) {
-        if (ArrayUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values)) {
             return BigDecimal.ZERO;
+        }
 
         BigDecimal result = BigDecimal.ONE;
         for (String value : values) {
-            if (StringUtils.isBlank(value))
+            if (StringUtils.isBlank(value)) {
                 continue;
-            if (isZero(value))
+            }
+            if (isZero(value)) {
                 return BigDecimal.ZERO;
+            }
 
             result = result.multiply(new BigDecimal(value));
         }
@@ -366,15 +401,18 @@ public class NumberUtils {
      * @return 积
      */
     public static BigDecimal multiply(BigDecimal... values) {
-        if (ArrayUtils.isEmpty(values))
+        if (ArrayUtils.isEmpty(values)) {
             return BigDecimal.ZERO;
+        }
 
         BigDecimal result = BigDecimal.ONE;
         for (BigDecimal value : values) {
-            if (value == null)
+            if (value == null) {
                 continue;
-            if (isZero(value.toString()))
+            }
+            if (isZero(value.toString())) {
                 return BigDecimal.ZERO;
+            }
 
             result = result.multiply(value);
         }
@@ -880,7 +918,7 @@ public class NumberUtils {
      * @return 格式化后的值
      */
     public static String decimalFormatMoney(double value) {
-        return decimalFormat(",##0.00", value);
+        return decimalFormat(MONEY_FORMATTER, value);
     }
 
     /**
@@ -891,7 +929,7 @@ public class NumberUtils {
      * @since 1.2.3
      */
     public static String decimalFormatMoney(Object value) {
-        return decimalFormat(",##0.00", value);
+        return decimalFormat(MONEY_FORMATTER, value);
     }
 
     /**
@@ -902,7 +940,7 @@ public class NumberUtils {
      * @since 1.2.3
      */
     public static String decimalFormatMoney(String value) {
-        return decimalFormat(",##0.00", value);
+        return decimalFormat(MONEY_FORMATTER, value);
     }
 
     /**
@@ -926,8 +964,9 @@ public class NumberUtils {
      * @return 是否是质数
      */
     public static boolean isPrimes(int n) {
-        if (n <= 1)
+        if (n <= 1) {
             return false;
+        }
 
         for (int i = 2; i <= Math.sqrt(n); i++) {
             if (n % i == 0) {

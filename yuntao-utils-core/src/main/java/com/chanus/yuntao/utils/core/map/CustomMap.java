@@ -67,6 +67,17 @@ public class CustomMap extends HashMap<String, Object> {
     /**
      * 创建 {@code CustomMap} 对象
      *
+     * @param initialCapacity 初始容量
+     * @return {@link CustomMap}
+     * @since 1.6.0
+     */
+    public static CustomMap create(int initialCapacity) {
+        return new CustomMap(initialCapacity);
+    }
+
+    /**
+     * 创建 {@code CustomMap} 对象
+     *
      * @param key   键
      * @param value 值
      * @return {@link CustomMap}
@@ -96,8 +107,9 @@ public class CustomMap extends HashMap<String, Object> {
      * @since 1.4.6
      */
     public CustomMap putNextIgnoreNull(String key, Object value) {
-        if (value != null)
+        if (value != null) {
             this.put(key, value);
+        }
 
         return this;
     }
@@ -111,8 +123,9 @@ public class CustomMap extends HashMap<String, Object> {
      * @since 1.4.6
      */
     public CustomMap putNextIgnoreEmpty(String key, CharSequence value) {
-        if (StringUtils.isNotEmpty(value))
+        if (StringUtils.isNotEmpty(value)) {
             this.put(key, value);
+        }
 
         return this;
     }
@@ -126,9 +139,21 @@ public class CustomMap extends HashMap<String, Object> {
      * @since 1.4.6
      */
     public CustomMap putNextIgnoreBlank(String key, CharSequence value) {
-        if (StringUtils.isNotBlank(value))
+        if (StringUtils.isNotBlank(value)) {
             this.put(key, value);
+        }
 
         return this;
+    }
+
+    /**
+     * 获取字符串类型的值
+     *
+     * @param key 键
+     * @return 字符串类型值
+     * @since 1.6.0
+     */
+    public String getStringValue(String key) {
+        return (String) this.get(key);
     }
 }

@@ -32,9 +32,9 @@ public enum FtpMode {
     /**
      * 主动模式
      */
-    Active,
+    ACTIVE,
     /**
      * 被动模式
      */
-    Passive
+    PASSIVE
 }

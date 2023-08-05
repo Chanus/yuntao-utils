@@ -33,8 +33,8 @@ public class GoogleAuthenticatorUtilsTest {
     }
 
     @Test
-    public void getQRBarcodeURLTest() {
-        String qrBarcodeURL = GoogleAuthenticatorUtils.getQRBarcodeURL("test", "test@test.com", "N6VDTUFTVZS6ED6P");
+    public void getQRBarcodeUrlTest() {
+        String qrBarcodeURL = GoogleAuthenticatorUtils.getQRBarcodeUrl("test", "test@test.com", "N6VDTUFTVZS6ED6P");
         System.out.println(qrBarcodeURL);
     }
 

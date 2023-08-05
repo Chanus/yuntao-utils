@@ -81,6 +81,9 @@ public class UrlUtilsTest {
         String url = "http://www.test.com?a=aaa&b=bbb&c=ccc&d=ddd&e=e1,e2,e3";
         System.out.println(UrlUtils.getParamValue(url, "a"));// aaa
         System.out.println(UrlUtils.getParamValue(url, "e"));// e1,e2,e3
+        String uri = "a=aaa&b=bbb&c=ccc&d=ddd&e=e1,e2,e3";
+        System.out.println(UrlUtils.getParamValue(uri, "a"));// aaa
+        System.out.println(UrlUtils.getParamValue(uri, "e"));// e1,e2,e3
     }
 
     @Test
