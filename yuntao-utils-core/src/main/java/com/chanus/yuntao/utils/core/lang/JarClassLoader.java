@@ -59,8 +59,10 @@ public class JarClassLoader extends URLClassLoader {
      */
     public static JarClassLoader load(File dir) {
         final JarClassLoader loader = new JarClassLoader();
-        loader.addJar(dir);// 查找加载所有 jar
-        loader.addURL(dir);// 查找加载所有 class
+        // 查找加载所有 jar
+        loader.addJar(dir);
+        // 查找加载所有 class
+        loader.addUrl(dir);
         return loader;
     }
 
@@ -114,12 +116,13 @@ public class JarClassLoader extends URLClassLoader {
      * @return this
      */
     public JarClassLoader addJar(File jarFileOrDir) {
-        if (isJarFile(jarFileOrDir))
-            return addURL(jarFileOrDir);
+        if (isJarFile(jarFileOrDir)) {
+            return addUrl(jarFileOrDir);
+        }
 
         final List<File> jars = loopJar(jarFileOrDir);
         for (File jar : jars) {
-            addURL(jar);
+            addUrl(jar);
         }
         return this;
     }
@@ -131,7 +134,7 @@ public class JarClassLoader extends URLClassLoader {
      * @param dir 目录
      * @return this
      */
-    public JarClassLoader addURL(File dir) {
+    public JarClassLoader addUrl(File dir) {
         try {
             super.addURL(dir.toURI().toURL());
         } catch (IOException e) {
@@ -157,8 +160,9 @@ public class JarClassLoader extends URLClassLoader {
      * @return {@code true} 是 jar 文件；{@code false} 不是 jar 文件
      */
     private static boolean isJarFile(File file) {
-        if (file == null || !file.isFile())
+        if (file == null || !file.isFile()) {
             return false;
+        }
 
         return file.getPath().toLowerCase().endsWith(".jar");
     }

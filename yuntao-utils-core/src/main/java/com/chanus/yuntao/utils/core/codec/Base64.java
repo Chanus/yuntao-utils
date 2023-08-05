@@ -32,6 +32,10 @@ import java.nio.charset.Charset;
  * @since 1.0.0
  */
 public class Base64 {
+    private Base64() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 编码为 Base64，非 URL 安全
      *

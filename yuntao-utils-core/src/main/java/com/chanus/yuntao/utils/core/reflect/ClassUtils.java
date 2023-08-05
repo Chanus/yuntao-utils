@@ -40,6 +40,10 @@ import java.util.*;
  * @since 1.2.5
  */
 public class ClassUtils {
+    private ClassUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 获取对象类型
      *
@@ -91,8 +95,9 @@ public class ClassUtils {
      * @return 类名
      */
     public static String getClassName(Class<?> clazz, boolean isSimple) {
-        if (clazz == null)
+        if (clazz == null) {
             return null;
+        }
 
         return isSimple ? clazz.getSimpleName() : clazz.getName();
     }
@@ -105,8 +110,9 @@ public class ClassUtils {
      */
     public static String getShortClassName(String className) {
         final List<String> packages = StringUtils.split(className, CharUtils.DOT);
-        if (packages == null || packages.size() < 2)
+        if (packages == null || packages.size() < 2) {
             return className;
+        }
 
         final int size = packages.size();
         final StringBuilder result = new StringBuilder();
@@ -144,8 +150,9 @@ public class ClassUtils {
      * @return 指定类是否与给定的类名相同
      */
     public static boolean equals(Class<?> clazz, String className, boolean ignoreCase) {
-        if (clazz == null || StringUtils.isBlank(className))
+        if (clazz == null || StringUtils.isBlank(className)) {
             return false;
+        }
 
         if (ignoreCase) {
             return className.equalsIgnoreCase(clazz.getName()) || className.equalsIgnoreCase(clazz.getSimpleName());
@@ -276,8 +283,9 @@ public class ClassUtils {
      * @throws SecurityException    无访问权限抛出异常
      */
     public static Field getDeclaredField(Class<?> clazz, String fieldName) throws NoSuchFieldException, SecurityException {
-        if (clazz == null || StringUtils.isBlank(fieldName))
+        if (clazz == null || StringUtils.isBlank(fieldName)) {
             return null;
+        }
 
         return clazz.getDeclaredField(fieldName);
     }
@@ -356,7 +364,7 @@ public class ClassUtils {
      * @return ClassPath
      */
     public static String getClassPath() {
-        return getClassPathURL().getPath();
+        return getClassPathUrl().getPath();
     }
 
     /**
@@ -364,8 +372,8 @@ public class ClassUtils {
      *
      * @return ClassPath URL
      */
-    public static URL getClassPathURL() {
-        return getResourceURL(StringUtils.EMPTY);
+    public static URL getClassPathUrl() {
+        return getResourceUrl(StringUtils.EMPTY);
     }
 
     /**
@@ -379,7 +387,7 @@ public class ClassUtils {
      * @param resource 资源相对 Classpath 的路径
      * @return 资源 URL
      */
-    public static URL getResourceURL(String resource) {
+    public static URL getResourceUrl(String resource) {
         return ClassLoaderUtils.getClassLoader().getResource(resource);
     }
 
@@ -397,8 +405,9 @@ public class ClassUtils {
     public static List<URL> getResources(String resource) {
         try {
             Enumeration<URL> resources = ClassLoaderUtils.getClassLoader().getResources(resource);
-            if (resources == null)
+            if (resources == null) {
                 return null;
+            }
 
             ArrayList<URL> list = new ArrayList<>();
             while (resources.hasMoreElements()) {
@@ -417,7 +426,7 @@ public class ClassUtils {
      * @param baseClass 基准 Class，获取的相对路径相对于此 Class 所在路径，如果为 {@code null} 则相对 ClassPath
      * @return {@link URL}
      */
-    public static URL getResourceURL(String resource, Class<?> baseClass) {
+    public static URL getResourceUrl(String resource, Class<?> baseClass) {
         return baseClass != null ? baseClass.getResource(resource) : ClassLoaderUtils.getClassLoader().getResource(resource);
     }
 
@@ -463,8 +472,9 @@ public class ClassUtils {
      * @return 是否相同、父类或接口
      */
     public static boolean isAllAssignableFrom(Class<?>[] types1, Class<?>[] types2) {
-        if (ArrayUtils.isEmpty(types1) && ArrayUtils.isEmpty(types2))
+        if (ArrayUtils.isEmpty(types1) && ArrayUtils.isEmpty(types2)) {
             return true;
+        }
 
         if (types1 == null || types2 == null) {
             // 任何一个为 null 则不相等（之前已判断两个都为 null 的情况）
@@ -567,7 +577,7 @@ public class ClassUtils {
      * @return {@code true} 是包装类型；{@code false} 不是包装类型
      */
     public static boolean isPrimitiveWrapper(Class<?> clazz) {
-        return clazz != null && BasicType.wrapperPrimitiveMap.containsKey(clazz);
+        return clazz != null && BasicType.WRAPPER_PRIMITIVE_MAP.containsKey(clazz);
     }
 
     /**
@@ -594,21 +604,23 @@ public class ClassUtils {
      * @return {@code true} 可转化；{@code false} 不可转化
      */
     public static boolean isAssignable(Class<?> targetType, Class<?> sourceType) {
-        if (targetType == null || sourceType == null)
+        if (targetType == null || sourceType == null) {
             return false;
+        }
 
         // 对象类型
-        if (targetType.isAssignableFrom(sourceType))
+        if (targetType.isAssignableFrom(sourceType)) {
             return true;
+        }
 
         // 基本类型
         if (targetType.isPrimitive()) {
             // 原始类型
-            Class<?> resolvedPrimitive = BasicType.wrapperPrimitiveMap.get(sourceType);
+            Class<?> resolvedPrimitive = BasicType.WRAPPER_PRIMITIVE_MAP.get(sourceType);
             return targetType.equals(resolvedPrimitive);
         } else {
             // 包装类型
-            Class<?> resolvedWrapper = BasicType.primitiveWrapperMap.get(sourceType);
+            Class<?> resolvedWrapper = BasicType.PRIMITIVE_WRAPPER_MAP.get(sourceType);
             return resolvedWrapper != null && targetType.isAssignableFrom(resolvedWrapper);
         }
     }
@@ -650,8 +662,9 @@ public class ClassUtils {
      * @return 方法
      */
     public static Method setAccessible(Method method) {
-        if (method != null && !method.isAccessible())
+        if (method != null && !method.isAccessible()) {
             method.setAccessible(true);
+        }
 
         return method;
     }
@@ -708,8 +721,9 @@ public class ClassUtils {
      * @return 类所在包的名称
      */
     public static String getPackage(Class<?> clazz) {
-        if (clazz == null)
+        if (clazz == null) {
             return StringUtils.EMPTY;
+        }
 
         final String className = clazz.getName();
         int packageEndIndex = className.lastIndexOf(StringUtils.DOT);
@@ -787,8 +801,9 @@ public class ClassUtils {
      */
     public static boolean isJdkClass(Class<?> clazz) {
         final Package objectPackage = clazz.getPackage();
-        if (objectPackage == null)
+        if (objectPackage == null) {
             return false;
+        }
 
         final String objectPackageName = objectPackage.getName();
         return objectPackageName.startsWith("java.")

@@ -30,19 +30,33 @@ import java.nio.charset.Charset;
  * @since 1.0.0
  */
 public class Base32 {
-    private static final String base32Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-    private static final int[] base32Lookup = {
-            0xFF, 0xFF, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, // '0', '1', '2', '3', '4', '5', '6', '7'
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // '8', '9', ':', ';', '<', '=', '>', '?'
-            0xFF, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, // '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G'
-            0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, // 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'
-            0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, // 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W'
-            0x17, 0x18, 0x19, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // 'X', 'Y', 'Z', '[', '\', ']', '^', '_'
-            0xFF, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, // '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g'
-            0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, // 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'
-            0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, // 'p', 'q', 'r', 's', 't', 'u', 'v', 'w'
-            0x17, 0x18, 0x19, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF // 'x', 'y', 'z', '{', '|', '}', '~', 'DEL'
+    private static final String BASE32_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+    private static final int[] BASE32_LOOKUP = {
+            // '0', '1', '2', '3', '4', '5', '6', '7'
+            0xFF, 0xFF, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
+            // '8', '9', ':', ';', '<', '=', '>', '?'
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            // '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G'
+            0xFF, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06,
+            // 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'
+            0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E,
+            // 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W'
+            0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
+            // 'X', 'Y', 'Z', '[', '\', ']', '^', '_'
+            0x17, 0x18, 0x19, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            // '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g'
+            0xFF, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06,
+            // 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'
+            0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E,
+            // 'p', 'q', 'r', 's', 't', 'u', 'v', 'w'
+            0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
+            // 'x', 'y', 'z', '{', '|', '}', '~', 'DEL'
+            0x17, 0x18, 0x19, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
     };
+
+    private Base32() {
+        throw new IllegalStateException("Utility class");
+    }
 
     /**
      * Base32 编码
@@ -59,7 +73,8 @@ public class Base32 {
         StringBuilder base32 = new StringBuilder((bytes.length + 7) * 8 / 5);
 
         while (i < bytes.length) {
-            currByte = (bytes[i] >= 0) ? bytes[i] : (bytes[i] + 256); // unsign
+            // unsigned
+            currByte = (bytes[i] >= 0) ? bytes[i] : (bytes[i] + 256);
 
             /* Is the current digit going to span a byte boundary? */
             if (index > 3) {
@@ -81,7 +96,7 @@ public class Base32 {
                     i++;
                 }
             }
-            base32.append(base32Chars.charAt(digit));
+            base32.append(BASE32_CHARS.charAt(digit));
         }
 
         return base32.toString();
@@ -126,18 +141,22 @@ public class Base32 {
      * @return 解码后的数据
      */
     public static byte[] decode2Bytes(final String base32) {
-        int i, index, lookup, offset, digit;
+        int i;
+        int index;
+        int lookup;
+        int offset;
+        int digit;
         byte[] bytes = new byte[base32.length() * 5 / 8];
 
         for (i = 0, index = 0, offset = 0; i < base32.length(); i++) {
             lookup = base32.charAt(i) - '0';
 
             /* Skip chars outside the lookup table */
-            if (lookup < 0 || lookup >= base32Lookup.length) {
+            if (lookup < 0 || lookup >= BASE32_LOOKUP.length) {
                 continue;
             }
 
-            digit = base32Lookup[lookup];
+            digit = BASE32_LOOKUP[lookup];
 
             /* If this digit is not in the table, ignore it */
             if (digit == 0xFF) {

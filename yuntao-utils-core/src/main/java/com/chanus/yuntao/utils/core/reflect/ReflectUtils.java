@@ -47,6 +47,10 @@ public class ReflectUtils {
      */
     private static final SimpleCache<Class<?>, Method[]> METHODS_CACHE = new SimpleCache<>();
 
+    private ReflectUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 查找类中的指定参数的构造方法，如果找到构造方法，会自动设置可访问为 true
      *
@@ -57,8 +61,9 @@ public class ReflectUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> Constructor<T> getConstructor(Class<T> clazz, Class<?>... parameterTypes) {
-        if (clazz == null)
+        if (clazz == null) {
             return null;
+        }
 
         final Constructor<?>[] constructors = getConstructors(clazz);
         Class<?>[] pts;
@@ -210,8 +215,9 @@ public class ReflectUtils {
      * @return 字段值
      */
     public static Object getFieldValue(Object obj, String fieldName) {
-        if (obj == null || StringUtils.isBlank(fieldName))
+        if (obj == null || StringUtils.isBlank(fieldName)) {
             return null;
+        }
 
         return getFieldValue(obj, getField(obj instanceof Class ? (Class<?>) obj : obj.getClass(), fieldName));
     }
@@ -234,8 +240,9 @@ public class ReflectUtils {
      * @return 字段值
      */
     public static Object getFieldValue(Object obj, Field field) {
-        if (field == null)
+        if (field == null) {
             return null;
+        }
 
         if (obj instanceof Class) {
             // 静态字段获取时对象为 null
@@ -281,8 +288,9 @@ public class ReflectUtils {
      */
     public static void setFieldValue(Object obj, String fieldName, Object value) {
         final Field field = getField((obj instanceof Class) ? (Class<?>) obj : obj.getClass(), fieldName);
-        if (field != null)
+        if (field != null) {
             setFieldValue(obj, field, value);
+        }
     }
 
     /**
@@ -342,8 +350,9 @@ public class ReflectUtils {
      * @return 过滤后的方法列表
      */
     public static List<Method> getPublicMethods(Class<?> clazz, Filter<Method> filter) {
-        if (clazz == null)
+        if (clazz == null) {
             return null;
+        }
 
         final Method[] methods = getPublicMethods(clazz);
         List<Method> methodList;
@@ -412,8 +421,9 @@ public class ReflectUtils {
      * @throws SecurityException 无访问权限抛出异常
      */
     public static Method getMethodOfObj(Object obj, String methodName, Object... args) throws SecurityException {
-        if (obj == null || StringUtils.isBlank(methodName))
+        if (obj == null || StringUtils.isBlank(methodName)) {
             return null;
+        }
 
         return getMethod(obj.getClass(), methodName, ClassUtils.getClasses(args));
     }
@@ -429,8 +439,9 @@ public class ReflectUtils {
      * @throws SecurityException 无权访问抛出异常
      */
     public static Method getMethod(Class<?> clazz, String methodName, Class<?>... paramTypes) throws SecurityException {
-        if (clazz == null || StringUtils.isBlank(methodName))
+        if (clazz == null || StringUtils.isBlank(methodName)) {
             return null;
+        }
 
         final Method[] methods = getMethods(clazz);
         if (ArrayUtils.isNotEmpty(methods)) {
@@ -455,14 +466,16 @@ public class ReflectUtils {
      * @throws SecurityException 无权访问抛出异常
      */
     public static Method getMethodByName(Class<?> clazz, String methodName) throws SecurityException {
-        if (clazz == null || StringUtils.isBlank(methodName))
+        if (clazz == null || StringUtils.isBlank(methodName)) {
             return null;
+        }
 
         final Method[] methods = getMethods(clazz);
         if (ArrayUtils.isNotEmpty(methods)) {
             for (Method method : methods) {
-                if (methodName.equals(method.getName()))
+                if (methodName.equals(method.getName())) {
                     return method;
+                }
             }
         }
         return null;
@@ -493,8 +506,9 @@ public class ReflectUtils {
      * @throws SecurityException 无权访问抛出异常
      */
     public static Method[] getMethods(Class<?> clazz, Filter<Method> filter) throws SecurityException {
-        if (clazz == null)
+        if (clazz == null) {
             return null;
+        }
 
         return ArrayUtils.filter(getMethods(clazz), filter);
     }
@@ -508,8 +522,9 @@ public class ReflectUtils {
      */
     public static Method[] getMethods(Class<?> beanClass) throws SecurityException {
         Method[] allMethods = METHODS_CACHE.get(beanClass);
-        if (allMethods != null)
+        if (allMethods != null) {
             return allMethods;
+        }
 
         allMethods = getMethodsDirectly(beanClass, true);
         return METHODS_CACHE.put(beanClass, allMethods);
@@ -668,7 +683,7 @@ public class ReflectUtils {
             for (int i = 0; i < args.length; i++) {
                 type = types[i];
                 if (type.isPrimitive() && args[i] == null) {
-                    // 参数是原始类型，而传入参数为null时赋予默认值
+                    // 参数是原始类型，而传入参数为 null 时赋予默认值
                     args[i] = ClassUtils.getDefaultValue(type);
                 }
             }
@@ -745,8 +760,9 @@ public class ReflectUtils {
      * @return 被设置可访问的对象
      */
     public static <T extends AccessibleObject> T setAccessible(T accessibleObject) {
-        if (accessibleObject != null && !accessibleObject.isAccessible())
+        if (accessibleObject != null && !accessibleObject.isAccessible()) {
             accessibleObject.setAccessible(true);
+        }
 
         return accessibleObject;
     }

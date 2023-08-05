@@ -18,7 +18,9 @@ package com.chanus.yuntao.utils.core.test;
 import com.chanus.yuntao.utils.core.CollectionUtils;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * CollectionUtils 测试类
@@ -37,89 +39,74 @@ public class CollectionUtilsTest {
         list.add("b");
         list.add("b");
         System.out.println(CollectionUtils.isEmpty(list));
-
-        System.out.println("================= isEmpty(Map<?, ?> map) =================");
-        Map<String, Object> map = new HashMap<>();
-        System.out.println(CollectionUtils.isEmpty(map));
-        map.put("a", "A");
-        map.put("b", "B");
-        map.put("c", "C");
-        System.out.println(CollectionUtils.isEmpty(map));
-
-        System.out.println("================= isEmpty(Object[] objects) =================");
-        String[] arrary = {};
-        System.out.println(CollectionUtils.isEmpty(arrary));
-        arrary = new String[3];
-        System.out.println(CollectionUtils.isEmpty(arrary));
-        arrary[0] = "a";
-        arrary[1] = "b";
-        arrary[2] = "c";
-        System.out.println(CollectionUtils.isEmpty(arrary));
     }
 
     @Test
-    public void sortMapByKeyTest() {
-        Map<String, Object> map = new HashMap<String, Object>() {{
-            put("s", "S");
-            put("a", "A");
-            put("z", "Z");
-            put("d", "D");
-            put("g", "G");
-            put("4", "4");
-            put("1", "1");
-        }};
-        System.out.println("排序前：");
-        Objects.requireNonNull(map).forEach((k, v) -> System.out.println(k + "=" + v));
-        System.out.println("排序后：");
-        Objects.requireNonNull(CollectionUtils.sortMapByKey(map)).forEach((k, v) -> System.out.println(k + "=" + v));
-    }
-
-    @Test
-    public void containsTest() {
-        String[] array = {"a", "s", "d", "f"};
-        System.out.println(CollectionUtils.contains(array, "d"));
-        System.out.println(CollectionUtils.contains(array, "b"));
-    }
-
-    @Test
-    public void collectionJoinTest() {
+    public void joinTest() {
         List<String> list = new ArrayList<>();
         list.add("a");
         list.add("b");
         list.add("b");
         System.out.println(CollectionUtils.join(list, "-"));
+        List<String[]> list2 = new ArrayList<>();
+        list2.add(new String[]{"1", "2", "3"});
+        list2.add(new String[]{"a", "b", "c"});
+        list2.add(new String[]{"A", "S", "D"});
+        System.out.println(CollectionUtils.join(list2, "-"));
     }
 
     @Test
-    public void mapJoinTest() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("a", "A");
-        map.put("b", "B");
-        map.put("c", "C");
-        System.out.println(CollectionUtils.join(map, "=", "&"));
-        System.out.println(CollectionUtils.join(map));
-        System.out.println(CollectionUtils.keyJoin(map, "-"));
-        System.out.println(CollectionUtils.valueJoin(map, "-"));
+    public void filterTest() {
+        Integer[] array = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        List<Integer> list = (List<Integer>) CollectionUtils.filter(Arrays.asList(array), t -> t % 2 == 0);
+        System.out.println(list);
     }
 
     @Test
-    public void arrayJoinTest() {
-        String[] array = {"a", "s", "d", "f"};
-        System.out.println(CollectionUtils.join(array, "-"));
-        System.out.println(CollectionUtils.join(array));
+    public void editTest() {
+        String[] array = {"a", "b", "c", "d", "e", "f", "g"};
+        List<String> list = Arrays.asList(array);
+        System.out.println(list);
+        list = CollectionUtils.edit(list, String::toUpperCase);
+        System.out.println(list);
     }
 
     @Test
-    public void uniqueArrayTest() {
-        String[] array = {"a", "s", "d", "f", "a", "s", "d", "f", "a", "s", "d", "f"};
-        System.out.println(Arrays.toString(CollectionUtils.uniqueArray(array)));
+    public void removeTest() {
+        List<Integer> list = new ArrayList<>();
+        list.add(0);
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        list.add(5);
+        list.add(6);
+        list.add(7);
+        list.add(8);
+        list.add(9);
+        System.out.println(list);
+        List<Integer> list2 = CollectionUtils.remove(list, t -> t % 2 == 0);
+        System.out.println(list);
+        System.out.println(list2);
     }
 
     @Test
-    public void uniqueArray2StringTest() {
-        String[] array = {"a", "s", "d", "f", "a", "s", "d", "f", "a", "s", "d", "f"};
-        System.out.println(CollectionUtils.uniqueArray2String(array, "-"));
-        System.out.println(CollectionUtils.uniqueArray2String(array));
+    public void removeAnyTest() {
+        List<Integer> list = new ArrayList<>();
+        list.add(0);
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        list.add(5);
+        list.add(6);
+        list.add(7);
+        list.add(8);
+        list.add(9);
+        System.out.println(list);
+        List<Integer> list2 = CollectionUtils.removeAny(list, 1, 2, 3, 4, 5);
+        System.out.println(list);
+        System.out.println(list2);
     }
 
     @Test

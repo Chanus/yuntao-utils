@@ -15,7 +15,7 @@
  */
 package com.chanus.yuntao.utils.extra.quartz;
 
-import com.chanus.yuntao.utils.core.CollectionUtils;
+import com.chanus.yuntao.utils.core.MapUtils;
 import com.chanus.yuntao.utils.core.StringUtils;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
@@ -46,6 +46,10 @@ public class QuartzUtils {
      */
     private static final String TRIGGER_GROUP_NAME = "DEFAULT_TRIGGER_GROUP_NAME";
 
+    private QuartzUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 获取调度器
      *
@@ -65,8 +69,9 @@ public class QuartzUtils {
      * @return JobDetail
      */
     public static JobDetail getJobDetail(Class<? extends Job> clazz, String jobName, String jobGroupName) {
-        if (StringUtils.isBlank(jobGroupName))
+        if (StringUtils.isBlank(jobGroupName)) {
             jobGroupName = JOB_GROUP_NAME;
+        }
 
         return JobBuilder.newJob(clazz).withIdentity(jobName, jobGroupName).build();
     }
@@ -81,8 +86,9 @@ public class QuartzUtils {
      * @return JobDetail
      */
     public static JobDetail getJobDetail(Class<? extends Job> clazz, String jobName, String jobGroupName, JobDataMap jobDataMap) {
-        if (StringUtils.isBlank(jobGroupName))
+        if (StringUtils.isBlank(jobGroupName)) {
             jobGroupName = JOB_GROUP_NAME;
+        }
 
         if (jobDataMap != null) {
             return JobBuilder.newJob(clazz).withIdentity(jobName, jobGroupName).usingJobData(jobDataMap).build();
@@ -100,8 +106,9 @@ public class QuartzUtils {
      * @return JobDetail
      */
     public static JobDetail getJobDetailWithDurably(Class<? extends Job> clazz, String jobName, String jobGroupName) {
-        if (StringUtils.isBlank(jobGroupName))
+        if (StringUtils.isBlank(jobGroupName)) {
             jobGroupName = JOB_GROUP_NAME;
+        }
 
         return JobBuilder.newJob(clazz).withIdentity(jobName, jobGroupName).storeDurably().build();
     }
@@ -116,8 +123,9 @@ public class QuartzUtils {
      * @return JobDetail
      */
     public static JobDetail getJobDetailWithDurably(Class<? extends Job> clazz, String jobName, String jobGroupName, JobDataMap jobDataMap) {
-        if (StringUtils.isBlank(jobGroupName))
+        if (StringUtils.isBlank(jobGroupName)) {
             jobGroupName = JOB_GROUP_NAME;
+        }
 
         if (jobDataMap != null) {
             return JobBuilder.newJob(clazz).withIdentity(jobName, jobGroupName).usingJobData(jobDataMap).storeDurably().build();
@@ -137,14 +145,17 @@ public class QuartzUtils {
      * @return JobDetail
      */
     public static JobDetail getJobDetail(Class<? extends Job> clazz, String jobName, String jobGroupName, JobDataMap jobDataMap, boolean isDurably) {
-        if (StringUtils.isBlank(jobGroupName))
+        if (StringUtils.isBlank(jobGroupName)) {
             jobGroupName = JOB_GROUP_NAME;
+        }
 
         JobBuilder jobBuilder = JobBuilder.newJob(clazz).withIdentity(jobName, jobGroupName);
-        if (jobDataMap != null)
+        if (jobDataMap != null) {
             jobBuilder.usingJobData(jobDataMap);
-        if (isDurably)
+        }
+        if (isDurably) {
             jobBuilder.storeDurably();
+        }
 
         return jobBuilder.build();
     }
@@ -158,8 +169,9 @@ public class QuartzUtils {
      * @return CronTrigger
      */
     public static CronTrigger getCronTrigger(String triggerName, String triggerGroupName, String cronTime) {
-        if (StringUtils.isBlank(triggerGroupName))
+        if (StringUtils.isBlank(triggerGroupName)) {
             triggerGroupName = TRIGGER_GROUP_NAME;
+        }
 
         return TriggerBuilder.newTrigger().withIdentity(triggerName, triggerGroupName)
                 .withSchedule(CronScheduleBuilder.cronSchedule(cronTime)).build();
@@ -175,8 +187,9 @@ public class QuartzUtils {
      * @return CronTrigger
      */
     public static CronTrigger getCronTrigger(String triggerName, String triggerGroupName, String cronTime, JobDataMap jobDataMap) {
-        if (StringUtils.isBlank(triggerGroupName))
+        if (StringUtils.isBlank(triggerGroupName)) {
             triggerGroupName = TRIGGER_GROUP_NAME;
+        }
 
         return TriggerBuilder.newTrigger().withIdentity(triggerName, triggerGroupName)
                 .withSchedule(CronScheduleBuilder.cronSchedule(cronTime)).usingJobData(jobDataMap).build();
@@ -192,8 +205,9 @@ public class QuartzUtils {
      * @return CronTrigger
      */
     public static CronTrigger getCronTrigger(String triggerName, String triggerGroupName, String cronTime, JobDetail jobDetail) {
-        if (StringUtils.isBlank(triggerGroupName))
+        if (StringUtils.isBlank(triggerGroupName)) {
             triggerGroupName = TRIGGER_GROUP_NAME;
+        }
 
         return TriggerBuilder.newTrigger().withIdentity(triggerName, triggerGroupName)
                 .withSchedule(CronScheduleBuilder.cronSchedule(cronTime)).forJob(jobDetail).build();
@@ -210,8 +224,9 @@ public class QuartzUtils {
      * @return CronTrigger
      */
     public static CronTrigger getCronTrigger(String triggerName, String triggerGroupName, String cronTime, JobDataMap jobDataMap, JobDetail jobDetail) {
-        if (StringUtils.isBlank(triggerGroupName))
+        if (StringUtils.isBlank(triggerGroupName)) {
             triggerGroupName = TRIGGER_GROUP_NAME;
+        }
 
         return TriggerBuilder.newTrigger().withIdentity(triggerName, triggerGroupName)
                 .withSchedule(CronScheduleBuilder.cronSchedule(cronTime)).usingJobData(jobDataMap).forJob(jobDetail).build();
@@ -231,21 +246,27 @@ public class QuartzUtils {
      * @return CronTrigger
      */
     public static CronTrigger getCronTrigger(String triggerName, String triggerGroupName, String cronTime, Date startTime, Date endTime, Integer priority, JobDataMap jobDataMap, JobDetail jobDetail) {
-        if (StringUtils.isBlank(triggerGroupName))
+        if (StringUtils.isBlank(triggerGroupName)) {
             triggerGroupName = TRIGGER_GROUP_NAME;
+        }
 
         TriggerBuilder<CronTrigger> triggerBuilder = TriggerBuilder.newTrigger().withIdentity(triggerName, triggerGroupName)
                 .withSchedule(CronScheduleBuilder.cronSchedule(cronTime));
-        if (startTime != null)
+        if (startTime != null) {
             triggerBuilder.startAt(startTime);
-        if (endTime != null)
+        }
+        if (endTime != null) {
             triggerBuilder.endAt(endTime);
-        if (priority != null)
+        }
+        if (priority != null) {
             triggerBuilder.withPriority(priority);
-        if (jobDataMap != null)
+        }
+        if (jobDataMap != null) {
             triggerBuilder.usingJobData(jobDataMap);
-        if (jobDetail != null)
+        }
+        if (jobDetail != null) {
             triggerBuilder.forJob(jobDetail);
+        }
 
         return triggerBuilder.build();
     }
@@ -266,10 +287,12 @@ public class QuartzUtils {
      */
     public static void setJobDetailAndCronTriggerInScheduler(Scheduler scheduler, Class<? extends Job> clazz, String jobName, String jobGroupName, String triggerName, String triggerGroupName,
                                                              String cronTime, JobDataMap jobDataMap) throws SchedulerException {
-        if (StringUtils.isBlank(jobGroupName))
+        if (StringUtils.isBlank(jobGroupName)) {
             jobGroupName = JOB_GROUP_NAME;
-        if (StringUtils.isBlank(triggerGroupName))
+        }
+        if (StringUtils.isBlank(triggerGroupName)) {
             triggerGroupName = TRIGGER_GROUP_NAME;
+        }
 
         JobDetail jobDetail = getJobDetail(clazz, jobName, jobGroupName, jobDataMap);
         CronTrigger trigger = getCronTrigger(triggerName, triggerGroupName, cronTime);
@@ -336,18 +359,21 @@ public class QuartzUtils {
                                      String triggerName, String triggerGroupName, String cronTime, JobDataMap jobDataMap) {
         try {
             Scheduler scheduler = getScheduler();
-            if (StringUtils.isBlank(triggerGroupName))
+            if (StringUtils.isBlank(triggerGroupName)) {
                 triggerGroupName = TRIGGER_GROUP_NAME;
+            }
 
             TriggerKey triggerKey = TriggerKey.triggerKey(triggerName, triggerGroupName);
             CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
-            if (trigger == null)
+            if (trigger == null) {
                 return;
+            }
 
             String oldTime = trigger.getCronExpression();
             if (!oldTime.equalsIgnoreCase(cronTime)) {
-                if (StringUtils.isBlank(jobGroupName))
+                if (StringUtils.isBlank(jobGroupName)) {
                     jobGroupName = JOB_GROUP_NAME;
+                }
 
                 JobKey jobKey = JobKey.jobKey(jobName, jobGroupName);
                 JobDetail jobDetail = scheduler.getJobDetail(jobKey);
@@ -363,7 +389,6 @@ public class QuartzUtils {
     /**
      * 修改定时任务 JobDataMap
      *
-     * @param clazz            任务类
      * @param jobName          任务名
      * @param jobGroupName     任务组名（为空使用默认）
      * @param triggerName      触发器名
@@ -371,19 +396,22 @@ public class QuartzUtils {
      * @param cronTime         cron 表达式
      * @param jobDataMap       附带参数
      */
-    public static void modifyJobDateMap(Class<? extends Job> clazz, String jobName, String jobGroupName, String triggerName, String triggerGroupName, String cronTime, JobDataMap jobDataMap) {
-        if (StringUtils.isBlank(jobGroupName))
+    public static void modifyJobDateMap(String jobName, String jobGroupName, String triggerName, String triggerGroupName, String cronTime, JobDataMap jobDataMap) {
+        if (StringUtils.isBlank(jobGroupName)) {
             jobGroupName = JOB_GROUP_NAME;
-        if (StringUtils.isBlank(triggerGroupName))
+        }
+        if (StringUtils.isBlank(triggerGroupName)) {
             triggerGroupName = TRIGGER_GROUP_NAME;
+        }
 
         TriggerKey triggerKey = TriggerKey.triggerKey(triggerName, triggerGroupName);
         try {
             Scheduler scheduler = getScheduler();
             JobKey jobKey = JobKey.jobKey(jobName, jobGroupName);
             JobDetail jobDetail = scheduler.getJobDetail(jobKey);
-            if (jobDetail == null)
+            if (jobDetail == null) {
                 return;
+            }
 
             JobDataMap oldJobDataMap = jobDetail.getJobDataMap();
             if (!oldJobDataMap.equals(jobDataMap)) {
@@ -426,21 +454,29 @@ public class QuartzUtils {
      */
     public static void removeJob(String jobName, String jobGroupName, String triggerName, String triggerGroupName) {
         try {
-            if (StringUtils.isBlank(jobGroupName))
+            if (StringUtils.isBlank(jobGroupName)) {
                 jobGroupName = JOB_GROUP_NAME;
-            if (StringUtils.isBlank(triggerGroupName))
+            }
+            if (StringUtils.isBlank(triggerGroupName)) {
                 triggerGroupName = TRIGGER_GROUP_NAME;
+            }
 
             Scheduler scheduler = getScheduler();
-            JobKey jobKey = JobKey.jobKey(jobName, jobGroupName); // 通过任务名和组名获取JobKey
+            // 通过任务名和组名获取 JobKey
+            JobKey jobKey = JobKey.jobKey(jobName, jobGroupName);
             // 定时任务不存在
-            if (!isJobKey(scheduler, jobKey))
+            if (!isJobKey(scheduler, jobKey)) {
                 return;
+            }
 
-            TriggerKey triggerKey = TriggerKey.triggerKey(triggerName, triggerGroupName); // 通过触发器名和组名获取TriggerKey
-            scheduler.pauseTrigger(triggerKey); // 停止触发器
-            scheduler.unscheduleJob(triggerKey);// 移除触发器
-            scheduler.deleteJob(jobKey); // 删除任务
+            // 通过触发器名和组名获取TriggerKey
+            TriggerKey triggerKey = TriggerKey.triggerKey(triggerName, triggerGroupName);
+            // 停止触发器
+            scheduler.pauseTrigger(triggerKey);
+            // 移除触发器
+            scheduler.unscheduleJob(triggerKey);
+            // 删除任务
+            scheduler.deleteJob(jobKey);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -455,25 +491,33 @@ public class QuartzUtils {
      */
     public static void removeJob(String jobName, String jobGroupName, Map<String, String> triggerMap) {
         try {
-            if (StringUtils.isBlank(jobGroupName))
+            if (StringUtils.isBlank(jobGroupName)) {
                 jobGroupName = JOB_GROUP_NAME;
+            }
 
             Scheduler scheduler = getScheduler();
-            JobKey jobKey = JobKey.jobKey(jobName, jobGroupName); // 通过任务名和组名获取JobKey
+            // 通过任务名和组名获取 JobKey
+            JobKey jobKey = JobKey.jobKey(jobName, jobGroupName);
             // 定时任务不存在
-            if (!isJobKey(scheduler, jobKey))
+            if (!isJobKey(scheduler, jobKey)) {
                 return;
+            }
 
-            if (!CollectionUtils.isEmpty(triggerMap)) {// 存在触发器
-                TriggerKey triggerKey = null;
-                for (String triggerName : triggerMap.keySet()) {
-                    String triggerGroupName = StringUtils.isBlank(triggerMap.get(triggerName)) ? TRIGGER_GROUP_NAME : triggerMap.get(triggerName);
-                    triggerKey = TriggerKey.triggerKey(triggerName, triggerGroupName); // 通过触发器名和组名获取TriggerKey
-                    scheduler.pauseTrigger(triggerKey); // 停止触发器
-                    scheduler.unscheduleJob(triggerKey);// 移除触发器
+            if (MapUtils.isNotEmpty(triggerMap)) {
+                // 存在触发器
+                TriggerKey triggerKey;
+                for (Map.Entry<String, String> entry : triggerMap.entrySet()) {
+                    String triggerGroupName = StringUtils.isBlank(entry.getValue()) ? TRIGGER_GROUP_NAME : entry.getValue();
+                    // 通过触发器名和组名获取TriggerKey
+                    triggerKey = TriggerKey.triggerKey(entry.getKey(), triggerGroupName);
+                    // 停止触发器
+                    scheduler.pauseTrigger(triggerKey);
+                    // 移除触发器
+                    scheduler.unscheduleJob(triggerKey);
                 }
             }
-            scheduler.deleteJob(jobKey); // 删除任务
+            // 删除任务
+            scheduler.deleteJob(jobKey);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -497,8 +541,9 @@ public class QuartzUtils {
     public static void shutdownJobs() {
         try {
             Scheduler scheduler = getScheduler();
-            if (!scheduler.isShutdown())
+            if (!scheduler.isShutdown()) {
                 scheduler.shutdown();
+            }
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
@@ -512,8 +557,9 @@ public class QuartzUtils {
      * @return {@code true} 停止成功；{@code false} 停止失败
      */
     public static boolean pauseJob(String jobName, String jobGroupName) {
-        if (StringUtils.isBlank(jobGroupName))
+        if (StringUtils.isBlank(jobGroupName)) {
             jobGroupName = JOB_GROUP_NAME;
+        }
         try {
             Scheduler scheduler = getScheduler();
             scheduler.pauseJob(JobKey.jobKey(jobName, jobGroupName));
@@ -548,8 +594,9 @@ public class QuartzUtils {
      * @return {@code true} 恢复成功；{@code false} 恢复失败
      */
     public static boolean resumeJob(String jobName, String jobGroupName) {
-        if (StringUtils.isBlank(jobGroupName))
+        if (StringUtils.isBlank(jobGroupName)) {
             jobGroupName = JOB_GROUP_NAME;
+        }
         try {
             Scheduler scheduler = getScheduler();
             scheduler.resumeJob(JobKey.jobKey(jobName, jobGroupName));
@@ -583,8 +630,9 @@ public class QuartzUtils {
      * @param jobGroupName 任务组名（空为默认）
      */
     public static void triggerJob(String jobName, String jobGroupName) {
-        if (StringUtils.isBlank(jobGroupName))
+        if (StringUtils.isBlank(jobGroupName)) {
             jobGroupName = JOB_GROUP_NAME;
+        }
         try {
             Scheduler scheduler = getScheduler();
             scheduler.triggerJob(JobKey.jobKey(jobName, jobGroupName));
@@ -601,8 +649,9 @@ public class QuartzUtils {
      * @param jobDataMap   附带参数
      */
     public static void triggerJob(String jobName, String jobGroupName, JobDataMap jobDataMap) {
-        if (StringUtils.isBlank(jobGroupName))
+        if (StringUtils.isBlank(jobGroupName)) {
             jobGroupName = JOB_GROUP_NAME;
+        }
         try {
             Scheduler scheduler = getScheduler();
             scheduler.triggerJob(JobKey.jobKey(jobName, jobGroupName), jobDataMap);
@@ -620,7 +669,7 @@ public class QuartzUtils {
      */
     public static boolean isJobKey(Scheduler scheduler, JobKey jobKey) {
         try {
-            return !(scheduler.getJobDetail(jobKey) == null);
+            return scheduler.getJobDetail(jobKey) != null;
         } catch (SchedulerException e) {
             e.printStackTrace();
             return false;
@@ -636,11 +685,12 @@ public class QuartzUtils {
      * @return {@code true} 存在 JobKey；{@code false} 不存在 JobKey
      */
     public static boolean isJobKey(Scheduler scheduler, String jobName, String jobGroupName) {
-        if (StringUtils.isBlank(jobGroupName))
+        if (StringUtils.isBlank(jobGroupName)) {
             jobGroupName = JOB_GROUP_NAME;
+        }
         JobKey jobKey = JobKey.jobKey(jobName, jobGroupName);
         try {
-            return !(scheduler.getJobDetail(jobKey) == null);
+            return scheduler.getJobDetail(jobKey) != null;
         } catch (SchedulerException e) {
             e.printStackTrace();
             return false;

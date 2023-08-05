@@ -50,14 +50,22 @@ public class HttpUtilsTest {
     }
 
     @Test
-    public void getAsynTest() {
+    public void getAsyncTest() {
         String url = "http://pv.sohu.com/cityjson?ie=utf-8";
         String ip = "125.78.96.179";
-        HttpUtils.getAsyn(url + "&ip=" + ip, result -> System.out.println("result == " + result));
+        HttpUtils.getAsync(url + "?ip=" + ip, result -> System.out.println("result == " + result));
 
         Map<String, Object> params = new HashMap<>();
         params.put("ip", ip);
-        HttpUtils.getAsyn(url, params, result -> System.out.println("result == " + result));
+        HttpUtils.getAsync(url, params, result -> System.out.println("result == " + result));
+
+        System.out.println("end");
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
@@ -77,14 +85,24 @@ public class HttpUtilsTest {
     }
 
     @Test
-    public void postAsynTest() {
+    public void postAsyncTest() {
         String url = "http://pv.sohu.com/cityjson?ie=utf-8";
         String ip = "125.78.96.179";
-        HttpUtils.postAsyn(url, "{\"ip\":\"" + ip + "\"}", result -> System.out.println("result == " + result));
-        HttpUtils.postAsyn(url + "&ip=" + ip, result -> System.out.println("result == " + result));
+        HttpUtils.postAsync(url, "{\"ip\":\"" + ip + "\"}", result -> System.out.println("result == " + result));
+
+        HttpUtils.postAsync(url + "&ip=" + ip, result -> System.out.println("result == " + result));
+
         Map<String, Object> params = new HashMap<>();
         params.put("ip", ip);
-        HttpUtils.postAsyn(url, params, result -> System.out.println("result == " + result));
+        HttpUtils.postAsync(url, params, result -> System.out.println("result == " + result));
+
+        System.out.println("end");
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test

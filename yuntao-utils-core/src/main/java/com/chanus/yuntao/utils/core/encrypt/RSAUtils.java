@@ -58,6 +58,10 @@ public class RSAUtils {
      */
     public static final String PRIVATE_KEY = "RSAPrivateKey";
 
+    private RSAUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 生成密钥对(公钥和私钥)
      *

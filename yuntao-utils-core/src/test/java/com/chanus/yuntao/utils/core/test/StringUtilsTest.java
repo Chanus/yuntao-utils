@@ -435,6 +435,11 @@ public class StringUtilsTest {
     }
 
     @Test
+    public void replaceAnyTest() {
+        System.out.println(StringUtils.replaceAny("13378653645", "*", "3", "7", "4"));
+    }
+
+    @Test
     public void capitalizeTest() {
         System.out.println(StringUtils.capitalize("test"));
     }
@@ -447,11 +452,17 @@ public class StringUtilsTest {
     @Test
     public void string2UnicodeTest() {
         System.out.println(StringUtils.string2Unicode("测试"));
+        System.out.println(StringUtils.string2Unicode("test"));
+        System.out.println(StringUtils.string2Unicode("测试1234567890"));
+        System.out.println(StringUtils.string2Unicode("测试!@#$%^&*()"));
     }
 
     @Test
     public void unicode2StringTest() {
         System.out.println(StringUtils.unicode2String("\\u6d4b\\u8bd5"));
+        System.out.println(StringUtils.unicode2String("\\u74\\u65\\u73\\u74"));
+        System.out.println(StringUtils.unicode2String("\\u6d4b\\u8bd5\\u31\\u32\\u33\\u34\\u35\\u36\\u37\\u38\\u39\\u30"));
+        System.out.println(StringUtils.unicode2String("\\u6d4b\\u8bd5\\u21\\u40\\u23\\u24\\u25\\u5e\\u26\\u2a\\u28\\u29"));
     }
 
     @Test

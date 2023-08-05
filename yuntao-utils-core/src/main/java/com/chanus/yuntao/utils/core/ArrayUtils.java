@@ -29,6 +29,10 @@ import java.util.*;
  * @since 1.1.0
  */
 public class ArrayUtils {
+    private ArrayUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 判断数组是否为空
      *
@@ -47,8 +51,9 @@ public class ArrayUtils {
      * @return {@code true} 数组对象为空；{@code false} 数组对象不为空
      */
     public static boolean isEmpty(Object array) {
-        if (array == null)
+        if (array == null) {
             return true;
+        }
 
         return isArray(array) && Array.getLength(array) == 0;
     }
@@ -84,12 +89,14 @@ public class ArrayUtils {
      */
     @SafeVarargs
     public static <T> boolean hasNull(T... array) {
-        if (isEmpty(array))
+        if (isEmpty(array)) {
             return true;
+        }
 
         for (T t : array) {
-            if (t == null)
+            if (t == null) {
                 return true;
+            }
         }
         return false;
     }
@@ -152,11 +159,13 @@ public class ArrayUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> T get(Object array, int index) {
-        if (array == null)
+        if (array == null) {
             return null;
+        }
 
-        if (index < 0)
+        if (index < 0) {
             index += Array.getLength(array);
+        }
 
         try {
             return (T) Array.get(array, index);
@@ -174,12 +183,14 @@ public class ArrayUtils {
      * @return 元素在数组中的位置，数组为空或没找到元素则返回-1
      */
     public static <T> int indexOf(T[] array, Object value) {
-        if (array == null)
+        if (array == null) {
             return -1;
+        }
 
         for (int i = 0; i < array.length; i++) {
-            if (Objects.equals(array[i], value))
+            if (Objects.equals(array[i], value)) {
                 return i;
+            }
         }
         return -1;
     }
@@ -233,8 +244,9 @@ public class ArrayUtils {
      */
     @SafeVarargs
     public static <T> T[] append(T[] array, T... newElements) {
-        if (isEmpty(array))
+        if (isEmpty(array)) {
             return newElements;
+        }
 
         return insert(array, array.length, newElements);
     }
@@ -249,8 +261,9 @@ public class ArrayUtils {
      */
     @SafeVarargs
     public static <T> Object append(Object array, T... newElements) {
-        if (isEmpty(array))
+        if (isEmpty(array)) {
             return newElements;
+        }
 
         return insert(array, Array.getLength(array), newElements);
     }
@@ -284,21 +297,25 @@ public class ArrayUtils {
      */
     @SuppressWarnings({"unchecked", "SuspiciousSystemArraycopy"})
     public static <T> Object insert(Object array, int index, T... newElements) {
-        if (isEmpty(newElements))
+        if (isEmpty(newElements)) {
             return array;
+        }
 
-        if (isEmpty(array))
+        if (isEmpty(array)) {
             return newElements;
+        }
 
         final int len = Array.getLength(array);
-        if (index < 0)
+        if (index < 0) {
             index = (index % len) + len;
+        }
 
         final T[] result = (T[]) Array.newInstance(array.getClass().getComponentType(), Math.max(len, index) + newElements.length);
         System.arraycopy(array, 0, result, 0, Math.min(len, index));
         System.arraycopy(newElements, 0, result, index, newElements.length);
-        if (index < len)
+        if (index < len) {
             System.arraycopy(array, index, result, index + newElements.length, len - index);
+        }
 
         return result;
     }
@@ -325,15 +342,18 @@ public class ArrayUtils {
      */
     @SuppressWarnings("SuspiciousSystemArraycopy")
     public static Object remove(Object array, int index) {
-        if (array == null)
+        if (array == null) {
             return null;
+        }
 
-        if (!isArray(array))
+        if (!isArray(array)) {
             throw new IllegalArgumentException("Object must be array!");
+        }
 
         int length = Array.getLength(array);
-        if (index < 0 || index >= length)
+        if (index < 0 || index >= length) {
             return array;
+        }
 
         final Object result = Array.newInstance(array.getClass().getComponentType(), length - 1);
         System.arraycopy(array, 0, result, 0, index);
@@ -437,10 +457,12 @@ public class ArrayUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] union(T[]... arrays) {
-        if (isEmpty(arrays))
+        if (isEmpty(arrays)) {
             return null;
-        if (arrays.length == 1)
+        }
+        if (arrays.length == 1) {
             return arrays[0];
+        }
 
         int length = 0;
         for (T[] array : arrays) {
@@ -572,13 +594,14 @@ public class ArrayUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> String join(T[] array, String separator, boolean isIgnoreNull) {
-        if (array == null)
+        if (array == null) {
             return null;
+        }
 
         final StringBuilder stringBuilder = new StringBuilder();
         boolean isFirst = true;
         for (T t : array) {
-            if (!isIgnoreNull || t != null) {
+            if (!isIgnoreNull || ObjectUtils.isNotEmpty(t)) {
                 if (isFirst) {
                     isFirst = false;
                 } else {
@@ -608,6 +631,18 @@ public class ArrayUtils {
     }
 
     /**
+     * 将数组转换为字符串，以 “,” 分隔，忽略 {@code null} 元素
+     *
+     * @param <T>       数组元素类型
+     * @param array     数组
+     * @return 连接后的字符串
+     * @since 1.4.1
+     */
+    public static <T> String joinDefaultIgnoreNull(T[] array) {
+        return join(array, StringUtils.COMMA, true);
+    }
+
+    /**
      * 去重数组中的元素，去重后生成新的数组，原数组不变
      *
      * @param array 数组
@@ -616,8 +651,9 @@ public class ArrayUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] distinct(T[] array) {
-        if (isEmpty(array))
+        if (isEmpty(array)) {
             return array;
+        }
 
         final Set<T> set = new LinkedHashSet<>(array.length, 1);
         Collections.addAll(set, array);
@@ -635,8 +671,9 @@ public class ArrayUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] filter(T[] array, Filter<T> filter) {
-        if (filter == null)
+        if (filter == null) {
             return array;
+        }
 
         final ArrayList<T> list = new ArrayList<>(array.length);
         for (T t : array) {
@@ -671,8 +708,9 @@ public class ArrayUtils {
      * @since 1.2.6
      */
     public static <T> T[] clone(T[] array) {
-        if (array == null)
+        if (array == null) {
             return null;
+        }
 
         return array.clone();
     }
@@ -687,13 +725,15 @@ public class ArrayUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> T clone(final T obj) {
-        if (obj == null)
+        if (obj == null) {
             return null;
+        }
 
         if (isArray(obj)) {
             final Object result;
             final Class<?> componentType = obj.getClass().getComponentType();
-            if (componentType.isPrimitive()) {// 原始类型
+            if (componentType.isPrimitive()) {
+                // 原始类型
                 int length = Array.getLength(obj);
                 result = Array.newInstance(componentType, length);
                 while (length-- > 0) {
@@ -742,11 +782,13 @@ public class ArrayUtils {
      * @since 1.3.0
      */
     public static boolean equals(Object array1, Object array2) {
-        if (array1 == array2)
+        if (array1 == array2) {
             return true;
+        }
 
-        if (hasNull(array1, array2) || array1.getClass() != array2.getClass())
+        if (hasNull(array1, array2) || array1.getClass() != array2.getClass()) {
             return false;
+        }
 
         if (array1 instanceof long[]) {
             return Arrays.equals((long[]) array1, (long[]) array2);
@@ -776,8 +818,9 @@ public class ArrayUtils {
      * @return 字符串
      */
     public static String toString(Object obj) {
-        if (obj == null)
+        if (obj == null) {
             return null;
+        }
 
         if (obj instanceof long[]) {
             return Arrays.toString((long[]) obj);

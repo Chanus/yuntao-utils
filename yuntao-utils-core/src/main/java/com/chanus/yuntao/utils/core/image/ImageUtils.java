@@ -40,12 +40,34 @@ import java.util.Iterator;
  * @since 1.0.0
  */
 public class ImageUtils {
-    public static final String IMAGE_TYPE_GIF = "gif";// 图形交换格式
-    public static final String IMAGE_TYPE_JPG = "jpg";// 联合照片专家组
-    public static final String IMAGE_TYPE_JPEG = "jpeg";// 联合照片专家组
-    public static final String IMAGE_TYPE_BMP = "bmp";// 英文Bitmap（位图）的简写，它是Windows操作系统中的标准图像文件格式
-    public static final String IMAGE_TYPE_PNG = "png";// 可移植网络图形
-    public static final String IMAGE_TYPE_PSD = "psd";// Photoshop的专用格式Photoshop
+    /**
+     * 图形交换格式
+     */
+    public static final String IMAGE_TYPE_GIF = "gif";
+    /**
+     * 联合照片专家组
+     */
+    public static final String IMAGE_TYPE_JPG = "jpg";
+    /**
+     * 联合照片专家组
+     */
+    public static final String IMAGE_TYPE_JPEG = "jpeg";
+    /**
+     * 英文 Bitmap（位图）的简写，它是 Windows 操作系统中的标准图像文件格式
+     */
+    public static final String IMAGE_TYPE_BMP = "bmp";
+    /**
+     * 可移植网络图形
+     */
+    public static final String IMAGE_TYPE_PNG = "png";
+    /**
+     * Photoshop 的专用格式 Photoshop
+     */
+    public static final String IMAGE_TYPE_PSD = "psd";
+
+    private ImageUtils() {
+        throw new IllegalStateException("Utility class");
+    }
 
     /**
      * 缩放图像（按比例缩放），目标文件的扩展名决定目标文件类型
@@ -153,7 +175,7 @@ public class ImageUtils {
      * @param fixedColor    补充的颜色，不补充为 <code>null</code>
      */
     public static void scale(File srcImageFile, File destImageFile, int width, int height, Color fixedColor) {
-        Img.from(srcImageFile)//
+        Img.from(srcImageFile)
                 .setTargetImageType(FileUtils.getFileExtension(destImageFile))
                 .scale(width, height, fixedColor)
                 .write(destImageFile);
@@ -338,21 +360,30 @@ public class ImageUtils {
      * @param destHeight 目标切片高度。默认150
      */
     public static void slice(Image srcImage, File descDir, int destWidth, int destHeight) {
+        if (srcImage == null) {
+            return;
+        }
         if (destWidth <= 0) {
-            destWidth = 200; // 切片宽度
+            // 切片宽度
+            destWidth = 200;
         }
         if (destHeight <= 0) {
-            destHeight = 150; // 切片高度
+            // 切片高度
+            destHeight = 150;
         }
-        int srcWidth = srcImage.getWidth(null); // 源图宽度
-        int srcHeight = srcImage.getHeight(null); // 源图高度
+        // 源图宽度
+        int srcWidth = srcImage.getWidth(null);
+        // 源图高度
+        int srcHeight = srcImage.getHeight(null);
 
         try {
             FileUtils.mkdirs(descDir);
 
             if (srcWidth > destWidth && srcHeight > destHeight) {
-                int cols; // 切片横向数量
-                int rows; // 切片纵向数量
+                // 切片横向数量
+                int cols;
+                // 切片纵向数量
+                int rows;
                 // 计算切片的横向和纵向数量
                 if (srcWidth % destWidth == 0) {
                     cols = srcWidth / destWidth;
@@ -409,18 +440,24 @@ public class ImageUtils {
         FileUtils.mkdirs(destDir);
         try {
             if (rows <= 0 || rows > 20) {
-                rows = 2; // 切片行数
+                // 切片行数
+                rows = 2;
             }
             if (cols <= 0 || cols > 20) {
-                cols = 2; // 切片列数
+                // 切片列数
+                cols = 2;
             }
             // 读取源图像
             final Image bi = toBufferedImage(srcImage);
-            int srcWidth = bi.getWidth(null); // 源图宽度
-            int srcHeight = bi.getHeight(null); // 源图高度
+            // 源图宽度
+            int srcWidth = bi.getWidth(null);
+            // 源图高度
+            int srcHeight = bi.getHeight(null);
 
-            int destWidth = NumberUtils.partValue(srcWidth, cols); // 每张切片的宽度
-            int destHeight = NumberUtils.partValue(srcHeight, rows); // 每张切片的高度
+            // 每张切片的宽度
+            int destWidth = NumberUtils.partValue(srcWidth, cols);
+            // 每张切片的高度
+            int destHeight = NumberUtils.partValue(srcHeight, rows);
 
             // 循环建立切片
             Image tag;
@@ -1202,9 +1239,10 @@ public class ImageUtils {
             g.setColor(backgroundColor);
             g.fillRect(0, 0, width, height);
         }
+        // 画出字符串
         g.setColor(fontColor != null ? fontColor : Color.BLACK);
-        g.setFont(font);// 设置画笔字体
-        g.drawString(str, 0, font.getSize());// 画出字符串
+        g.setFont(font);
+        g.drawString(str, 0, font.getSize());
         g.dispose();
 
         return image;
@@ -1416,7 +1454,7 @@ public class ImageUtils {
             if (imgWriteParams.canWriteCompressed()) {
                 imgWriteParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
                 imgWriteParams.setCompressionQuality(quality);
-                final ColorModel colorModel = renderedImage.getColorModel();// ColorModel.getRGBdefault();
+                final ColorModel colorModel = renderedImage.getColorModel();
                 imgWriteParams.setDestinationType(new ImageTypeSpecifier(colorModel, colorModel.createCompatibleSampleModel(16, 16)));
             }
         }
@@ -1471,8 +1509,9 @@ public class ImageUtils {
             return ImageIO.read(imageFile);
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -1607,12 +1646,12 @@ public class ImageUtils {
      * @return 16进制的颜色值，例如 #fcf6d6
      */
     public static String toHex(Color color) {
-        String R = Integer.toHexString(color.getRed());
-        R = R.length() < 2 ? ('0' + R) : R;
-        String G = Integer.toHexString(color.getGreen());
-        G = G.length() < 2 ? ('0' + G) : G;
-        String B = Integer.toHexString(color.getBlue());
-        B = B.length() < 2 ? ('0' + B) : B;
-        return '#' + R + G + B;
+        String r = Integer.toHexString(color.getRed());
+        r = r.length() < 2 ? ('0' + r) : r;
+        String g = Integer.toHexString(color.getGreen());
+        g = g.length() < 2 ? ('0' + g) : g;
+        String b = Integer.toHexString(color.getBlue());
+        b = b.length() < 2 ? ('0' + b) : b;
+        return '#' + r + g + b;
     }
 }

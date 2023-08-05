@@ -15,6 +15,8 @@
  */
 package com.chanus.yuntao.utils.core.map;
 
+import com.chanus.yuntao.utils.core.StringUtils;
+
 import java.util.HashMap;
 
 /**
@@ -50,7 +52,7 @@ public class CustomMap extends HashMap<String, Object> {
      * @param value 值
      */
     public CustomMap(String key, Object value) {
-        new CustomMap().put(key, value);
+        this.put(key, value);
     }
 
     /**
@@ -60,6 +62,17 @@ public class CustomMap extends HashMap<String, Object> {
      */
     public static CustomMap create() {
         return new CustomMap();
+    }
+
+    /**
+     * 创建 {@code CustomMap} 对象
+     *
+     * @param initialCapacity 初始容量
+     * @return {@link CustomMap}
+     * @since 1.6.0
+     */
+    public static CustomMap create(int initialCapacity) {
+        return new CustomMap(initialCapacity);
     }
 
     /**
@@ -83,5 +96,64 @@ public class CustomMap extends HashMap<String, Object> {
     public CustomMap putNext(String key, Object value) {
         this.put(key, value);
         return this;
+    }
+
+    /**
+     * 存储数据并返回当前对象，忽略 {@code null} 值
+     *
+     * @param key   键
+     * @param value 值，若为 {@code null} 则忽略
+     * @return 当前 {@code CustomMap} 对象
+     * @since 1.4.6
+     */
+    public CustomMap putNextIgnoreNull(String key, Object value) {
+        if (value != null) {
+            this.put(key, value);
+        }
+
+        return this;
+    }
+
+    /**
+     * 存储数据并返回当前对象，忽略 {@code null} 和 "" 值
+     *
+     * @param key   键
+     * @param value 值，若为 {@code null} 或 "" 则忽略
+     * @return 当前 {@code CustomMap} 对象
+     * @since 1.4.6
+     */
+    public CustomMap putNextIgnoreEmpty(String key, CharSequence value) {
+        if (StringUtils.isNotEmpty(value)) {
+            this.put(key, value);
+        }
+
+        return this;
+    }
+
+    /**
+     * 存储数据并返回当前对象，忽略空或空白值
+     *
+     * @param key   键
+     * @param value 值，若为 {@code null} 或 "" 或不可见字符则忽略
+     * @return 当前 {@code CustomMap} 对象
+     * @since 1.4.6
+     */
+    public CustomMap putNextIgnoreBlank(String key, CharSequence value) {
+        if (StringUtils.isNotBlank(value)) {
+            this.put(key, value);
+        }
+
+        return this;
+    }
+
+    /**
+     * 获取字符串类型的值
+     *
+     * @param key 键
+     * @return 字符串类型值
+     * @since 1.6.0
+     */
+    public String getStringValue(String key) {
+        return (String) this.get(key);
     }
 }

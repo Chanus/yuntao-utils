@@ -15,8 +15,11 @@
  */
 package com.chanus.yuntao.utils.core;
 
+import com.chanus.yuntao.utils.core.function.Processor;
+
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -50,6 +53,10 @@ public class StreamUtils {
      */
     public static final int EOF = -1;
 
+    private StreamUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 将 Reader 中的内容复制到 Writer 中 使用默认缓存大小，拷贝后不关闭 Reader
      *
@@ -82,7 +89,7 @@ public class StreamUtils {
                 writer.flush();
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("IOException occurred.", e);
         }
         return size;
     }
@@ -109,8 +116,9 @@ public class StreamUtils {
      * @since 1.2.1
      */
     public static long copy(InputStream inputStream, OutputStream outputStream, int bufferSize) {
-        if (bufferSize <= 0)
+        if (bufferSize <= 0) {
             bufferSize = DEFAULT_BUFFER_SIZE;
+        }
 
         byte[] buffer = new byte[bufferSize];
         long size = 0;
@@ -121,7 +129,7 @@ public class StreamUtils {
                 outputStream.flush();
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("IOException occurred.", e);
         }
         return size;
     }
@@ -140,7 +148,7 @@ public class StreamUtils {
     }
 
     /**
-     * 拷贝文件流，使用 NIO
+     * 拷贝文件流，使用 NIO，会关闭流
      *
      * @param fileInputStream  文件输入流
      * @param fileOutputStream 文件输出流
@@ -192,7 +200,7 @@ public class StreamUtils {
                 byteBuffer.clear();
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("IOException occurred.", e);
         }
 
         return size;
@@ -217,7 +225,35 @@ public class StreamUtils {
             }
             return collection;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("IOException occurred.", e);
+        } finally {
+            IOUtils.close(bufferedReader);
+        }
+    }
+
+    /**
+     * 从 {@link Reader} 中按行读取数据，并处理读取的每行数据
+     *
+     * @param <R>        集合类型
+     * @param reader     {@link Reader}
+     * @param collection 返回集合
+     * @param processor  处理器
+     * @return 内容集合
+     * @since 1.6.0
+     */
+    public static <R extends Collection<R>> R readLines(Reader reader, final R collection, Processor<String, R> processor) {
+        // 从返回的内容中读取所需内容
+        final BufferedReader bufferedReader = getReader(reader);
+        String line;
+        try {
+            while ((line = bufferedReader.readLine()) != null) {
+                collection.add(processor.process(line));
+            }
+            return collection;
+        } catch (IOException e) {
+            throw new RuntimeException("IOException occurred.", e);
+        } finally {
+            IOUtils.close(bufferedReader);
         }
     }
 
@@ -236,6 +272,21 @@ public class StreamUtils {
     }
 
     /**
+     * 从输入流中按行读取数据，并处理读取的每行数据
+     *
+     * @param <R>         集合类型
+     * @param inputStream 输入流
+     * @param charset     字符集
+     * @param collection  返回集合
+     * @param processor   处理器
+     * @return 内容集合
+     * @since 1.6.0
+     */
+    public static <R extends Collection<R>> R readLines(InputStream inputStream, Charset charset, R collection, Processor<String, R> processor) {
+        return readLines(getReader(inputStream, charset), collection, processor);
+    }
+
+    /**
      * 从输入流中按行读取数据，使用 UTF-8 编码
      *
      * @param <T>         集合类型
@@ -246,6 +297,20 @@ public class StreamUtils {
      */
     public static <T extends Collection<String>> T readUtf8Lines(InputStream inputStream, T collection) {
         return readLines(inputStream, CharsetUtils.CHARSET_UTF_8, collection);
+    }
+
+    /**
+     * 从输入流中按行读取数据，使用 UTF-8 编码，并处理读取的每行数据
+     *
+     * @param <R>         集合类型
+     * @param inputStream 输入流
+     * @param collection  返回集合
+     * @param processor   处理器
+     * @return 内容集合
+     * @since 1.6.0
+     */
+    public static <R extends Collection<R>> R readUtf8Lines(InputStream inputStream, R collection, Processor<String, R> processor) {
+        return readLines(getReader(inputStream, CharsetUtils.CHARSET_UTF_8), collection, processor);
     }
 
     /**
@@ -265,8 +330,9 @@ public class StreamUtils {
             throw new RuntimeException("IOException occurred.", e);
         } finally {
             IOUtils.close(outputStream);
-            if (isCloseStream)
+            if (isCloseStream) {
                 IOUtils.close(inputStream);
+            }
         }
     }
 
@@ -288,12 +354,14 @@ public class StreamUtils {
      * @return 数据字节数组
      * @since 1.3.0
      */
-    public static byte[] readBytes(InputStream inputStream, int length) {
-        if (inputStream == null)
+    public static byte[] read2Byte(InputStream inputStream, int length) {
+        if (inputStream == null) {
             return null;
+        }
 
-        if (length <= 0)
+        if (length <= 0) {
             return new byte[0];
+        }
 
         byte[] b = new byte[length];
         int readLength;
@@ -335,6 +403,24 @@ public class StreamUtils {
     }
 
     /**
+     * 从 FileChannel 中读取数据
+     *
+     * @param fileChannel 文件管道
+     * @param charset     字符集
+     * @return 数据字符串
+     * @throws IOException IO 异常
+     */
+    public static String read2String(FileChannel fileChannel, Charset charset) throws IOException {
+        MappedByteBuffer buffer;
+        try {
+            buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size()).load();
+        } catch (IOException e) {
+            throw new IOException(e);
+        }
+        return StringUtils.toString(buffer, charset);
+    }
+
+    /**
      * 从输入流中读取数据到字符串
      *
      * @param inputStream 输入流
@@ -356,7 +442,31 @@ public class StreamUtils {
     }
 
     /**
-     * 从输入流中读取数据到字符串
+     * 从 {@link Reader} 中读取数据到字符串
+     *
+     * @param reader {@link Reader}
+     * @return 数据字符串
+     * @since 1.4.4
+     */
+    public static String read2String(Reader reader) {
+        // 从返回的内容中读取所需内容
+        final BufferedReader bufferedReader = getReader(reader);
+        StringBuilder stringBuilder = new StringBuilder();
+        String line;
+        try {
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+            return stringBuilder.toString();
+        } catch (IOException e) {
+            throw new RuntimeException("IOException occurred.", e);
+        } finally {
+            IOUtils.closeQuietly(bufferedReader);
+        }
+    }
+
+    /**
+     * 从输入流中读取数据到字符串，使用 UTF-8 编码
      *
      * @param inputStream 输入流
      * @return 数据字符串
@@ -364,6 +474,18 @@ public class StreamUtils {
      */
     public static String read2Utf8String(InputStream inputStream) {
         return read2String(inputStream, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 从 FileChannel 中读取数据，使用 UTF-8 编码
+     *
+     * @param fileChannel 文件管道
+     * @return 数据字符串
+     * @throws IOException IO 异常
+     * @since 1.4.0
+     */
+    public static String read2Utf8String(FileChannel fileChannel) throws IOException {
+        return read2String(fileChannel, StandardCharsets.UTF_8);
     }
 
     /**
@@ -376,13 +498,15 @@ public class StreamUtils {
      */
     public static void write(final byte[] data, final OutputStream outputStream, boolean isCloseOut) {
         try {
-            if (data != null)
+            if (data != null) {
                 outputStream.write(data);
+            }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("IOException occurred.", e);
         } finally {
-            if (isCloseOut)
+            if (isCloseOut) {
                 IOUtils.close(outputStream);
+            }
         }
     }
 
@@ -416,10 +540,11 @@ public class StreamUtils {
             }
             outputStreamWriter.flush();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("IOException occurred.", e);
         } finally {
-            if (isCloseOut)
+            if (isCloseOut) {
                 IOUtils.close(outputStreamWriter);
+            }
         }
     }
 
@@ -454,8 +579,9 @@ public class StreamUtils {
      * @return 字节流
      */
     public static ByteArrayInputStream toStream(String content, Charset charset) {
-        if (content == null)
+        if (content == null) {
             return null;
+        }
 
         return toStream(content.getBytes(charset));
     }
@@ -491,8 +617,9 @@ public class StreamUtils {
      * @return 字节流
      */
     public static ByteArrayInputStream toStream(byte[] content) {
-        if (content == null)
+        if (content == null) {
             return null;
+        }
 
         return new ByteArrayInputStream(content);
     }
@@ -528,8 +655,9 @@ public class StreamUtils {
      * @since 1.3.0
      */
     public static InputStream toMarkSupportStream(InputStream inputStream) {
-        if (inputStream == null)
+        if (inputStream == null) {
             return null;
+        }
 
         return inputStream.markSupported() ? inputStream : new BufferedInputStream(inputStream);
     }
@@ -556,8 +684,9 @@ public class StreamUtils {
      * @since 1.3.0
      */
     public static BufferedReader getReader(InputStream in, Charset charset) {
-        if (in == null)
+        if (in == null) {
             return null;
+        }
 
         InputStreamReader reader;
         if (charset == null) {
@@ -600,8 +729,9 @@ public class StreamUtils {
      * @since 1.3.0
      */
     public static BufferedReader getReader(Reader reader) {
-        if (reader == null)
+        if (reader == null) {
             return null;
+        }
 
         return (reader instanceof BufferedReader) ? (BufferedReader) reader : new BufferedReader(reader);
     }
@@ -627,8 +757,9 @@ public class StreamUtils {
      * @since 1.2.1
      */
     public static OutputStreamWriter getWriter(OutputStream outputStream, Charset charset) {
-        if (outputStream == null)
+        if (outputStream == null) {
             return null;
+        }
 
         if (charset == null) {
             return new OutputStreamWriter(outputStream);

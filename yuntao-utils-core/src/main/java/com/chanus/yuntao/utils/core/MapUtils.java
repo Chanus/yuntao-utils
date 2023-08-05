@@ -27,6 +27,10 @@ import java.util.*;
  * @since 1.2.6
  */
 public class MapUtils {
+    private MapUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 判断 Map 集合是否为空
      *
@@ -73,8 +77,9 @@ public class MapUtils {
      * @return 连接后的字符串
      */
     public static <K, V> String join(Map<K, V> map, String separator, String keyValueSeparator, boolean isIgnoreNull) {
-        if (isEmpty(map))
+        if (isEmpty(map)) {
             return null;
+        }
 
         final StringBuilder stringBuilder = new StringBuilder();
         boolean isFirst = true;
@@ -107,6 +112,111 @@ public class MapUtils {
     }
 
     /**
+     * 将 Map 集合转成字符串，以"="连接和"&"分割，忽略 {@code null} 的键和值
+     *
+     * @param <K> 键类型
+     * @param <V> 值类型
+     * @param map Map 集合
+     * @return 连接后的字符串
+     * @since 1.4.0
+     */
+    public static <K, V> String joinDefaultIgnoreNull(Map<K, V> map) {
+        return joinIgnoreNull(map, StringUtils.AMPERSAND, StringUtils.EQUAL);
+    }
+
+    /**
+     * 将 Map 集合的 key 转成字符串
+     *
+     * @param <K>          键类型
+     * @param <V>          值类型
+     * @param map          Map 集合
+     * @param separator    连接符
+     * @param isIgnoreNull 是否忽略 {@code null} 的键和值
+     * @return {@code separator} 连接的字符串
+     * @since 1.4.0
+     */
+    public static <K, V> String keyJoin(Map<K, V> map, String separator, boolean isIgnoreNull) {
+        if (isEmpty(map)) {
+            return null;
+        }
+
+        final StringBuilder stringBuilder = new StringBuilder();
+        boolean isFirst = true;
+        for (K k : map.keySet()) {
+            if (!isIgnoreNull || ObjectUtils.isNotEmpty(k)) {
+                if (isFirst) {
+                    isFirst = false;
+                } else {
+                    stringBuilder.append(separator);
+                }
+                stringBuilder.append(k);
+            }
+        }
+
+        return stringBuilder.toString();
+    }
+
+    /**
+     * 将 Map 集合的 key 转成字符串，忽略 {@code null} 的 key
+     *
+     * @param <K>       键类型
+     * @param <V>       值类型
+     * @param map       Map 集合
+     * @param separator 连接符
+     * @return {@code separator} 连接的字符串
+     * @since 1.4.0
+     */
+    public static <K, V> String keyJoinIgnoreNull(Map<K, V> map, String separator) {
+        return keyJoin(map, separator, true);
+    }
+
+    /**
+     * 将 Map 集合的 value 转成字符串
+     *
+     * @param <K>          键类型
+     * @param <V>          值类型
+     * @param map          Map 集合
+     * @param separator    连接符
+     * @param isIgnoreNull 是否忽略 {@code null} 的键和值
+     * @return {@code separator} 连接的字符串
+     * @since 1.4.0
+     */
+    public static <K, V> String valueJoin(Map<K, V> map, String separator, boolean isIgnoreNull) {
+        if (isEmpty(map)) {
+            return null;
+        }
+
+        final StringBuilder stringBuilder = new StringBuilder();
+        boolean isFirst = true;
+        for (V v : map.values()) {
+            if (!isIgnoreNull || ObjectUtils.isNotEmpty(v)) {
+                if (isFirst) {
+                    isFirst = false;
+                } else {
+                    stringBuilder.append(separator);
+                }
+                stringBuilder.append(v);
+            }
+        }
+
+        return stringBuilder.toString();
+    }
+
+    /**
+     * 将 Map 集合的 value 转成字符串，忽略 {@code null} 的 value
+     *
+     * @param <K>       键类型
+     * @param <V>       值类型
+     * @param map       Map 集合
+     * @param separator 连接符
+     * @return {@code separator} 连接的字符串
+     * @since 1.4.0
+     */
+    public static <K, V> String valueJoinIgnoreNull(Map<K, V> map, String separator) {
+        return valueJoin(map, separator, true);
+    }
+
+    /**
      * 过滤 Map 集合，通过传入的 {@link Filter} 实现来返回需要的元素内容
      *
      * @param <K>    键类型
@@ -116,12 +226,14 @@ public class MapUtils {
      * @return 过滤的新 Map 集合，类型与原 Map 集合保持一致
      */
     public static <K, V> Map<K, V> filter(Map<K, V> map, Filter<Map.Entry<K, V>> filter) {
-        if (map == null || filter == null)
+        if (map == null || filter == null) {
             return map;
+        }
 
         final Map<K, V> map2 = ObjectUtils.clone(map);
-        if (isEmpty(map2))
+        if (isEmpty(map2)) {
             return map2;
+        }
 
         map2.clear();
         for (Map.Entry<K, V> entry : map.entrySet()) {
@@ -144,8 +256,9 @@ public class MapUtils {
     @SuppressWarnings("unchecked")
     public static <K, V> Map<K, V> filter(Map<K, V> map, K... keys) {
         final Map<K, V> map2 = ObjectUtils.clone(map);
-        if (isEmpty(map2))
+        if (isEmpty(map2)) {
             return map2;
+        }
 
         map2.clear();
         for (K key : keys) {
@@ -178,8 +291,9 @@ public class MapUtils {
      * @return {@link TreeMap}
      */
     public static <K, V> TreeMap<K, V> sort(Map<K, V> map, Comparator<? super K> comparator) {
-        if (map == null)
+        if (map == null) {
             return null;
+        }
 
         TreeMap<K, V> result;
         if (map instanceof TreeMap) {
@@ -251,8 +365,9 @@ public class MapUtils {
      * @return 去除值为 {@code null} 的键值对后的 Map
      */
     public static <K, V> Map<K, V> removeNullValue(Map<K, V> map) {
-        if (isEmpty(map))
+        if (isEmpty(map)) {
             return map;
+        }
 
         final Iterator<Map.Entry<K, V>> iterator = map.entrySet().iterator();
         Map.Entry<K, V> entry;

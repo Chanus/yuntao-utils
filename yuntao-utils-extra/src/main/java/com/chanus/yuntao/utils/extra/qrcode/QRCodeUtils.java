@@ -28,7 +28,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * 二维码工具类，基于 zxing 库
@@ -38,6 +39,10 @@ import java.util.HashMap;
  * @since 1.0.0
  */
 public class QRCodeUtils {
+    private QRCodeUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 生成 PNG 格式的二维码图片，以 byte[] 形式表示
      *
@@ -240,7 +245,8 @@ public class QRCodeUtils {
                     continue;
                 }
                 currentLineLen += charWidth;
-                if (lineNum == 1 && i == text.length() - 1) {// 不存在换行时
+                if (lineNum == 1 && i == text.length() - 1) {
+                    // 不存在换行时
                     textLRMargin = (config.getWidth() - currentLineLen) / 2;
                 }
             }
@@ -408,7 +414,7 @@ public class QRCodeUtils {
         final LuminanceSource source = new BufferedImageLuminanceSource(ImageUtils.toBufferedImage(image));
         final BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(source));
 
-        final HashMap<DecodeHintType, Object> hints = new HashMap<>();
+        final Map<DecodeHintType, Object> hints = new EnumMap<>(DecodeHintType.class);
         hints.put(DecodeHintType.CHARACTER_SET, charset);
         // 优化精度
         hints.put(DecodeHintType.TRY_HARDER, isTryHarder);

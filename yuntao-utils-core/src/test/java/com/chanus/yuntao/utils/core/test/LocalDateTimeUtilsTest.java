@@ -18,9 +18,7 @@ package com.chanus.yuntao.utils.core.test;
 import com.chanus.yuntao.utils.core.LocalDateTimeUtils;
 import org.junit.Test;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
@@ -196,44 +194,79 @@ public class LocalDateTimeUtilsTest {
     public void convertToDateTest() {
         System.out.println("LocalDateTime 转 Date：" + LocalDateTimeUtils.convertToDate(LocalDateTime.now()));
         System.out.println("LocalDate 转 Date：" + LocalDateTimeUtils.convertToDate(LocalDate.now()));
+        System.out.println("ZonedDateTime 转 Date：" + LocalDateTimeUtils.convertToDate(ZonedDateTime.now()));
     }
 
     @Test
-    public void convertToLocalDateTimeFromDateTest() {
+    public void convertToLocalDateTimeTest() {
         Date date = new Date();
         System.out.println("date：" + date);
-        System.out.println("Date 转 LocalDateTime：" + LocalDateTimeUtils.convertToLocalDateTimeFromDate(date));
-    }
-
-    @Test
-    public void convertToLocalDateTimeFromTimestampTest() {
+        System.out.println("Date 转 LocalDateTime：" + LocalDateTimeUtils.convertToLocalDateTime(date));
         long timestamp = System.currentTimeMillis();
         System.out.println("timestamp：" + timestamp);
-        System.out.println("timestamp 转 LocalDateTime：" + LocalDateTimeUtils.convertToLocalDateTimeFromTimestamp(timestamp));
+        System.out.println("timestamp 转 LocalDateTime：" + LocalDateTimeUtils.convertToLocalDateTime(timestamp));
     }
 
     @Test
-    public void convertToLocalDateFromDateTest() {
+    public void convertToLocalDateTest() {
         Date date = new Date();
         System.out.println("date：" + date);
-        System.out.println("Date 转 LocalDate：" + LocalDateTimeUtils.convertToLocalDateFromDate(date));
+        System.out.println("Date 转 LocalDate：" + LocalDateTimeUtils.convertToLocalDate(date));
+        long timestamp = System.currentTimeMillis();
+        System.out.println("timestamp：" + timestamp);
+        System.out.println("timestamp 转 LocalDate：" + LocalDateTimeUtils.convertToLocalDate(timestamp));
     }
 
     @Test
-    public void convertToLocalDateFromTimestampTest() {
-        long timestamp = System.currentTimeMillis();
-        System.out.println("timestamp：" + timestamp);
-        System.out.println("timestamp 转 LocalDate：" + LocalDateTimeUtils.convertToLocalDateFromTimestamp(timestamp));
+    public void convertToZonedDateTimeTest() {
+        Date date = new Date();
+        System.out.println("date：" + date);
+        System.out.println("Date 转 ZonedDateTime：" + LocalDateTimeUtils.convertToZonedDateTime(date));
+        System.out.println("Date 转 ZonedDateTime：" + LocalDateTimeUtils.convertToZonedDateTime(date, ZoneId.of("Asia/Kolkata")));
+        System.out.println("Date 转 ZonedDateTime：" + LocalDateTimeUtils.convertToZonedDateTime(date, "Asia/Kolkata"));
+        LocalDateTime localDateTime = LocalDateTime.now();
+        System.out.println("localDateTime：" + localDateTime);
+        System.out.println("LocalDateTime 转 ZonedDateTime：" + LocalDateTimeUtils.convertToZonedDateTime(localDateTime));
+        System.out.println("LocalDateTime 转 ZonedDateTime：" + LocalDateTimeUtils.convertToZonedDateTime(localDateTime, ZoneId.of("Asia/Kolkata")));
+        System.out.println("LocalDateTime 转 ZonedDateTime：" + LocalDateTimeUtils.convertToZonedDateTime(localDateTime, "Asia/Kolkata"));
+        LocalDate localDate = LocalDate.now();
+        System.out.println("localDate：" + localDate);
+        System.out.println("LocalDate 转 ZonedDateTime：" + LocalDateTimeUtils.convertToZonedDateTime(localDate));
+        System.out.println("LocalDate 转 ZonedDateTime：" + LocalDateTimeUtils.convertToZonedDateTime(localDate, ZoneId.of("Asia/Kolkata")));
+        System.out.println("LocalDate 转 ZonedDateTime：" + LocalDateTimeUtils.convertToZonedDateTime(localDate, "Asia/Kolkata"));
+    }
+
+    @Test
+    public void convertTimeZoneTest() {
+        ZonedDateTime zonedDateTime = ZonedDateTime.now();
+        System.out.println("zonedDateTime：" + zonedDateTime);
+        System.out.println("转换时区：" + LocalDateTimeUtils.convertTimeZone(zonedDateTime, ZoneId.of("Asia/Kolkata")));
+        System.out.println("转换时区：" + LocalDateTimeUtils.convertTimeZone(zonedDateTime, "Asia/Kolkata"));
+        LocalDateTime localDateTime = LocalDateTime.now();
+        System.out.println("localDateTime：" + localDateTime);
+        System.out.println("转换时区：" + LocalDateTimeUtils.convertTimeZone(localDateTime, ZoneId.of("Asia/Kolkata")));
+        System.out.println("转换时区：" + LocalDateTimeUtils.convertTimeZone(localDateTime, "Asia/Kolkata"));
+        System.out.println("转换时区：" + LocalDateTimeUtils.convertTimeZone(localDateTime, ZoneId.of("Asia/Tokyo"), ZoneId.of("Asia/Kolkata")));
+        System.out.println("转换时区：" + LocalDateTimeUtils.convertTimeZone(localDateTime, "Asia/Tokyo", "Asia/Kolkata"));
     }
 
     @Test
     public void getSecondsTest() {
-        System.out.println("seconds: " + LocalDateTimeUtils.getSeconds(LocalDateTime.now()));
+        LocalDateTime localDateTime = LocalDateTime.now();
+        System.out.println("localDateTime：" + localDateTime);
+        System.out.println("seconds: " + LocalDateTimeUtils.getSeconds(localDateTime));
+        System.out.println("seconds: " + LocalDateTimeUtils.getSeconds(localDateTime, ZoneId.of("Asia/Kolkata")));
+        System.out.println("seconds: " + LocalDateTimeUtils.getSeconds(localDateTime, "Asia/Kolkata"));
     }
 
     @Test
     public void getMillisTest() {
-        System.out.println("millis: " + LocalDateTimeUtils.getMillis(LocalDateTime.now()));
+        LocalDateTime localDateTime = LocalDateTime.now();
+        System.out.println("localDateTime：" + localDateTime);
+        System.out.println("millis: " + LocalDateTimeUtils.getMillis(localDateTime));
+        System.out.println("millis: " + LocalDateTimeUtils.getMillis(LocalDateTimeUtils.parseDateTime("2021-03-21 17:28:01")));
+        System.out.println("millis: " + LocalDateTimeUtils.getMillis(localDateTime, ZoneId.of("Asia/Kolkata")));
+        System.out.println("millis: " + LocalDateTimeUtils.getMillis(localDateTime, "Asia/Kolkata"));
     }
 
     @Test
@@ -454,6 +487,18 @@ public class LocalDateTimeUtilsTest {
         LocalTime source3 = LocalDateTimeUtils.parseTimeMillis("20:11:33.123");
         LocalTime target3 = LocalDateTimeUtils.parseTimeMillis("20:11:33.123");
         System.out.println("比较时间：" + LocalDateTimeUtils.compare(source3, target3));
+    }
+
+    @Test
+    public void compareNowTest() {
+        LocalDateTime source = LocalDateTimeUtils.parseDateTimeMillis("2018-05-12 20:11:33.123");
+        System.out.println("比较日期时间：" + LocalDateTimeUtils.compareNow(source));
+
+        LocalDate source2 = LocalDateTimeUtils.parseDate("2020-12-12");
+        System.out.println("比较日期：" + LocalDateTimeUtils.compareNow(source2));
+
+        LocalTime source3 = LocalDateTimeUtils.parseTimeMillis("20:11:33.123");
+        System.out.println("比较时间：" + LocalDateTimeUtils.compareNow(source3));
     }
 
     @Test

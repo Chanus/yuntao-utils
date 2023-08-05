@@ -15,9 +15,9 @@
  */
 package com.chanus.yuntao.utils.core;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Cookie 操作工具类
@@ -27,6 +27,10 @@ import javax.servlet.http.HttpServletResponse;
  * @since 1.0.0
  */
 public class CookieUtils {
+    private CookieUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 添加 cookie
      *
@@ -41,8 +45,9 @@ public class CookieUtils {
         Cookie cookie = new Cookie(name, value);
         cookie.setMaxAge(expiry);
         cookie.setPath(StringUtils.isBlank(path) ? "/" : path);
-        if (StringUtils.isNotBlank(domain))
+        if (StringUtils.isNotBlank(domain)) {
             cookie.setDomain(domain);
+        }
         response.addCookie(cookie);
     }
 
@@ -64,10 +69,12 @@ public class CookieUtils {
                 if (name.equals(cookie.getName())) {
                     cookie.setValue(value);
                     cookie.setMaxAge(expiry);
-                    if (StringUtils.isNotBlank(path))
+                    if (StringUtils.isNotBlank(path)) {
                         cookie.setPath(path);
-                    if (StringUtils.isNotBlank(domain))
+                    }
+                    if (StringUtils.isNotBlank(domain)) {
                         cookie.setDomain(domain);
+                    }
                     response.addCookie(cookie);
                     break;
                 }
@@ -84,8 +91,9 @@ public class CookieUtils {
      */
     public static String getCookieByName(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
-        if (cookies == null || StringUtils.isBlank(name))
+        if (cookies == null || StringUtils.isBlank(name)) {
             return null;
+        }
 
         for (Cookie cookie : cookies) {
             if (name.equals(cookie.getName())) {
@@ -106,10 +114,12 @@ public class CookieUtils {
      */
     public static void removeCookieByName(HttpServletResponse response, String name, String path, String domain) {
         Cookie cookie = new Cookie(name, null);
-        if (StringUtils.isNotBlank(path))
+        if (StringUtils.isNotBlank(path)) {
             cookie.setPath(path);
-        if (StringUtils.isNotBlank(domain))
+        }
+        if (StringUtils.isNotBlank(domain)) {
             cookie.setDomain(domain);
+        }
 
         cookie.setMaxAge(0);
         response.addCookie(cookie);
@@ -128,10 +138,12 @@ public class CookieUtils {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 cookie.setValue(null);
-                if (StringUtils.isNotBlank(path))
+                if (StringUtils.isNotBlank(path)) {
                     cookie.setPath(path);
-                if (StringUtils.isNotBlank(domain))
+                }
+                if (StringUtils.isNotBlank(domain)) {
                     cookie.setDomain(domain);
+                }
                 cookie.setMaxAge(0);
                 response.addCookie(cookie);
             }

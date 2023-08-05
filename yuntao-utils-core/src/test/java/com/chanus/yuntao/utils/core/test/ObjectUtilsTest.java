@@ -180,6 +180,14 @@ public class ObjectUtilsTest {
     }
 
     @Test
+    public void verifyTest() {
+        System.out.println(ObjectUtils.verify("abc123", s -> s.startsWith("abc")));// true
+        System.out.println(ObjectUtils.verify("abc123", s -> s.startsWith("abcd")));// false
+        System.out.println(ObjectUtils.verify("abc123", "abcd123", s -> s.startsWith("abc")));// abc123
+        System.out.println(ObjectUtils.verify("abc123", "abcd123", s -> s.startsWith("abcd")));// abcd123
+    }
+
+    @Test
     public void toMapTest() {
         Student student = new Student();
         student.setId(1);

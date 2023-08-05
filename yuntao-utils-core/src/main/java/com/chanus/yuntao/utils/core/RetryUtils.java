@@ -25,12 +25,25 @@ import java.util.concurrent.Callable;
  * @since 1.0.0
  */
 public class RetryUtils {
+    private RetryUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 回调结果检查
      */
     public interface ResultCheck {
+        /**
+         * 校验是否匹配
+         *
+         * @return {@code true} 匹配，{@code false} 不匹配
+         */
         boolean matching();
 
+        /**
+         * 获取 JSON 字符串
+         * @return JSON 字符串
+         */
         String getJson();
     }
 
@@ -50,7 +63,9 @@ public class RetryUtils {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if (null != v && v.matching()) break;
+            if (null != v && v.matching()) {
+                break;
+            }
         }
         return v;
     }
@@ -73,7 +88,9 @@ public class RetryUtils {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if (null != v && v.matching()) break;
+            if (null != v && v.matching()) {
+                break;
+            }
             Thread.sleep(sleepMillis);
         }
         return v;
