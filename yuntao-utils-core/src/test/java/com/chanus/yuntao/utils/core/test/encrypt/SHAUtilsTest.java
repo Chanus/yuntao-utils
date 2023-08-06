@@ -22,7 +22,6 @@ import org.junit.Test;
  * SHAUtils 测试类
  *
  * @author Chanus
- * @date 2020-06-24 17:52:33
  * @since 1.0.0
  */
 public class SHAUtilsTest {

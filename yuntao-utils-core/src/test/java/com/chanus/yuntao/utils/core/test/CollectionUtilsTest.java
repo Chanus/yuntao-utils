@@ -26,7 +26,6 @@ import java.util.List;
  * CollectionUtils 测试类
  *
  * @author Chanus
- * @date 2020-06-20 14:16:48
  * @since 1.0.0
  */
 public class CollectionUtilsTest {

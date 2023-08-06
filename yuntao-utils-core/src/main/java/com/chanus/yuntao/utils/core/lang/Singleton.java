@@ -27,7 +27,6 @@ import java.util.function.Supplier;
  * 提供单例对象的统一管理，当调用 get 方法时，如果对象池中存在此对象，返回此对象，否则创建新对象返回
  *
  * @author Chanus
- * @date 2020-09-18 17:48:02
  * @since 1.2.5
  */
 public final class Singleton {

@@ -27,7 +27,6 @@ import java.util.concurrent.CompletableFuture;
  * Http 请求工具类
  *
  * @author Chanus
- * @date 2020-06-24 11:08:02
  * @since 1.0.0
  */
 public class HttpUtils {

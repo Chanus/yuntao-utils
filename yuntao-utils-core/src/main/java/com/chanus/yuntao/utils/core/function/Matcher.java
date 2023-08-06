@@ -20,7 +20,6 @@ package com.chanus.yuntao.utils.core.function;
  *
  * @param <T> 匹配的对象类型
  * @author Chanus
- * @date 2020-09-18 11:41:45
  * @since 1.2.5
  */
 @FunctionalInterface

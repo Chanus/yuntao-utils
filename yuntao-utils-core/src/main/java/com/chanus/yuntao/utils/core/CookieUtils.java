@@ -23,7 +23,6 @@ import jakarta.servlet.http.HttpServletResponse;
  * Cookie 操作工具类
  *
  * @author Chanus
- * @date 2020-06-24 11:16:05
  * @since 1.0.0
  */
 public class CookieUtils {

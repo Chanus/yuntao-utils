@@ -25,7 +25,6 @@ import java.util.*;
  * 数组工具类
  *
  * @author Chanus
- * @date 2020-07-27 15:40:21
  * @since 1.1.0
  */
 public class ArrayUtils {

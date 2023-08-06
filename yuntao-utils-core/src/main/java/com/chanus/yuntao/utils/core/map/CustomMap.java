@@ -23,7 +23,6 @@ import java.util.HashMap;
  * 自定义 Map，继承 HashMap
  *
  * @author Chanus
- * @date 2020-09-30 15:00:00
  * @since 1.2.6
  */
 public class CustomMap extends HashMap<String, Object> {

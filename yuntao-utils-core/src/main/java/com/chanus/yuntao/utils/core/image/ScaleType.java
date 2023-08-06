@@ -21,7 +21,6 @@ import java.awt.*;
  * 图片缩略算法类型
  *
  * @author Chanus
- * @date 2020-06-24 11:41:48
  * @since 1.0.0
  */
 public enum ScaleType {

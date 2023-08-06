@@ -22,7 +22,6 @@ import org.junit.Test;
  * GoogleAuthenticatorUtils 测试类
  *
  * @author Chanus
- * @date 2020-06-24 16:36:38
  * @since 1.0.0
  */
 public class GoogleAuthenticatorUtilsTest {

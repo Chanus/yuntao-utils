@@ -26,7 +26,6 @@ import java.util.*;
  * StringUtils 测试类
  *
  * @author Chanus
- * @date 2020-06-20 22:09:35
  * @since 1.0.0
  */
 public class StringUtilsTest {

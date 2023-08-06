@@ -26,7 +26,6 @@ import java.util.Arrays;
  * ClassLoaderUtils 测试类
  *
  * @author Chanus
- * @date 2020-09-22 10:14:41
  * @since 1.2.5
  */
 public class ClassLoaderUtilsTest {

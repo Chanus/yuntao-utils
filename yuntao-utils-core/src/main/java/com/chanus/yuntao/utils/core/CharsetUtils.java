@@ -23,7 +23,6 @@ import java.nio.charset.UnsupportedCharsetException;
  * 字符集工具类
  *
  * @author Chanus
- * @date 2020-06-24 15:25:33
  * @since 1.0.0
  */
 public class CharsetUtils {

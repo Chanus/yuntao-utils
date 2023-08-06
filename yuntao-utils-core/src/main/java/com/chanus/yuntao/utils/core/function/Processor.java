@@ -21,7 +21,6 @@ package com.chanus.yuntao.utils.core.function;
  * @param <T> 待处理的对象类型
  * @param <R> 处理后的对象类型
  * @author Chanus
- * @date 2021-04-05 15:13:09
  * @since 1.6.0
  */
 @FunctionalInterface

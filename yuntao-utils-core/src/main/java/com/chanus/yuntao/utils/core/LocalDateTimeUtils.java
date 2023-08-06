@@ -27,7 +27,6 @@ import java.util.Objects;
  * 日期时间工具类，适应于jdk 1.8及以上版本
  *
  * @author Chanus
- * @date 2020-06-24 10:34:31
  * @since 1.0.0
  */
 public class LocalDateTimeUtils {

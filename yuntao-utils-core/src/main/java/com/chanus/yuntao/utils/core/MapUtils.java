@@ -23,7 +23,6 @@ import java.util.*;
  * Map 工具类
  *
  * @author Chanus
- * @date 2020-09-30 15:22:51
  * @since 1.2.6
  */
 public class MapUtils {
@@ -112,7 +111,7 @@ public class MapUtils {
     }
 
     /**
-     * 将 Map 集合转成字符串，以"="连接和"&"分割，忽略 {@code null} 的键和值
+     * 将 Map 集合转成字符串，以"="连接和"{@literal &}"分割，忽略 {@code null} 的键和值
      *
      * @param <K> 键类型
      * @param <V> 值类型

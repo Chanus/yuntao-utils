@@ -33,7 +33,6 @@ import java.util.Base64;
  * DES（对称加密）加密解密工具类
  *
  * @author Chanus
- * @date 2020-10-29 21:23:11
  * @since 1.4.3
  */
 public class DESUtils {

@@ -40,7 +40,6 @@ import java.util.Objects;
  * 图像编辑工具类
  *
  * @author Chanus
- * @date 2020-06-24 11:33:45
  * @since 1.0.0
  */
 public class Img implements Serializable {

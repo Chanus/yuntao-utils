@@ -30,7 +30,6 @@ import java.util.Map;
  * </pre>
  *
  * @author Chanus
- * @date 2020-09-18 09:10:05
  * @since 1.2.5
  */
 public class TypeUtils {

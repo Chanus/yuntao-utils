@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
  * 数字工具类
  *
  * @author Chanus
- * @date 2020-06-24 09:29:06
  * @since 1.0.0
  */
 public class NumberUtils {
@@ -979,7 +978,7 @@ public class NumberUtils {
     /**
      * 计算阶乘
      * <ul>
-     *     n! = n * (n-1) * ... * end
+     *     {@literal n! = n * (n-1) * ... * end}
      * </ul>
      *
      * @param start 阶乘起始
@@ -999,7 +998,7 @@ public class NumberUtils {
     /**
      * 计算阶乘
      * <ul>
-     *     n! = n * (n-1) * ... * 2 * 1
+     *     {@literal n! = n * (n-1) * ... * 2 * 1}
      * </ul>
      *
      * @param n 阶乘起始

@@ -21,7 +21,6 @@ import java.util.concurrent.Callable;
  * 异常重试工具类
  *
  * @author Chanus
- * @date 2020-06-24 09:06:00
  * @since 1.0.0
  */
 public class RetryUtils {

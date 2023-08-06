@@ -33,7 +33,6 @@ import java.util.*;
  * 文件操作工具类
  *
  * @author Chanus
- * @date 2020-06-22 08:39:51
  * @since 1.0.0
  */
 public class FileUtils {
@@ -1165,7 +1164,7 @@ public class FileUtils {
     }
 
     /**
-     * 去除文件名中不支持的特殊字符（\ / : * " < > | ?）
+     * 去除文件名中不支持的特殊字符（\ / : * " &lt; &gt; | ?）
      *
      * @param fileName 文件名
      * @return 去除特殊字符后的文件名
@@ -1487,6 +1486,7 @@ public class FileUtils {
      * 创建文件
      *
      * @param file 文件
+     * @return 文件
      */
     public static File createFile(File file) {
         if (file == null) {
@@ -1512,6 +1512,7 @@ public class FileUtils {
      * 创建文件
      *
      * @param path 文件路径
+     * @return 文件
      */
     public static File createFile(String path) {
         if (StringUtils.isBlank(path)) {
@@ -1526,6 +1527,7 @@ public class FileUtils {
      *
      * @param parent 父目录
      * @param path   文件路径
+     * @return 文件
      * @since 1.2.1
      */
     public static File createFile(String parent, String path) {
@@ -1995,6 +1997,7 @@ public class FileUtils {
      * @param isOnlyCopyFile     当拷贝来源是目录时是否只拷贝文件而忽略子目录
      * @param isCopyContentIfDir 当拷贝来源是目录时是否只拷贝目录下的内容
      * @return 拷贝后目标的文件或目录
+     * @throws IOException IO 异常
      * @since 1.2.1
      */
     public static File copy(File source, File target, boolean isCover, boolean isOnlyCopyFile, boolean isCopyContentIfDir) throws IOException {
@@ -2043,6 +2046,7 @@ public class FileUtils {
      * @param target  目标文件或目录
      * @param isCover 是否覆盖目标文件
      * @return 拷贝后目标的文件或目录
+     * @throws IOException IO 异常
      * @since 1.2.1
      */
     public static File copy(File source, File target, boolean isCover) throws IOException {

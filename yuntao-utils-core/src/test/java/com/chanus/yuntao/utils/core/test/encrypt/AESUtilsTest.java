@@ -22,7 +22,6 @@ import org.junit.Test;
  * AESUtils 测试类
  *
  * @author Chanus
- * @date 2020-06-24 17:50:06
  * @since 1.0.0
  */
 public class AESUtilsTest {

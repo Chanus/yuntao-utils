@@ -19,7 +19,6 @@ package com.chanus.yuntao.utils.core;
  * 字符工具类
  *
  * @author Chanus
- * @date 2020-06-20 09:29:15
  * @since 1.0.0
  */
 public class CharUtils {
@@ -181,7 +180,7 @@ public class CharUtils {
      * </pre>
      *
      * @param object 被检查的对象
-     * @return @code true} 表示为字符类；{@code false} 表示非字符类
+     * @return {@code true} 表示为字符类；{@code false} 表示非字符类
      */
     public static boolean isChar(Object object) {
         return object instanceof Character;
@@ -410,7 +409,7 @@ public class CharUtils {
      * 是否为 Windows 或者 Linux（Unix）文件分隔符，Windows 平台下分隔符为 \，Linux（Unix）为 /
      *
      * @param c 被检查的字符
-     * @return @code true} 表示为 Windows 或者 Linux（Unix）文件分隔符；{@code false} 表示非 Windows 或者 Linux（Unix）文件分隔符
+     * @return {@code true} 表示为 Windows 或者 Linux（Unix）文件分隔符；{@code false} 表示非 Windows 或者 Linux（Unix）文件分隔符
      */
     public static boolean isFileSeparator(final char c) {
         return SLASH == c || BACKSLASH == c;
@@ -422,7 +421,7 @@ public class CharUtils {
      * @param c1         字符1
      * @param c2         字符2
      * @param ignoreCase 是否忽略大小写
-     * @return @code true} 表示相同；{@code false} 表示不相同
+     * @return {@code true} 表示相同；{@code false} 表示不相同
      */
     public static boolean equals(final char c1, final char c2, final boolean ignoreCase) {
         return ignoreCase ? Character.toLowerCase(c1) == Character.toLowerCase(c2) : c1 == c2;

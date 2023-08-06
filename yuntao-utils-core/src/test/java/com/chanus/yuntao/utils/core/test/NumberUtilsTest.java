@@ -25,7 +25,6 @@ import java.math.RoundingMode;
  * NumberUtils 测试类
  *
  * @author Chanus
- * @date 2020-07-04 14:09:11
  * @since 1.0.0
  */
 public class NumberUtilsTest {

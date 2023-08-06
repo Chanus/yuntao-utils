@@ -24,7 +24,6 @@ import java.io.File;
  * DESUtils 测试类
  *
  * @author Chanus
- * @date 2020-10-29 21:46:27
  * @since 1.4.3
  */
 public class DESUtilsTest {

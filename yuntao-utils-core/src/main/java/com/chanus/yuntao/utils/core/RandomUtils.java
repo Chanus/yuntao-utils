@@ -23,7 +23,6 @@ import java.util.concurrent.ThreadLocalRandom;
  * 随机数工具类
  *
  * @author Chanus
- * @date 2020-06-24 08:55:29
  * @since 1.0.0
  */
 public class RandomUtils {

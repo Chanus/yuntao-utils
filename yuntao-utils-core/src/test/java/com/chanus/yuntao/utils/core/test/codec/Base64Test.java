@@ -29,7 +29,6 @@ import java.util.Arrays;
  * Base64 测试类
  *
  * @author Chanus
- * @date 2020-07-07 17:26:49
  * @since 1.0.0
  */
 public class Base64Test {

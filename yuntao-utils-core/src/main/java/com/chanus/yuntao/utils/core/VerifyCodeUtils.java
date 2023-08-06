@@ -24,7 +24,6 @@ import java.util.Map;
  * 验证码图片生成工具类
  *
  * @author Chanus
- * @date 2020-06-24 08:52:56
  * @since 1.0.0
  */
 public class VerifyCodeUtils {

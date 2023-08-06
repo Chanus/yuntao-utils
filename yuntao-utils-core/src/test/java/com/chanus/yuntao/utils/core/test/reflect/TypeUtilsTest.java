@@ -26,7 +26,6 @@ import java.util.Arrays;
  * TypeUtils 测试类
  *
  * @author Chanus
- * @date 2020-09-22 11:32:19
  * @since 1.2.5
  */
 public class TypeUtilsTest {

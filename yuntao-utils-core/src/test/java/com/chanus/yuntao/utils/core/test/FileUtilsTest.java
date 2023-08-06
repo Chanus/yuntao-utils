@@ -26,7 +26,6 @@ import java.util.List;
  * FileUtils 测试类
  *
  * @author Chanus
- * @date 2020-06-22 08:52:01
  * @since 1.0.0
  */
 public class FileUtilsTest {

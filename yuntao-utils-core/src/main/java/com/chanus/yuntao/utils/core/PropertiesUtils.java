@@ -23,7 +23,6 @@ import java.util.*;
  * 属性文件操作工具类
  *
  * @author Chanus
- * @date 2020-06-24 09:10:53
  * @since 1.0.0
  */
 public class PropertiesUtils {

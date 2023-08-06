@@ -21,7 +21,6 @@ package com.chanus.yuntao.utils.core.function;
  * @param <T> 待转换的对象类型
  * @param <R> 转换后的对象类型
  * @author Chanus
- * @date 2021-04-05 15:04:14
  * @since 1.6.0
  */
 @FunctionalInterface

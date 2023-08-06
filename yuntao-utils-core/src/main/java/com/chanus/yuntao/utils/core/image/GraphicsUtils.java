@@ -24,7 +24,6 @@ import java.awt.image.BufferedImage;
  * {@link Graphics} 相关工具类
  *
  * @author Chanus
- * @date 2020-06-24 11:42:53
  * @since 1.0.0
  */
 public class GraphicsUtils {

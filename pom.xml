@@ -4,11 +4,54 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.chanus.utils</groupId>
+  <groupId>io.github.chanus</groupId>
   <artifactId>yuntao-utils</artifactId>
   <version>1.7.0</version>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
+
+  <url>https://github.com/Chanus/yuntao-utils</url>
+  <description>工具方法整合</description>
+
+  <!-- 开源协议 -->
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+    </license>
+  </licenses>
+
+  <!-- 开发者信息 -->
+  <developers>
+    <developer>
+      <id>yuntao-utils</id>
+      <name>Chanus</name>
+      <email>chanus1990@gmail.com</email>
+      <timezone>+8</timezone>
+    </developer>
+  </developers>
+
+  <!-- 项目在 github 或其它托管平台的地址 -->
+  <scm>
+    <tag>master</tag>
+    <connection>scm:git:https://github.com/Chanus/yuntao-utils.git</connection>
+    <developerConnection>scm:git:git@github.com:Chanus/yuntao-utils.git</developerConnection>
+    <url>https://github.com/Chanus/yuntao-utils.git</url>
+  </scm>
+
+  <issueManagement>
+    <system>Github Issue</system>
+    <url>https://github.com/Chanus/yuntao-utils/issues</url>
+  </issueManagement>
+
+  <modules>
+    <module>yuntao-utils-core</module>
+    <module>yuntao-utils-ftp</module>
+    <module>yuntao-utils-qrcode</module>
+    <module>yuntao-utils-quartz</module>
+  </modules>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,10 +65,12 @@
     <!-- 单元测试 -->
     <junit.version>4.13.2</junit.version>
     <!-- Maven 插件 -->
-    <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
     <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
     <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+    <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
+    <maven-nexus-staging-plugin.version>1.6.13</maven-nexus-staging-plugin.version>
+    <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
   </properties>
 
   <dependencyManagement>
@@ -47,23 +92,27 @@
       <version>5.0.0</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-source-plugin</artifactId>
-      <version>${maven-source-plugin.version}</version>
-    </dependency>
   </dependencies>
 
   <build>
     <plugins>
-      <!-- 资源配置插件 -->
+      <!-- 打包源文件插件 -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>${maven-resources-plugin.version}</version>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>${maven-source-plugin.version}</version>
         <configuration>
-          <encoding>${project.encoding}</encoding>
+          <attach>true</attach>
         </configuration>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <!-- 编译插件 -->
       <plugin>
@@ -78,7 +127,7 @@
           <fork>true</fork>
         </configuration>
       </plugin>
-      <!-- jar包插件 -->
+      <!-- jar 包插件 -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
@@ -89,12 +138,104 @@
           </archive>
         </configuration>
       </plugin>
+      <!-- Javadoc -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven-javadoc-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
-  <modules>
-    <module>yuntao-utils-core</module>
-    <module>yuntao-utils-extra</module>
-  </modules>
+  <profiles>
+    <profile>
+      <id>release</id>
+      <distributionManagement>
+        <snapshotRepository>
+          <id>ossrh</id>
+          <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+          <id>ossrh</id>
+          <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+      </distributionManagement>
+      <build>
+        <plugins>
+          <!-- 打包源文件插件 -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>${maven-source-plugin.version}</version>
+            <configuration>
+              <attach>true</attach>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- Javadoc -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>${maven-javadoc-plugin.version}</version>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <configuration>
+                  <doclint>none</doclint>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- Gpg Signature -->
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>${maven-nexus-staging-plugin.version}</version>
+            <extensions>true</extensions>
+            <configuration>
+              <serverId>ossrh</serverId>
+              <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+              <autoReleaseAfterClose>true</autoReleaseAfterClose>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>${maven-gpg-plugin.version}</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

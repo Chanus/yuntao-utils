@@ -24,7 +24,6 @@ import java.util.List;
  *
  * @param <T> 分页数据实体类型
  * @author Chanus
- * @date 2020-10-26 14:25:16
  * @since 1.4.2
  */
 public class Page<T> {
@@ -117,6 +116,7 @@ public class Page<T> {
      *
      * @param count 记录条数
      * @param data  记录列表
+     * @param <T>   泛型
      * @return {@link Page}
      */
     public static <T> Page<T> pagination(int count, List<T> data) {

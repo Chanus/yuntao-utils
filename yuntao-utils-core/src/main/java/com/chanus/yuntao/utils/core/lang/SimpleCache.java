@@ -28,7 +28,6 @@ import java.util.function.Supplier;
  * @param <K> 键类型
  * @param <V> 值类型
  * @author Chanus
- * @date 2020-09-18 17:40:46
  * @since 1.2.5
  */
 public class SimpleCache<K, V> implements Iterable<Map.Entry<K, V>>, Serializable {

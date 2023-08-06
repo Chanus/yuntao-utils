@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
  * RandomUtils 测试类
  *
  * @author Chanus
- * @date 2020-06-24 14:03:49
  * @since 1.0.0
  */
 public class RandomUtilsTest {

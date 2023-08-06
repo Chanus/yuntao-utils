@@ -28,7 +28,6 @@ import java.security.SecureRandom;
  * Google 身份验证器，java 服务端实现
  *
  * @author Chanus
- * @date 2020-06-24 16:28:29
  * @since 1.0.0
  */
 public class GoogleAuthenticatorUtils {
@@ -57,7 +56,7 @@ public class GoogleAuthenticatorUtils {
      * 30 second windows we allow The bigger the window, the more tolerant of clock
      * skew we are.
      *
-     * @param s window size - must be >=1 and <=17. Other values are ignored
+     * @param s window size - must be &gt;=1 and &lt;=17. Other values are ignored
      */
     public void setWindowSize(int s) {
         if (s >= 1 && s <= 17) {

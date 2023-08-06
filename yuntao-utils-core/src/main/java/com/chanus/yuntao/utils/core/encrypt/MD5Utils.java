@@ -22,7 +22,6 @@ import java.util.Objects;
  * MD5 加密工具类
  *
  * @author Chanus
- * @date 2020-06-24 11:26:00
  * @since 1.0.0
  */
 public class MD5Utils {

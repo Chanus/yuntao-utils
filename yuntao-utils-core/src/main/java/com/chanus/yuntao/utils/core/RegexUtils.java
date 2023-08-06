@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
  * 正则相关工具类
  *
  * @author Chanus
- * @date 2020-10-01 22:29:42
  * @since 1.3.0
  */
 public class RegexUtils {

@@ -20,7 +20,6 @@ package com.chanus.yuntao.utils.core.function;
  *
  * @param <T> 替换的对象类型
  * @author Chanus
- * @date 2020-10-02 15:05:22
  * @since 1.3.0
  */
 @FunctionalInterface

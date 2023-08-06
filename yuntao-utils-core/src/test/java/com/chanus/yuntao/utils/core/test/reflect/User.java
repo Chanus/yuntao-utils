@@ -19,7 +19,6 @@ package com.chanus.yuntao.utils.core.test.reflect;
  * Java Bean
  *
  * @author Chanus
- * @date 2020-09-22 11:36:44
  * @since 1.2.5
  */
 public class User {

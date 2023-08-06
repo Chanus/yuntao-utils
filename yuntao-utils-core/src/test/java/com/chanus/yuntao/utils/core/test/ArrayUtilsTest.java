@@ -24,7 +24,6 @@ import java.util.Arrays;
  * ArrayUtils 测试类
  *
  * @author Chanus
- * @date 2020-07-27 15:57:10
  * @since 1.1.0
  */
 public class ArrayUtilsTest {

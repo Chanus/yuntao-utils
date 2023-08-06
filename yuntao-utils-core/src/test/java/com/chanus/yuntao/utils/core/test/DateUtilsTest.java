@@ -27,7 +27,6 @@ import java.util.TimeZone;
  * DateUtils 测试类
  *
  * @author Chanus
- * @date 2020-06-20 16:55:42
  * @since 1.0.0
  */
 public class DateUtilsTest {

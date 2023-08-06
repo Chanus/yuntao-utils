@@ -24,7 +24,6 @@ import java.io.File;
  * CharUtils 测试类
  *
  * @author Chanus
- * @date 2020-06-20 09:39:55
  * @since 1.0.0
  */
 public class CharUtilsTest {

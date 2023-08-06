@@ -23,7 +23,6 @@ import org.junit.Test;
  * Base32 测试类
  *
  * @author Chanus
- * @date 2020-07-07 17:12:58
  * @since 1.0.0
  */
 public class Base32Test {

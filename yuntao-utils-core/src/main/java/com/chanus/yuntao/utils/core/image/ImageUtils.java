@@ -36,7 +36,6 @@ import java.util.Iterator;
  * 图片处理工具类
  *
  * @author Chanus
- * @date 2020-06-24 11:44:42
  * @since 1.0.0
  */
 public class ImageUtils {

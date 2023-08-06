@@ -22,7 +22,6 @@ import org.junit.Test;
  * HMACUtils 测试类
  *
  * @author Chanus
- * @date 2020-07-21 14:01:17
  * @since 1.1.0
  */
 public class HMACUtilsTest {

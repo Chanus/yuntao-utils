@@ -30,7 +30,6 @@ import java.util.List;
  * 外部 Jar 的类加载器
  *
  * @author Chanus
- * @date 2020-09-21 09:19:52
  * @since 1.2.5
  */
 public class JarClassLoader extends URLClassLoader {

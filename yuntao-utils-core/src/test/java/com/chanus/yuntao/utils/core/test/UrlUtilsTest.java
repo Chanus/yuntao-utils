@@ -26,7 +26,6 @@ import java.util.Map;
  * UrlUtils 测试类
  *
  * @author Chanus
- * @date 2020-07-07 15:00:17
  * @since 1.0.0
  */
 public class UrlUtilsTest {

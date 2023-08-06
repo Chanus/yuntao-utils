@@ -36,7 +36,6 @@ import java.util.*;
  * 类工具类
  *
  * @author Chanus
- * @date 2020-09-17 10:18:16
  * @since 1.2.5
  */
 public class ClassUtils {

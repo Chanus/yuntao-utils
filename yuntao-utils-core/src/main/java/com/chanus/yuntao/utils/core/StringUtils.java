@@ -31,7 +31,6 @@ import java.util.zip.GZIPOutputStream;
  * 字符串工具类
  *
  * @author Chanus
- * @date 2020-06-20 15:24:34
  * @since 1.0.0
  */
 public class StringUtils {
@@ -1610,13 +1609,13 @@ public class StringUtils {
      * 截取字符串<br>
      * 截取规则：<br>
      * <pre>
-     *     1. beginIndex < 0，beginIndex = s.length() + beginIndex，即 beginIndex 从后向前开始，
-     *     若 s.length() + beginIndex < 0，则 beginIndex 默认为 0
-     *     2. beginIndex > s.length()，则 beginIndex 默认为 s.length()
-     *     3. endIndex > s.length()，则 endIndex 默认为 s.length()
-     *     4. endIndex < 0，则 endIndex = s.length() + endIndex，即 endIndex 从后向前开始，
-     *     若 s.length() + endIndex <= 0，则返回 ""
-     *     5. endIndex < beginIndex，则交换 beginIndex 和 endIndex
+     *     1. beginIndex &lt; 0，beginIndex = s.length() + beginIndex，即 beginIndex 从后向前开始，
+     *     若 s.length() + beginIndex &lt; 0，则 beginIndex 默认为 0
+     *     2. beginIndex &gt; s.length()，则 beginIndex 默认为 s.length()
+     *     3. endIndex &gt; s.length()，则 endIndex 默认为 s.length()
+     *     4. endIndex &lt; 0，则 endIndex = s.length() + endIndex，即 endIndex 从后向前开始，
+     *     若 s.length() + endIndex &lt;= 0，则返回 ""
+     *     5. endIndex &lt; beginIndex，则交换 beginIndex 和 endIndex
      * </pre>
      *
      * @param s          被截取的字符串
@@ -1667,9 +1666,9 @@ public class StringUtils {
      * 截取字符串左侧部分<br>
      * 截取规则：<br>
      * <pre>
-     *     1. endIndex > s.length()，则 endIndex 默认为 s.length()
-     *     2. endIndex < 0，则 endIndex = s.length() + endIndex，即 endIndex 从后向前开始，
-     *     若 s.length() + endIndex <= 0，则返回 ""
+     *     1. endIndex &gt; s.length()，则 endIndex 默认为 s.length()
+     *     2. endIndex &lt; 0，则 endIndex = s.length() + endIndex，即 endIndex 从后向前开始，
+     *     若 s.length() + endIndex &lt;= 0，则返回 ""
      * </pre>
      *
      * @param s        被截取的字符串
@@ -1685,9 +1684,9 @@ public class StringUtils {
      * 截取字符串右侧部分<br>
      * 截取规则：<br>
      * <pre>
-     *     1. beginIndex < 0，beginIndex = s.length() + beginIndex，即 beginIndex 从后向前开始，
-     *     若 s.length() + beginIndex < 0，则 beginIndex 默认为 0
-     *     2. beginIndex > s.length()，则返回 ""
+     *     1. beginIndex &lt; 0，beginIndex = s.length() + beginIndex，即 beginIndex 从后向前开始，
+     *     若 s.length() + beginIndex &lt; 0，则 beginIndex 默认为 0
+     *     2. beginIndex &gt; s.length()，则返回 ""
      * </pre>
      *
      * @param s          被截取的字符串

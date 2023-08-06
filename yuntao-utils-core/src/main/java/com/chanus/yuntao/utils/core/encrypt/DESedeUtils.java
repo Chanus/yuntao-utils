@@ -33,7 +33,6 @@ import java.util.Base64;
  * DESede（对称加密）加密解密工具类
  *
  * @author Chanus
- * @date 2020-10-29 22:48:52
  * @since 1.4.3
  */
 public class DESedeUtils {

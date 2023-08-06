@@ -20,7 +20,6 @@ package com.chanus.yuntao.utils.core.function;
  *
  * @param <T> 验证的对象类型
  * @author Chanus
- * @date 2021-04-10 11:49:49
  * @since 1.6.0
  */
 @FunctionalInterface

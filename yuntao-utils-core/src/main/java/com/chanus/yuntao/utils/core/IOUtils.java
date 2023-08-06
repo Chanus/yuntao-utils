@@ -23,7 +23,6 @@ import java.io.IOException;
  * I/O 工具类
  *
  * @author Chanus
- * @date 2020-06-20 17:20:10
  * @since 1.0.0
  */
 public class IOUtils {

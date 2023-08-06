@@ -22,7 +22,6 @@ import org.junit.Test;
  * MD5Utils 测试类
  *
  * @author Chanus
- * @date 2020-06-24 17:50:59
  * @since 1.0.0
  */
 public class MD5UtilsTest {

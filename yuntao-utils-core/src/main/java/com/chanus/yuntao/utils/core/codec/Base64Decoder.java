@@ -24,7 +24,6 @@ import java.nio.charset.StandardCharsets;
  * Base64 解码实现
  *
  * @author Chanus
- * @date 2020-06-24 15:20:39
  * @since 1.0.0
  */
 public class Base64Decoder {

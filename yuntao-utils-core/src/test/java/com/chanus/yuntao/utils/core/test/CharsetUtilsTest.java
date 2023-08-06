@@ -22,7 +22,6 @@ import org.junit.Test;
  * CharsetUtils 测试类
  *
  * @author Chanus
- * @date 2020-07-02 17:32:29
  * @since 1.0.0
  */
 public class CharsetUtilsTest {

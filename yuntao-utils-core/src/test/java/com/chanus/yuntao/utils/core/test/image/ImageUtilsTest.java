@@ -25,7 +25,6 @@ import java.io.File;
  * ImageUtils 测试类
  *
  * @author Chanus
- * @date 2020-07-07 18:01:00
  * @since 1.0.0
  */
 public class ImageUtilsTest {

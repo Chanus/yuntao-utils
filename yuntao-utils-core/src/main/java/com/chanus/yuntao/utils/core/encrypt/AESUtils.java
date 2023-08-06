@@ -28,7 +28,6 @@ import java.util.Base64;
  * AES（对称加密）加密解密工具类
  *
  * @author Chanus
- * @date 2020-06-24 11:20:47
  * @since 1.0.0
  */
 public class AESUtils {

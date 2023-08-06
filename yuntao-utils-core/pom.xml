@@ -4,13 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.chanus.utils</groupId>
+    <groupId>io.github.chanus</groupId>
     <artifactId>yuntao-utils</artifactId>
     <version>1.7.0</version>
   </parent>
 
   <artifactId>yuntao-utils-core</artifactId>
+  <packaging>jar</packaging>
   <name>${project.artifactId}</name>
+  <description>核心工具方法</description>
 
   <dependencies>
     <dependency>
@@ -19,28 +21,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <!-- 打包源文件插件 -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>${maven-source-plugin.version}</version>
-        <configuration>
-          <attach>true</attach>
-        </configuration>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

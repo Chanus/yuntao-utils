@@ -22,7 +22,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * 基本变量类型的枚举，包括原始类型和包装类型
  *
  * @author Chanus
- * @date 2020-09-17 15:20:14
  * @since 1.2.5
  */
 public enum BasicType {

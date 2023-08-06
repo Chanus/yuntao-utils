@@ -26,7 +26,6 @@ import java.util.TimeZone;
  * 日期时间工具类
  *
  * @author Chanus
- * @date 2020-06-20 15:22:07
  * @since 1.0.0
  */
 public class DateUtils {
@@ -589,9 +588,9 @@ public class DateUtils {
     /**
      * 比较两个时间的大小
      * <pre>
-     *     sourceDate > targetDate 返回 1
+     *     sourceDate &gt; targetDate 返回 1
      *     sourceDate = targetDate 返回 0
-     *     sourceDate < targetDate 返回 -1
+     *     sourceDate &lt; targetDate 返回 -1
      * </pre>
      *
      * @param sourceDate 需要比较的时间
@@ -605,9 +604,9 @@ public class DateUtils {
     /**
      * 比较两个指定格式的时间字符串的大小
      * <pre>
-     *     sourceDateStr > targetDateStr 返回 1
+     *     sourceDateStr &gt; targetDateStr 返回 1
      *     sourceDateStr = targetDateStr 返回 0
-     *     sourceDateStr < targetDateStr 返回 -1
+     *     sourceDateStr &lt; targetDateStr 返回 -1
      * </pre>
      *
      * @param sourceDateStr 需要比较的时间字符串
@@ -628,9 +627,9 @@ public class DateUtils {
     /**
      * 比较指定时间与当前时间的大小
      * <pre>
-     *     date > 当前时间 返回 1
+     *     date &gt; 当前时间 返回 1
      *     date = 当前时间 返回 0
-     *     date < 当前时间 返回 -1
+     *     date &lt; 当前时间 返回 -1
      * </pre>
      *
      * @param date 需要比较的时间

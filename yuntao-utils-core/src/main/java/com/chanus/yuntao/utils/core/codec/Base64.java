@@ -28,7 +28,6 @@ import java.nio.charset.Charset;
  * 也就是三位二进制数组经过编码后变为四位的 ASCII 字符显示，长度比原来增加1/3。
  *
  * @author Chanus
- * @date 2020-06-24 15:12:24
  * @since 1.0.0
  */
 public class Base64 {

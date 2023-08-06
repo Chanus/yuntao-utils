@@ -29,7 +29,6 @@ import java.util.Map;
  * 消息封装
  *
  * @author Chanus
- * @date 2020-10-26 14:11:47
  * @since 1.4.2
  */
 public class Message implements Serializable {

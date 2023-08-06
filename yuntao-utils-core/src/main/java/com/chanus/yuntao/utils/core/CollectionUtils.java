@@ -26,7 +26,6 @@ import java.util.function.Predicate;
  * 集合工具类
  *
  * @author Chanus
- * @date 2020-06-20 11:44:05
  * @since 1.0.0
  */
 public class CollectionUtils {

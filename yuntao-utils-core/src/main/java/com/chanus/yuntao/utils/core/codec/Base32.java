@@ -26,7 +26,6 @@ import java.nio.charset.Charset;
  * 所以，5个 ASCII 字符经过 Base32 编码后会变为8个字符（公约数为40），长度增加3/5.不足8n用“=”补足。
  *
  * @author Chanus
- * @date 2020-06-24 14:25:06
  * @since 1.0.0
  */
 public class Base32 {

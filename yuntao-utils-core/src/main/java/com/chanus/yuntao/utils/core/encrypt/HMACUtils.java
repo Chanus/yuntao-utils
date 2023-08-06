@@ -26,7 +26,6 @@ import java.util.Objects;
  * HMAC 加密工具类
  *
  * @author Chanus
- * @date 2020-07-21 11:48:12
  * @since 1.1.0
  */
 public class HMACUtils {

@@ -26,7 +26,6 @@ import java.util.Date;
  * LocalDateTimeUtils 测试类
  *
  * @author Chanus
- * @date 2020-06-24 14:02:44
  * @since 1.0.0
  */
 public class LocalDateTimeUtilsTest {

@@ -21,7 +21,6 @@ import jakarta.servlet.http.HttpServletRequest;
  * IP 地址工具类
  *
  * @author Chanus
- * @date 2020-06-24 10:59:43
  * @since 1.0.0
  */
 public class IpUtils {

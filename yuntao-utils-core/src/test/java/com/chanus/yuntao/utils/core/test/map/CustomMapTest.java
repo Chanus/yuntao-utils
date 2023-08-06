@@ -23,7 +23,6 @@ import org.junit.Test;
  * CustomMap 测试类
  *
  * @author Chanus
- * @date 2020-10-21 15:23:33
  * @since 1.4.0
  */
 public class CustomMapTest {

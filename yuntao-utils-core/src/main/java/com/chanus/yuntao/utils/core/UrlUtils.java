@@ -24,7 +24,6 @@ import java.util.Map;
  * Http 请求 URL 处理工具类
  *
  * @author Chanus
- * @date 2020-06-24 09:01:33
  * @since 1.0.0
  */
 public class UrlUtils {

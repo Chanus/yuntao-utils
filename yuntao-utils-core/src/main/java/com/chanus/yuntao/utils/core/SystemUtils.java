@@ -25,7 +25,6 @@ import java.util.*;
  * 系统工具类
  *
  * @author Chanus
- * @date 2020-06-23 17:45:34
  * @since 1.0.0
  */
 public class SystemUtils {

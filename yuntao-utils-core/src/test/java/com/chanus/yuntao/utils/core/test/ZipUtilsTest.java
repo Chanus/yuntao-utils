@@ -22,7 +22,6 @@ import org.junit.Test;
  * ZipUtils 测试类
  *
  * @author Chanus
- * @date 2020-06-30 23:58:03
  * @since 1.0.0
  */
 public class ZipUtilsTest {
