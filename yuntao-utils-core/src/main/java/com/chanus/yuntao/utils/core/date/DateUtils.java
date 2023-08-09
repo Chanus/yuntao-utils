@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.chanus.yuntao.utils.core;
+package com.chanus.yuntao.utils.core.date;
+
+import com.chanus.yuntao.utils.core.ObjectUtils;
+import com.chanus.yuntao.utils.core.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,22 +33,6 @@ import java.util.TimeZone;
  */
 public class DateUtils {
     /**
-     * 日期时间格式
-     */
-    private static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    /**
-     * 日期格式
-     */
-    private static final String DATE_FORMAT = "yyyy-MM-dd";
-    /**
-     * 时间格式
-     */
-    private static final String TIME_FORMAT = "HH:mm:ss";
-    /**
-     * java.util.Date 原始格式
-     */
-    private static final String ORIGINAL_DATETIME_FORMAT = "EEE MMM dd HH:mm:ss zzz yyyy";
-    /**
      * 每日开始时刻 00:00:00
      */
     private static final String START_TIME = " 00:00:00";
@@ -59,13 +46,24 @@ public class DateUtils {
     }
 
     /**
-     * 获取 SimpleDateFormat 对象
+     * 创建 {@link SimpleDateFormat} 对象
      *
-     * @param format 时间格式
-     * @return {@code SimpleDateFormat} 对象
+     * @param pattern 时间格式
+     * @return {@link SimpleDateFormat}
      */
-    private static SimpleDateFormat getDateFormat(final String format) {
-        return new SimpleDateFormat(format);
+    public static SimpleDateFormat createDateFormat(String pattern) {
+        return new SimpleDateFormat(pattern);
+    }
+
+    /**
+     * 创建 {@link SimpleDateFormat} 对象，并指定地区
+     *
+     * @param pattern 时间格式
+     * @param locale  地区，若为 {@code null} 则使用默认地区
+     * @return {@link SimpleDateFormat}
+     */
+    public static SimpleDateFormat createDateFormat(String pattern, Locale locale) {
+        return new SimpleDateFormat(pattern, ObjectUtils.defaultIfNull(locale, Locale.getDefault()));
     }
 
     /**
@@ -74,9 +72,34 @@ public class DateUtils {
      * @param date   时间对象
      * @param format 时间格式
      * @return 格式化后的时间字符串，若 {@code date} 或 {@code format} 为空，则返回 null
+     * @since 1.8.0
      */
-    public static String format(Date date, String format) {
-        return (date == null || StringUtils.isBlank(format)) ? null : getDateFormat(format).format(date);
+    public static String format(Date date, SimpleDateFormat format) {
+        return (date == null || format == null) ? null : format.format(date);
+    }
+
+    /**
+     * 格式化时间对象
+     *
+     * @param date    时间对象
+     * @param pattern 时间格式
+     * @return 格式化后的时间字符串，若 {@code date} 或 {@code pattern} 为空，则返回 null
+     */
+    public static String format(Date date, String pattern) {
+        return (date == null || StringUtils.isBlank(pattern)) ? null : createDateFormat(pattern).format(date);
+    }
+
+    /**
+     * 格式化时间对象
+     *
+     * @param date    时间对象
+     * @param pattern 时间格式
+     * @param locale  地区，若为 {@code null} 则使用默认地区
+     * @return 格式化后的时间字符串，若 {@code date} 或 {@code pattern} 为空，则返回 null
+     * @since 1.8.0
+     */
+    public static String format(Date date, String pattern, Locale locale) {
+        return (date == null || StringUtils.isBlank(pattern)) ? null : createDateFormat(pattern, locale).format(date);
     }
 
     /**
@@ -87,7 +110,7 @@ public class DateUtils {
      * @see DateUtils#format(Date, String)
      */
     public static String formatDateTime(Date date) {
-        return format(date, DATETIME_FORMAT);
+        return format(date, DatePattern.NORMAL_DATETIME_PATTERN);
     }
 
     /**
@@ -98,7 +121,7 @@ public class DateUtils {
      * @see DateUtils#format(Date, String)
      */
     public static String formatDate(Date date) {
-        return format(date, DATE_FORMAT);
+        return format(date, DatePattern.NORMAL_DATE_PATTERN);
     }
 
     /**
@@ -109,7 +132,7 @@ public class DateUtils {
      * @see DateUtils#format(Date, String)
      */
     public static String formatTime(Date date) {
-        return format(date, TIME_FORMAT);
+        return format(date, DatePattern.NORMAL_TIME_PATTERN);
     }
 
     /**
@@ -118,17 +141,57 @@ public class DateUtils {
      * @param dateStr 时间字符串
      * @param format  时间格式
      * @return 转换后的时间对象，若 {@code dateStr} 或 {@code format} 为空，则返回 null
+     * @since 1.8.0
      */
-    public static Date parse(String dateStr, String format) {
-        if (StringUtils.isBlank(dateStr) || StringUtils.isBlank(format)) {
+    public static Date parse(String dateStr, SimpleDateFormat format) {
+        if (StringUtils.isBlank(dateStr) || format == null) {
             return null;
         }
 
         try {
-            return getDateFormat(format).parse(dateStr);
+            return format.parse(dateStr);
         } catch (ParseException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Invalid date format", e);
+        }
+    }
+
+    /**
+     * 时间字符串转换成时间对象
+     *
+     * @param dateStr 时间字符串
+     * @param pattern 时间格式
+     * @return 转换后的时间对象，若 {@code dateStr} 或 {@code pattern} 为空，则返回 null
+     */
+    public static Date parse(String dateStr, String pattern) {
+        if (StringUtils.isBlank(dateStr) || StringUtils.isBlank(pattern)) {
             return null;
+        }
+
+        try {
+            return createDateFormat(pattern).parse(dateStr);
+        } catch (ParseException e) {
+            throw new RuntimeException("Invalid date format", e);
+        }
+    }
+
+    /**
+     * 时间字符串转换成时间对象
+     *
+     * @param dateStr 时间字符串
+     * @param pattern 时间格式
+     * @param locale  地区，若为 {@code null} 则使用默认地区
+     * @return 转换后的时间对象，若 {@code dateStr} 或 {@code pattern} 为空，则返回 null
+     * @since 1.8.0
+     */
+    public static Date parse(String dateStr, String pattern, Locale locale) {
+        if (StringUtils.isBlank(dateStr) || StringUtils.isBlank(pattern)) {
+            return null;
+        }
+
+        try {
+            return createDateFormat(pattern, locale).parse(dateStr);
+        } catch (ParseException e) {
+            throw new RuntimeException("Invalid date format", e);
         }
     }
 
@@ -140,7 +203,7 @@ public class DateUtils {
      * @see DateUtils#parse(String, String)
      */
     public static Date parseDateTime(String dateStr) {
-        return parse(dateStr, DATETIME_FORMAT);
+        return parse(dateStr, DatePattern.NORMAL_DATETIME_PATTERN);
     }
 
     /**
@@ -151,7 +214,7 @@ public class DateUtils {
      * @see DateUtils#parse(String, String)
      */
     public static Date parseDate(String dateStr) {
-        return parse(dateStr, DATE_FORMAT);
+        return parse(dateStr, DatePattern.NORMAL_DATE_PATTERN);
     }
 
     /**
@@ -162,26 +225,7 @@ public class DateUtils {
      * @see DateUtils#parse(String, String)
      */
     public static Date parseTime(String dateStr) {
-        return parse(dateStr, TIME_FORMAT);
-    }
-
-    /**
-     * 将 EEE MMM dd HH:mm:ss zzz yyyy 格式的时间字符串转换成时间对象
-     *
-     * @param dateStr EEE MMM dd HH:mm:ss zzz yyyy 格式时间字符串
-     * @return 时间对象，若 {@code dateStr} 为空，则返回null
-     */
-    public static Date parseOriginalDateTime(String dateStr) {
-        if (StringUtils.isBlank(dateStr)) {
-            return null;
-        }
-
-        try {
-            return new SimpleDateFormat(ORIGINAL_DATETIME_FORMAT, Locale.ENGLISH).parse(dateStr);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return parse(dateStr, DatePattern.NORMAL_TIME_PATTERN);
     }
 
     /**
@@ -611,17 +655,16 @@ public class DateUtils {
      *
      * @param sourceDateStr 需要比较的时间字符串
      * @param targetDateStr 被比较的时间字符串
-     * @param format        待转换的时间格式
+     * @param pattern       待转换的时间格式
      * @return 比较结果
      */
-    public static int compare(String sourceDateStr, String targetDateStr, String format) {
-        SimpleDateFormat sdf = getDateFormat(format);
+    public static int compare(String sourceDateStr, String targetDateStr, String pattern) {
+        SimpleDateFormat sdf = createDateFormat(pattern);
         try {
             return compare(sdf.parse(sourceDateStr), sdf.parse(targetDateStr));
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Invalid date format", e);
         }
-        return 0;
     }
 
     /**

@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.chanus.yuntao.utils.core.test;
+package com.chanus.yuntao.utils.core.test.date;
 
-import com.chanus.yuntao.utils.core.LocalDateTimeUtils;
+import com.chanus.yuntao.utils.core.date.LocalDateTimeUtils;
+import com.chanus.yuntao.utils.core.date.DateFormatter;
+import com.chanus.yuntao.utils.core.date.DatePattern;
 import org.junit.Test;
 
 import java.time.*;
@@ -31,18 +33,46 @@ import java.util.Date;
 public class LocalDateTimeUtilsTest {
     @Test
     public void formatTest() {
+        System.out.println("-------------------format(ZonedDateTime zonedDateTime, DateTimeFormatter formatter)-------------------");
+        ZonedDateTime zonedDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault());
+        System.out.println(zonedDateTime);
+        System.out.println("EEE, dd MMM yyyy HH:mm:ss z: " + LocalDateTimeUtils.format(zonedDateTime, DateFormatter.HTTP_DATETIME_FORMATTER));
+        System.out.println("EEE MMM dd HH:mm:ss zzz yyyy: " + LocalDateTimeUtils.format(zonedDateTime, DateFormatter.JDK_DATETIME_FORMATTER));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss'Z': " + LocalDateTimeUtils.format(zonedDateTime, DateFormatter.UTC_FORMATTER));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss: " + LocalDateTimeUtils.format(zonedDateTime, DateFormatter.UTC_SIMPLE_FORMATTER));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ssZ: " + LocalDateTimeUtils.format(zonedDateTime, DateFormatter.UTC_WITH_ZONE_OFFSET_FORMATTER));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ssXXX: " + LocalDateTimeUtils.format(zonedDateTime, DateFormatter.UTC_WITH_XXX_OFFSET_FORMATTER));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss.SSS'Z': " + LocalDateTimeUtils.format(zonedDateTime, DateFormatter.UTC_MILLIS_FORMATTER));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss.SSS: " + LocalDateTimeUtils.format(zonedDateTime, DateFormatter.UTC_SIMPLE_MILLIS_FORMATTER));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss.SSSZ: " + LocalDateTimeUtils.format(zonedDateTime, DateFormatter.UTC_MILLIS_WITH_ZONE_OFFSET_FORMATTER));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss.SSSXXX: " + LocalDateTimeUtils.format(zonedDateTime, DateFormatter.UTC_MILLIS_WITH_XXX_OFFSET_FORMATTER));
+
         System.out.println("-------------------format(LocalDateTime localDateTime, String pattern)-------------------");
         LocalDateTime localDateTime = LocalDateTime.now();
         System.out.println(localDateTime);
-        System.out.println(LocalDateTimeUtils.format(localDateTime, "yyyy-MM-dd HH:mm:ss.SSS"));
-        System.out.println(LocalDateTimeUtils.format(localDateTime, "yyyy-MM-dd HH:mm:ss"));
-        System.out.println(LocalDateTimeUtils.format(localDateTime, "yyyy-MM-dd hh:mm:ss"));
-        System.out.println(LocalDateTimeUtils.format(localDateTime, "yyyy-MM-dd"));
-        System.out.println(LocalDateTimeUtils.format(localDateTime, "yyyy-MM"));
-        System.out.println(LocalDateTimeUtils.format(localDateTime, "HH:mm:ss.SSS"));
-        System.out.println(LocalDateTimeUtils.format(localDateTime, "HH:mm:ss"));
-        System.out.println(LocalDateTimeUtils.format(localDateTime, "hh:mm:ss"));
-        System.out.println(LocalDateTimeUtils.format(localDateTime, "HH:mm"));
+        System.out.println("yyyy: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.NORMAL_YEAR_FORMATTER));
+        System.out.println("yyyy年: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.CHINESE_YEAR_FORMATTER));
+        System.out.println("yyyy-MM: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.NORMAL_MONTH_FORMATTER));
+        System.out.println("yyyyMM: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.PURE_MONTH_FORMATTER));
+        System.out.println("yyyy年MM月: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.CHINESE_MONTH_FORMATTER));
+        System.out.println("yyyy-MM-dd: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.NORMAL_DATE_FORMATTER));
+        System.out.println("yyyyMMdd: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.PURE_DATE_FORMATTER));
+        System.out.println("yyyy年MM月dd日: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.CHINESE_DATE_FORMATTER));
+        System.out.println("HH:mm:ss: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.NORMAL_TIME_FORMATTER));
+        System.out.println("HHmmss: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.PURE_TIME_FORMATTER));
+        System.out.println("HH时mm分ss秒: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.CHINESE_TIME_FORMATTER));
+        System.out.println("HH:mm:ss.SSS: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.NORMAL_TIME_MILLIS_FORMATTER));
+        System.out.println("HHmmssSSS: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.PURE_TIME_MILLIS_FORMATTER));
+        System.out.println("yyyy-MM-dd HH:mm: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.NORMAL_DATETIME_MINUTE_FORMATTER));
+        System.out.println("yyyyMMddHHmm: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.PURE_DATETIME_MINUTE_FORMATTER));
+        System.out.println("yyyy年MM月dd日HH时mm分: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.CHINESE_DATETIME_MINUTE_FORMATTER));
+        System.out.println("yyyy-MM-dd HH:mm:ss: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.NORMAL_DATETIME_FORMATTER));
+        System.out.println("yyyyMMddHHmmss: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.PURE_DATETIME_FORMATTER));
+        System.out.println("yyyy年MM月dd日HH时mm分ss秒: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.CHINESE_DATETIME_FORMATTER));
+        System.out.println("yyyy-MM-dd HH:mm:ss.SSS: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.NORMAL_DATETIME_MILLIS_FORMATTER));
+        System.out.println("yyyyMMddHHmmssSSS: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.PURE_DATETIME_MILLIS_FORMATTER));
+        System.out.println("EEE, dd MMM yyyy HH:mm:ss z: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.HTTP_DATETIME_FORMATTER));
+        System.out.println("EEE MMM dd HH:mm:ss zzz yyyy: " + LocalDateTimeUtils.format(localDateTime, DateFormatter.JDK_DATETIME_FORMATTER));
 
         System.out.println("-------------------format(LocalDate localDate, String pattern)-------------------");
         LocalDate localDate = LocalDate.now();
@@ -96,7 +126,26 @@ public class LocalDateTimeUtilsTest {
     }
 
     @Test
+    public void parseZonedDateTimeTest() {
+        System.out.println("EEE, dd MMM yyyy HH:mm:ss z: " + LocalDateTimeUtils.parseZonedDateTime("Wed, 09 Aug 2023 15:32:42 CST", DateFormatter.HTTP_DATETIME_FORMATTER));
+        System.out.println("EEE MMM dd HH:mm:ss zzz yyyy: " + LocalDateTimeUtils.parseZonedDateTime("Wed Aug 09 15:32:42 CST 2023", DateFormatter.JDK_DATETIME_FORMATTER));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss'Z': " + LocalDateTimeUtils.parseZonedDateTime("2023-08-09T15:32:42Z", DateFormatter.UTC_FORMATTER));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss: " + LocalDateTimeUtils.parseZonedDateTime("2023-08-09T15:35:18", DateFormatter.UTC_SIMPLE_FORMATTER));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ssZ: " + LocalDateTimeUtils.parseZonedDateTime("2023-08-09T15:32:42+0800", DateFormatter.UTC_WITH_ZONE_OFFSET_FORMATTER));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ssXXX: " + LocalDateTimeUtils.parseZonedDateTime("2023-08-09T15:32:42+08:00", DateFormatter.UTC_WITH_XXX_OFFSET_FORMATTER));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss.SSS'Z': " + LocalDateTimeUtils.parseZonedDateTime("2023-08-09T15:32:42.028Z", DateFormatter.UTC_MILLIS_FORMATTER));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss.SSS: " + LocalDateTimeUtils.parseZonedDateTime("2023-08-09T15:32:42.028", DateFormatter.UTC_SIMPLE_MILLIS_FORMATTER));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss.SSSZ: " + LocalDateTimeUtils.parseZonedDateTime("2023-08-09T15:32:42.028+0800", DateFormatter.UTC_MILLIS_WITH_ZONE_OFFSET_FORMATTER));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss.SSSXXX: " + LocalDateTimeUtils.parseZonedDateTime("2023-08-09T15:32:42.028+08:00", DateFormatter.UTC_MILLIS_WITH_XXX_OFFSET_FORMATTER));
+        System.out.println("yyyy-MM-dd HH:mm:ss.SSS: " + LocalDateTimeUtils.parseZonedDateTime("2023-08-09 15:32:42.028", DateFormatter.NORMAL_DATETIME_MILLIS_FORMATTER));
+        System.out.println("yyyy-MM-dd HH:mm: " + LocalDateTimeUtils.parseZonedDateTime("2023-08-09 15:32", DateFormatter.NORMAL_DATETIME_MINUTE_FORMATTER));
+    }
+
+    @Test
     public void parseDateTimeTest() {
+        System.out.println("-------------------parseDateTime(String localDateTime, DateTimeFormatter formatter)-------------------");
+        System.out.println(LocalDateTimeUtils.parseDateTime("2019-06-12 20:11:33.123", DateFormatter.NORMAL_DATETIME_MILLIS_FORMATTER));
+
         System.out.println("-------------------parseDateTime(String localDateTime, String pattern)-------------------");
         System.out.println(LocalDateTimeUtils.parseDateTime("2019-06-12 20:11:33.123", "yyyy-MM-dd HH:mm:ss.SSS"));
         System.out.println(LocalDateTimeUtils.parseDateTime("2019-06-12 20:11:33", "yyyy-MM-dd HH:mm:ss"));
@@ -114,6 +163,9 @@ public class LocalDateTimeUtilsTest {
 
     @Test
     public void parseDateTest() {
+        System.out.println("-------------------parseDate(String localDate, DateTimeFormatter formatter)-------------------");
+        System.out.println(LocalDateTimeUtils.parseDate("2019-06-12", DateFormatter.NORMAL_DATE_FORMATTER));
+
         System.out.println("-------------------parseDate(String localDate, String pattern)-------------------");
         System.out.println(LocalDateTimeUtils.parseDate("2019-06-12", "yyyy-MM-dd"));
         System.out.println(LocalDateTimeUtils.parseDate("2019年06月12日", "yyyy年MM月dd日"));
@@ -124,6 +176,9 @@ public class LocalDateTimeUtilsTest {
 
     @Test
     public void parseTimeTest() {
+        System.out.println("-------------------parseTime(String localTime, DateTimeFormatter formatter)-------------------");
+        System.out.println(LocalDateTimeUtils.parseTime("20:11:33.123", DateFormatter.NORMAL_TIME_MILLIS_FORMATTER));
+
         System.out.println("-------------------parseTime(String localTime, String pattern)-------------------");
         System.out.println(LocalDateTimeUtils.parseTime("20:11:33.123", "HH:mm:ss.SSS"));
         System.out.println(LocalDateTimeUtils.parseTime("20:11:33", "HH:mm:ss"));
@@ -140,14 +195,14 @@ public class LocalDateTimeUtilsTest {
     }
 
     @Test
-    public void parseOriginalDateTimeTest() {
-        String originalDateTime = "Fri Apr 24 22:50:23 CST 2020";
-        LocalDateTime localDateTime = LocalDateTimeUtils.parseOriginalDateTime(originalDateTime);
-        System.out.println(localDateTime);
-    }
-
-    @Test
     public void nowTest() {
+        System.out.println("-------------------now(DateTimeFormatter formatter)-------------------");
+        System.out.println("nowDateTimeMillis: " + LocalDateTimeUtils.now(DatePattern.NORMAL_DATETIME_MILLIS_PATTERN));
+        System.out.println("nowDateTime: " + LocalDateTimeUtils.now(DatePattern.NORMAL_DATETIME_PATTERN));
+        System.out.println("nowDate: " + LocalDateTimeUtils.now(DatePattern.NORMAL_DATE_PATTERN));
+        System.out.println("nowTime: " + LocalDateTimeUtils.now(DatePattern.NORMAL_TIME_PATTERN));
+
+        System.out.println("-------------------now(String pattern)-------------------");
         System.out.println("nowDateTimeMillis: " + LocalDateTimeUtils.now("yyyy-MM-dd HH:mm:ss.SSS"));
         System.out.println("nowDateTime: " + LocalDateTimeUtils.now("yyyy-MM-dd HH:mm:ss"));
         System.out.println("nowDate: " + LocalDateTimeUtils.now("yyyy-MM-dd"));
@@ -187,6 +242,21 @@ public class LocalDateTimeUtilsTest {
     @Test
     public void tomorrowTest() {
         System.out.println("tomorrow: " + LocalDateTimeUtils.tomorrow());
+    }
+
+    @Test
+    public void monthTest() {
+        System.out.println("this month: " + LocalDateTimeUtils.month());
+    }
+
+    @Test
+    public void lastMonthTest() {
+        System.out.println("last month: " + LocalDateTimeUtils.lastMonth());
+    }
+
+    @Test
+    public void nextMonthTest() {
+        System.out.println("next month: " + LocalDateTimeUtils.nextMonth());
     }
 
     @Test

@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.chanus.yuntao.utils.core.test;
+package com.chanus.yuntao.utils.core.test.date;
 
-import com.chanus.yuntao.utils.core.DateUtils;
+import com.chanus.yuntao.utils.core.date.DateUtils;
+import com.chanus.yuntao.utils.core.date.DatePattern;
 import org.junit.Test;
 
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -33,11 +35,54 @@ public class DateUtilsTest {
     @Test
     public void formatTest() {
         Date date = new Date();
-        System.out.println(DateUtils.format(date, "yyyy年MM月dd日 HH时mm分ss秒SSS毫秒"));
-        System.out.println(DateUtils.format(date, "yyyy-MM-dd HH:mm:ss.SSS"));
-        System.out.println(DateUtils.format(date, "yyyy-MM-dd HH:mm:ss"));
-        System.out.println(DateUtils.format(date, "yyyy-MM-dd"));
-        System.out.println(DateUtils.format(date, "HH:mm:ss"));
+        System.out.println("-------------------format(Date date, SimpleDateFormat format)-------------------");
+        System.out.println("yyyy:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.NORMAL_YEAR_PATTERN)));
+        System.out.println("yyyy年:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.CHINESE_YEAR_PATTERN)));
+        System.out.println("yyyy-MM:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.NORMAL_MONTH_PATTERN)));
+        System.out.println("yyyyMM:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.PURE_MONTH_PATTERN)));
+        System.out.println("yyyy年MM月:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.CHINESE_MONTH_PATTERN)));
+        System.out.println("yyyy-MM-dd:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.NORMAL_DATE_PATTERN)));
+        System.out.println("yyyyMMdd:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.PURE_DATE_PATTERN)));
+        System.out.println("yyyy年MM月dd日:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.CHINESE_DATE_PATTERN)));
+        System.out.println("yyyy年MM月dd日:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.NORMAL_TIME_PATTERN)));
+        System.out.println("yyyy年MM月dd日:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.NORMAL_TIME_PATTERN)));
+        System.out.println("HH:mm:ss:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.NORMAL_TIME_PATTERN)));
+        System.out.println("HHmmss:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.PURE_TIME_PATTERN)));
+        System.out.println("HH时mm分ss秒:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.CHINESE_TIME_PATTERN)));
+        System.out.println("yyyy-MM-dd HH:mm:ss:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.NORMAL_DATETIME_PATTERN)));
+        System.out.println("yyyyMMddHHmmss:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.PURE_DATETIME_PATTERN)));
+        System.out.println("yyyy年MM月dd日HH时mm分ss秒:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.CHINESE_DATETIME_PATTERN)));
+        System.out.println("EEE, dd MMM yyyy HH:mm:ss z:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.HTTP_DATETIME_PATTERN)));
+        System.out.println("EEE, dd MMM yyyy HH:mm:ss z:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.HTTP_DATETIME_PATTERN, Locale.US)));
+        System.out.println("EEE MMM dd HH:mm:ss zzz yyyy:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.JDK_DATETIME_PATTERN)));
+        System.out.println("EEE MMM dd HH:mm:ss zzz yyyy:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.JDK_DATETIME_PATTERN, Locale.US)));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss'Z':" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.UTC_PATTERN)));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.UTC_SIMPLE_PATTERN)));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ssZ:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.UTC_WITH_ZONE_OFFSET_PATTERN)));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ssXXX:" + DateUtils.format(date, DateUtils.createDateFormat(DatePattern.UTC_WITH_XXX_OFFSET_PATTERN)));
+
+        System.out.println("-------------------format(Date date, String pattern)-------------------");
+        System.out.println("yyyy:" + DateUtils.format(date, DatePattern.NORMAL_YEAR_PATTERN));
+        System.out.println("yyyy年:" + DateUtils.format(date, DatePattern.CHINESE_YEAR_PATTERN));
+        System.out.println("yyyy-MM:" + DateUtils.format(date, DatePattern.NORMAL_MONTH_PATTERN));
+        System.out.println("yyyyMM:" + DateUtils.format(date, DatePattern.PURE_MONTH_PATTERN));
+        System.out.println("yyyy年MM月:" + DateUtils.format(date, DatePattern.CHINESE_MONTH_PATTERN));
+        System.out.println("yyyy-MM-dd:" + DateUtils.format(date, DatePattern.NORMAL_DATE_PATTERN));
+        System.out.println("yyyyMMdd:" + DateUtils.format(date, DatePattern.PURE_DATE_PATTERN));
+        System.out.println("yyyy年MM月dd日:" + DateUtils.format(date, DatePattern.CHINESE_DATE_PATTERN));
+        System.out.println("HH:mm:ss:" + DateUtils.format(date, DatePattern.NORMAL_TIME_PATTERN));
+        System.out.println("HHmmss:" + DateUtils.format(date, DatePattern.PURE_TIME_PATTERN));
+        System.out.println("HH时mm分ss秒:" + DateUtils.format(date, DatePattern.CHINESE_TIME_PATTERN));
+        System.out.println("EEE, dd MMM yyyy HH:mm:ss z:" + DateUtils.format(date, DatePattern.HTTP_DATETIME_PATTERN));
+        System.out.println("EEE MMM dd HH:mm:ss zzz yyyy:" + DateUtils.format(date, DatePattern.JDK_DATETIME_PATTERN));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss'Z':" + DateUtils.format(date, DatePattern.UTC_PATTERN));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss:" + DateUtils.format(date, DatePattern.UTC_SIMPLE_PATTERN));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ssZ:" + DateUtils.format(date, DatePattern.UTC_WITH_ZONE_OFFSET_PATTERN));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ssXXX:" + DateUtils.format(date, DatePattern.UTC_WITH_XXX_OFFSET_PATTERN));
+
+        System.out.println("-------------------format(Date date, String pattern, Locale locale)-------------------");
+        System.out.println("EEE, dd MMM yyyy HH:mm:ss z:" + DateUtils.format(date, DatePattern.HTTP_DATETIME_PATTERN, Locale.US));
+        System.out.println("EEE MMM dd HH:mm:ss zzz yyyy:" + DateUtils.format(date, DatePattern.JDK_DATETIME_PATTERN, Locale.US));
     }
 
     @Test
@@ -57,11 +102,33 @@ public class DateUtilsTest {
 
     @Test
     public void parseTest() {
+        System.out.println("-------------------parse(String dateStr, SimpleDateFormat format)-------------------");
+        System.out.println("yyyy-MM-dd:" + DateUtils.parse("2023-08-09", DateUtils.createDateFormat(DatePattern.NORMAL_DATE_PATTERN)));
+        System.out.println("yyyyMMdd:" + DateUtils.parse("20230809", DateUtils.createDateFormat(DatePattern.PURE_DATE_PATTERN)));
+        System.out.println("yyyy年MM月dd日:" + DateUtils.parse("2023年08月09日", DateUtils.createDateFormat(DatePattern.CHINESE_DATE_PATTERN)));
+        System.out.println("yyyy-MM-dd HH:mm:ss:" + DateUtils.parse("2023-08-09 12:33:25", DateUtils.createDateFormat(DatePattern.NORMAL_DATETIME_PATTERN)));
+        System.out.println("yyyyMMddHHmmss:" + DateUtils.parse("20230809123325", DateUtils.createDateFormat(DatePattern.PURE_DATETIME_PATTERN)));
+        System.out.println("yyyy年MM月dd日HH时mm分ss秒:" + DateUtils.parse("2023年08月09日12时33分25秒", DateUtils.createDateFormat(DatePattern.CHINESE_DATETIME_PATTERN)));
+        System.out.println("HH:mm:ss:" + DateUtils.parse("12:38:33", DateUtils.createDateFormat(DatePattern.NORMAL_TIME_PATTERN)));
+        System.out.println("HHmmss:" + DateUtils.parse("123833", DateUtils.createDateFormat(DatePattern.PURE_TIME_PATTERN)));
+        System.out.println("HH时mm分ss秒:" + DateUtils.parse("12时38分33秒", DateUtils.createDateFormat(DatePattern.CHINESE_TIME_PATTERN)));
+        System.out.println("EEE, dd MMM yyyy HH:mm:ss z:" + DateUtils.parse("Wed, 09 Aug 2023 12:33:25 CST", DateUtils.createDateFormat(DatePattern.HTTP_DATETIME_PATTERN, Locale.US)));
+        System.out.println("EEE MMM dd HH:mm:ss zzz yyyy:" + DateUtils.parse("Wed Aug 09 12:33:25 CST 2023", DateUtils.createDateFormat(DatePattern.JDK_DATETIME_PATTERN, Locale.US)));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss'Z':" + DateUtils.parse("2023-08-09T12:33:25Z", DatePattern.UTC_PATTERN));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ss:" + DateUtils.parse("2023-08-09T12:33:25", DatePattern.UTC_SIMPLE_PATTERN));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ssZ:" + DateUtils.parse("2023-08-09T12:33:25+0800", DatePattern.UTC_WITH_ZONE_OFFSET_PATTERN));
+        System.out.println("yyyy-MM-dd'T'HH:mm:ssXXX:" + DateUtils.parse("2023-08-09T12:33:25+08:00", DatePattern.UTC_WITH_XXX_OFFSET_PATTERN));
+
+        System.out.println("-------------------parse(String dateStr, SimpleDateFormat format)-------------------");
         System.out.println(DateUtils.parse("2019年06月13日 22时47分33秒547毫秒", "yyyy年MM月dd日 HH时mm分ss秒SSS毫秒"));
-        System.out.println(DateUtils.parse("2019-06-13 22:47:33.547", "yyyy-MM-dd HH:mm:ss.SSS"));
-        System.out.println(DateUtils.parse("2019-06-13 22:47:33", "yyyy-MM-dd HH:mm:ss"));
-        System.out.println(DateUtils.parse("2019-06-13", "yyyy-MM-dd"));
-        System.out.println(DateUtils.parse("22:47:33", "HH:mm:ss"));
+        System.out.println(DateUtils.parse("2019-06-13 22:47:33.547", DatePattern.NORMAL_DATETIME_MILLIS_PATTERN));
+        System.out.println(DateUtils.parse("2019-06-13 22:47:33", DatePattern.NORMAL_DATETIME_PATTERN));
+        System.out.println(DateUtils.parse("2019-06-13", DatePattern.NORMAL_DATE_PATTERN));
+        System.out.println(DateUtils.parse("22:47:33", DatePattern.NORMAL_TIME_PATTERN));
+
+        System.out.println("-------------------parse(String dateStr, String pattern, Locale locale)-------------------");
+        System.out.println("EEE, dd MMM yyyy HH:mm:ss z:" + DateUtils.parse("Wed, 09 Aug 2023 12:33:25 CST", DatePattern.HTTP_DATETIME_PATTERN, Locale.US));
+        System.out.println("EEE MMM dd HH:mm:ss zzz yyyy:" + DateUtils.parse("Wed Aug 09 12:33:25 CST 2023", DatePattern.JDK_DATETIME_PATTERN, Locale.US));
     }
 
     @Test
@@ -77,12 +144,6 @@ public class DateUtilsTest {
     @Test
     public void parseTimeTest() {
         System.out.println(DateUtils.parseTime("23:07:35"));
-    }
-
-    @Test
-    public void parseOriginalDateTimeTest() {
-        String originalDateTime = "Fri Apr 24 22:50:23 CST 2020";
-        System.out.println(DateUtils.parseOriginalDateTime(originalDateTime));
     }
 
     @Test

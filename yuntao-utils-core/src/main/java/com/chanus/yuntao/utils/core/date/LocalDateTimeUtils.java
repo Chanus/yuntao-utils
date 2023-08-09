@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.chanus.yuntao.utils.core;
+package com.chanus.yuntao.utils.core.date;
+
+import com.chanus.yuntao.utils.core.StringUtils;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -30,43 +32,122 @@ import java.util.Objects;
  * @since 1.0.0
  */
 public class LocalDateTimeUtils {
-    /**
-     * 日期时间格式
-     */
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    /**
-     * 日期时间格式，带毫秒数
-     */
-    private static final DateTimeFormatter DATE_TIME_MILLIS_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-    /**
-     * 日期格式
-     */
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    /**
-     * 时间格式
-     */
-    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
-    /**
-     * 时间格式，带毫秒数
-     */
-    private static final DateTimeFormatter TIME_MILLIS_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
-    /**
-     * 日期时间格式，java.util.Date原始格式
-     */
-    private static final DateTimeFormatter ORIGINAL_DATETIME_FORMATTER = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
-
     private LocalDateTimeUtils() {
         throw new IllegalStateException("Utility class");
     }
 
     /**
-     * 获取 DateTimeFormatter 对象
+     * {@code ZonedDateTime} 日期时间对象转自定义格式 {@code formatter} 字符串，{@code formatter} 可以包含年月日时分秒毫秒数及时区变异量，例如：
+     * <pre>
+     *     yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+     *     yyyy-MM-dd'T'HH:mm:ss.SSSZ
+     *     yyyy-MM-dd HH:mm:ss.SSS
+     *     yyyy-MM-dd'T'HH:mm:ssXXX
+     *     yyyy-MM-dd'T'HH:mm:ssZ
+     *     yyyy-MM-dd HH:mm:ss
+     *     yyyy-MM-dd
+     *     HH:mm:ss.SSS
+     *     HH:mm:ss
+     * </pre>
      *
-     * @param pattern 日期时间格式字符串
-     * @return {@code DateTimeFormatter} 对象
+     * @param zonedDateTime 日期时间，为空时返回 {@code null}
+     * @param formatter     日期时间格式，不能为空
+     * @return {@code formatter} 格式字符串
+     * @since 1.8.0
      */
-    public static DateTimeFormatter getDateTimeFormatter(String pattern) {
-        return DateTimeFormatter.ofPattern(pattern);
+    public static String format(ZonedDateTime zonedDateTime, DateTimeFormatter formatter) {
+        return zonedDateTime == null ? null : zonedDateTime.format(formatter);
+    }
+
+    /**
+     * {@code ZonedDateTime} 日期时间对象转自定义格式 {@code pattern} 字符串，{@code pattern} 可以包含年月日时分秒毫秒数及时区变异量，例如：
+     * <pre>
+     *     yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+     *     yyyy-MM-dd'T'HH:mm:ss.SSSZ
+     *     yyyy-MM-dd HH:mm:ss.SSS
+     *     yyyy-MM-dd'T'HH:mm:ssXXX
+     *     yyyy-MM-dd'T'HH:mm:ssZ
+     *     yyyy-MM-dd HH:mm:ss
+     *     yyyy-MM-dd
+     *     HH:mm:ss.SSS
+     *     HH:mm:ss
+     * </pre>
+     *
+     * @param zonedDateTime 日期时间，为空时返回 {@code null}
+     * @param pattern       日期时间格式字符串，不能为空
+     * @return {@code pattern} 格式字符串
+     * @since 1.8.0
+     */
+    public static String format(ZonedDateTime zonedDateTime, String pattern) {
+        return zonedDateTime == null ? null : zonedDateTime.format(DateFormatter.createDateTimeFormatter(pattern));
+    }
+
+    /**
+     * {@code ZonedDateTime} 日期时间对象转自定义格式 {@code pattern} 字符串，{@code pattern} 可以包含年月日时分秒毫秒数及时区变异量，例如：
+     * <pre>
+     *     yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+     *     yyyy-MM-dd'T'HH:mm:ss.SSSZ
+     *     yyyy-MM-dd HH:mm:ss.SSS
+     *     yyyy-MM-dd'T'HH:mm:ssXXX
+     *     yyyy-MM-dd'T'HH:mm:ssZ
+     *     yyyy-MM-dd HH:mm:ss
+     *     yyyy-MM-dd
+     *     HH:mm:ss.SSS
+     *     HH:mm:ss
+     * </pre>
+     *
+     * @param zonedDateTime 日期时间，为空时返回 {@code null}
+     * @param pattern       日期时间格式字符串，不能为空
+     * @param locale        地区，若为 {@code null} 则使用默认地区
+     * @return {@code pattern} 格式字符串
+     * @since 1.8.0
+     */
+    public static String format(ZonedDateTime zonedDateTime, String pattern, Locale locale) {
+        return zonedDateTime == null ? null : zonedDateTime.format(DateFormatter.createDateTimeFormatter(pattern, locale));
+    }
+
+    /**
+     * {@code ZonedDateTime} 日期时间对象转自定义格式 {@code pattern} 字符串，{@code pattern} 可以包含年月日时分秒毫秒数及时区变异量，例如：
+     * <pre>
+     *     yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+     *     yyyy-MM-dd'T'HH:mm:ss.SSSZ
+     *     yyyy-MM-dd HH:mm:ss.SSS
+     *     yyyy-MM-dd'T'HH:mm:ssXXX
+     *     yyyy-MM-dd'T'HH:mm:ssZ
+     *     yyyy-MM-dd HH:mm:ss
+     *     yyyy-MM-dd
+     *     HH:mm:ss.SSS
+     *     HH:mm:ss
+     * </pre>
+     *
+     * @param zonedDateTime 日期时间，为空时返回 {@code null}
+     * @param pattern       日期时间格式字符串，不能为空
+     * @param locale        地区，若为 {@code null} 则使用默认地区
+     * @param zoneId        时区，若为 {@code null} 则使用默认时区
+     * @return {@code pattern} 格式字符串
+     * @since 1.8.0
+     */
+    public static String format(ZonedDateTime zonedDateTime, String pattern, Locale locale, ZoneId zoneId) {
+        return zonedDateTime == null ? null : zonedDateTime.format(DateFormatter.createDateTimeFormatter(pattern, locale, zoneId));
+    }
+
+    /**
+     * {@code LocalDateTime} 日期时间对象转自定义格式 {@code formatter} 字符串，{@code formatter} 可以包含年月日时分秒毫秒数，例如：
+     * <pre>
+     *     yyyy-MM-dd HH:mm:ss.SSS
+     *     yyyy-MM-dd HH:mm:ss
+     *     yyyy-MM-dd
+     *     HH:mm:ss.SSS
+     *     HH:mm:ss
+     * </pre>
+     *
+     * @param localDateTime 日期时间，为空时返回 {@code null}
+     * @param formatter     日期时间格式，不能为空
+     * @return {@code formatter} 格式字符串
+     * @since 1.8.0
+     */
+    public static String format(LocalDateTime localDateTime, DateTimeFormatter formatter) {
+        return localDateTime == null ? null : localDateTime.format(formatter);
     }
 
     /**
@@ -84,7 +165,64 @@ public class LocalDateTimeUtils {
      * @return {@code pattern} 格式字符串
      */
     public static String format(LocalDateTime localDateTime, String pattern) {
-        return localDateTime == null ? null : localDateTime.format(DateTimeFormatter.ofPattern(pattern));
+        return localDateTime == null ? null : localDateTime.format(DateFormatter.createDateTimeFormatter(pattern));
+    }
+
+    /**
+     * {@code LocalDateTime} 日期时间对象转自定义格式 {@code pattern} 字符串，{@code pattern} 可以包含年月日时分秒毫秒数，例如：
+     * <pre>
+     *     yyyy-MM-dd HH:mm:ss.SSS
+     *     yyyy-MM-dd HH:mm:ss
+     *     yyyy-MM-dd
+     *     HH:mm:ss.SSS
+     *     HH:mm:ss
+     * </pre>
+     *
+     * @param localDateTime 日期时间，为空时返回 {@code null}
+     * @param pattern       日期时间格式字符串，不能为空
+     * @param locale        地区，若为 {@code null} 则使用默认地区
+     * @return {@code pattern} 格式字符串
+     * @since 1.8.0
+     */
+    public static String format(LocalDateTime localDateTime, String pattern, Locale locale) {
+        return localDateTime == null ? null : localDateTime.format(DateFormatter.createDateTimeFormatter(pattern, locale));
+    }
+
+    /**
+     * {@code LocalDateTime} 日期时间对象转自定义格式 {@code pattern} 字符串，{@code pattern} 可以包含年月日时分秒毫秒数，例如：
+     * <pre>
+     *     yyyy-MM-dd HH:mm:ss.SSS
+     *     yyyy-MM-dd HH:mm:ss
+     *     yyyy-MM-dd
+     *     HH:mm:ss.SSS
+     *     HH:mm:ss
+     * </pre>
+     *
+     * @param localDateTime 日期时间，为空时返回 {@code null}
+     * @param pattern       日期时间格式字符串，不能为空
+     * @param locale        地区，若为 {@code null} 则使用默认地区
+     * @param zoneId        时区，若为 {@code null} 则使用默认时区
+     * @return {@code pattern} 格式字符串
+     * @since 1.8.0
+     */
+    public static String format(LocalDateTime localDateTime, String pattern, Locale locale, ZoneId zoneId) {
+        return localDateTime == null ? null : localDateTime.format(DateFormatter.createDateTimeFormatter(pattern, locale, zoneId));
+    }
+
+    /**
+     * {@code LocalDate} 日期对象转自定义格式 {@code formatter} 字符串，{@code formatter} 可以包含年月日，例如：
+     * <pre>
+     *     yyyy-MM-dd
+     *     yyyy-MM
+     * </pre>
+     *
+     * @param localDate 日期，为空时返回 {@code null}
+     * @param formatter 日期格式，不能为空
+     * @return {@code formatter} 格式字符串
+     * @since 1.8.0
+     */
+    public static String format(LocalDate localDate, DateTimeFormatter formatter) {
+        return localDate == null ? null : localDate.format(formatter);
     }
 
     /**
@@ -99,7 +237,58 @@ public class LocalDateTimeUtils {
      * @return {@code pattern} 格式字符串
      */
     public static String format(LocalDate localDate, String pattern) {
-        return localDate == null ? null : localDate.format(DateTimeFormatter.ofPattern(pattern));
+        return localDate == null ? null : localDate.format(DateFormatter.createDateTimeFormatter(pattern));
+    }
+
+    /**
+     * {@code LocalDate} 日期对象转自定义格式 {@code pattern} 字符串，{@code pattern} 可以包含年月日，例如：
+     * <pre>
+     *     yyyy-MM-dd
+     *     yyyy-MM
+     * </pre>
+     *
+     * @param localDate 日期，为空时返回 {@code null}
+     * @param pattern   日期格式字符串，不能为空
+     * @param locale    地区，若为 {@code null} 则使用默认地区
+     * @return {@code pattern} 格式字符串
+     * @since 1.8.0
+     */
+    public static String format(LocalDate localDate, String pattern, Locale locale) {
+        return localDate == null ? null : localDate.format(DateFormatter.createDateTimeFormatter(pattern, locale));
+    }
+
+    /**
+     * {@code LocalDate} 日期对象转自定义格式 {@code pattern} 字符串，{@code pattern} 可以包含年月日，例如：
+     * <pre>
+     *     yyyy-MM-dd
+     *     yyyy-MM
+     * </pre>
+     *
+     * @param localDate 日期，为空时返回 {@code null}
+     * @param pattern   日期格式字符串，不能为空
+     * @param locale    地区，若为 {@code null} 则使用默认地区
+     * @param zoneId    时区，若为 {@code null} 则使用默认时区
+     * @return {@code pattern} 格式字符串
+     * @since 1.8.0
+     */
+    public static String format(LocalDate localDate, String pattern, Locale locale, ZoneId zoneId) {
+        return localDate == null ? null : localDate.format(DateFormatter.createDateTimeFormatter(pattern, locale, zoneId));
+    }
+
+    /**
+     * {@code LocalTime} 时间对象转自定义格式 {@code formatter} 字符串，{@code formatter} 可以包含时分秒毫秒数，例如：
+     * <pre>
+     *     HH:mm:ss.SSS
+     *     HH:mm:ss
+     * </pre>
+     *
+     * @param localTime 时间，为空时返回{@code null}
+     * @param formatter 时间格式，不能为空
+     * @return {@code formatter} 格式字符串
+     * @since 1.8.0
+     */
+    public static String format(LocalTime localTime, DateTimeFormatter formatter) {
+        return localTime == null ? null : localTime.format(formatter);
     }
 
     /**
@@ -111,10 +300,45 @@ public class LocalDateTimeUtils {
      *
      * @param localTime 时间，为空时返回{@code null}
      * @param pattern   时间格式字符串，不能为空
-     * @return {@code pattern}格式字符串
+     * @return {@code pattern} 格式字符串
      */
     public static String format(LocalTime localTime, String pattern) {
-        return localTime == null ? null : localTime.format(DateTimeFormatter.ofPattern(pattern));
+        return localTime == null ? null : localTime.format(DateFormatter.createDateTimeFormatter(pattern));
+    }
+
+    /**
+     * {@code LocalTime} 时间对象转自定义格式 {@code pattern} 字符串，{@code pattern} 可以包含时分秒毫秒数，例如：
+     * <pre>
+     *     HH:mm:ss.SSS
+     *     HH:mm:ss
+     * </pre>
+     *
+     * @param localTime 时间，为空时返回{@code null}
+     * @param pattern   时间格式字符串，不能为空
+     * @param locale    地区，若为 {@code null} 则使用默认地区
+     * @return {@code pattern} 格式字符串
+     * @since 1.8.0
+     */
+    public static String format(LocalTime localTime, String pattern, Locale locale) {
+        return localTime == null ? null : localTime.format(DateFormatter.createDateTimeFormatter(pattern, locale));
+    }
+
+    /**
+     * {@code LocalTime} 时间对象转自定义格式 {@code pattern} 字符串，{@code pattern} 可以包含时分秒毫秒数，例如：
+     * <pre>
+     *     HH:mm:ss.SSS
+     *     HH:mm:ss
+     * </pre>
+     *
+     * @param localTime 时间，为空时返回{@code null}
+     * @param pattern   时间格式字符串，不能为空
+     * @param locale    地区，若为 {@code null} 则使用默认地区
+     * @param zoneId    时区，若为 {@code null} 则使用默认时区
+     * @return {@code pattern} 格式字符串
+     * @since 1.8.0
+     */
+    public static String format(LocalTime localTime, String pattern, Locale locale, ZoneId zoneId) {
+        return localTime == null ? null : localTime.format(DateFormatter.createDateTimeFormatter(pattern, locale, zoneId));
     }
 
     /**
@@ -124,7 +348,7 @@ public class LocalDateTimeUtils {
      * @return yyyy-MM-dd HH:mm:ss 格式字符串
      */
     public static String formatDateTime(LocalDateTime localDateTime) {
-        return localDateTime == null ? null : localDateTime.format(DATE_TIME_FORMATTER);
+        return localDateTime == null ? null : localDateTime.format(DateFormatter.NORMAL_DATETIME_FORMATTER);
     }
 
     /**
@@ -134,7 +358,7 @@ public class LocalDateTimeUtils {
      * @return yyyy-MM-dd HH:mm:ss.SSS 格式字符串
      */
     public static String formatDateTimeMillis(LocalDateTime localDateTime) {
-        return localDateTime == null ? null : localDateTime.format(DATE_TIME_MILLIS_FORMATTER);
+        return localDateTime == null ? null : localDateTime.format(DateFormatter.NORMAL_DATETIME_MILLIS_FORMATTER);
     }
 
     /**
@@ -144,7 +368,7 @@ public class LocalDateTimeUtils {
      * @return yyyy-MM-dd 格式字符串
      */
     public static String formatDate(LocalDateTime localDateTime) {
-        return localDateTime == null ? null : localDateTime.format(DATE_FORMATTER);
+        return localDateTime == null ? null : localDateTime.format(DateFormatter.NORMAL_DATE_FORMATTER);
     }
 
     /**
@@ -154,7 +378,7 @@ public class LocalDateTimeUtils {
      * @return yyyy-MM-dd 格式字符串
      */
     public static String formatDate(LocalDate localDate) {
-        return localDate == null ? null : localDate.format(DATE_FORMATTER);
+        return localDate == null ? null : localDate.format(DateFormatter.NORMAL_DATE_FORMATTER);
     }
 
     /**
@@ -164,7 +388,7 @@ public class LocalDateTimeUtils {
      * @return HH:mm:ss 格式字符串
      */
     public static String formatTime(LocalDateTime localDateTime) {
-        return localDateTime == null ? null : localDateTime.format(TIME_FORMATTER);
+        return localDateTime == null ? null : localDateTime.format(DateFormatter.NORMAL_TIME_FORMATTER);
     }
 
     /**
@@ -174,7 +398,7 @@ public class LocalDateTimeUtils {
      * @return HH:mm:ss 格式字符串
      */
     public static String formatTime(LocalTime localTime) {
-        return localTime == null ? null : localTime.format(TIME_FORMATTER);
+        return localTime == null ? null : localTime.format(DateFormatter.NORMAL_TIME_FORMATTER);
     }
 
     /**
@@ -184,7 +408,7 @@ public class LocalDateTimeUtils {
      * @return HH:mm:ss.SSS 格式字符串
      */
     public static String formatTimeMillis(LocalDateTime localDateTime) {
-        return localDateTime == null ? null : localDateTime.format(TIME_MILLIS_FORMATTER);
+        return localDateTime == null ? null : localDateTime.format(DateFormatter.NORMAL_TIME_MILLIS_FORMATTER);
     }
 
     /**
@@ -194,7 +418,126 @@ public class LocalDateTimeUtils {
      * @return HH:mm:ss.SSS 格式字符串
      */
     public static String formatTimeMillis(LocalTime localTime) {
-        return localTime == null ? null : localTime.format(TIME_MILLIS_FORMATTER);
+        return localTime == null ? null : localTime.format(DateFormatter.NORMAL_TIME_MILLIS_FORMATTER);
+    }
+
+    /**
+     * 日期时间字符串转自定义格式 {@code formatter} 的 {@code ZonedDateTime} 日期时间对象<br>
+     * {@code zonedDateTime} 与 {@code formatter} 需对应，且必须包含时间<br>
+     * {@code formatter} 可以包含年月日时分秒毫秒数，例如：
+     * <pre>
+     *     yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+     *     yyyy-MM-dd'T'HH:mm:ss.SSSZ
+     *     yyyy-MM-dd HH:mm:ss.SSS
+     *     yyyy-MM-dd'T'HH:mm:ssXXX
+     *     yyyy-MM-dd'T'HH:mm:ssZ
+     *     yyyy-MM-dd HH:mm:ss
+     *     yyyy-MM-dd HH:mm
+     *     yyyy年MM月dd日 HH时mm分ss秒
+     * </pre>
+     *
+     * @param zonedDateTime 日期时间字符串，为空时返回 {@code null}
+     * @param formatter     日期时间格式，不能为空
+     * @return {@code ZonedDateTime} 日期时间对象
+     * @since 1.8.0
+     */
+    public static ZonedDateTime parseZonedDateTime(String zonedDateTime, DateTimeFormatter formatter) {
+        return StringUtils.isBlank(zonedDateTime) ? null : ZonedDateTime.parse(zonedDateTime, formatter);
+    }
+
+    /**
+     * 日期时间字符串转自定义格式 {@code pattern} 的 {@code ZonedDateTime} 日期时间对象<br>
+     * {@code zonedDateTime} 与 {@code pattern} 需对应，且必须包含时间<br>
+     * {@code pattern} 可以包含年月日时分秒毫秒数，例如：
+     * <pre>
+     *     yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+     *     yyyy-MM-dd'T'HH:mm:ss.SSSZ
+     *     yyyy-MM-dd HH:mm:ss.SSS
+     *     yyyy-MM-dd'T'HH:mm:ssXXX
+     *     yyyy-MM-dd'T'HH:mm:ssZ
+     *     yyyy-MM-dd HH:mm:ss
+     *     yyyy-MM-dd HH:mm
+     *     yyyy年MM月dd日 HH时mm分ss秒
+     * </pre>
+     *
+     * @param zonedDateTime 日期时间字符串，为空时返回 {@code null}
+     * @param pattern       日期时间格式字符串，不能为空
+     * @return {@code ZonedDateTime} 日期时间对象
+     * @since 1.8.0
+     */
+    public static ZonedDateTime parseZonedDateTime(String zonedDateTime, String pattern) {
+        return StringUtils.isBlank(zonedDateTime) ? null : ZonedDateTime.parse(zonedDateTime, DateFormatter.createDateTimeFormatter(pattern));
+    }
+
+    /**
+     * 日期时间字符串转自定义格式 {@code pattern} 的 {@code ZonedDateTime} 日期时间对象<br>
+     * {@code zonedDateTime} 与 {@code pattern} 需对应，且必须包含时间<br>
+     * {@code pattern} 可以包含年月日时分秒毫秒数，例如：
+     * <pre>
+     *     yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+     *     yyyy-MM-dd'T'HH:mm:ss.SSSZ
+     *     yyyy-MM-dd HH:mm:ss.SSS
+     *     yyyy-MM-dd'T'HH:mm:ssXXX
+     *     yyyy-MM-dd'T'HH:mm:ssZ
+     *     yyyy-MM-dd HH:mm:ss
+     *     yyyy-MM-dd HH:mm
+     *     yyyy年MM月dd日 HH时mm分ss秒
+     * </pre>
+     *
+     * @param zonedDateTime 日期时间字符串，为空时返回 {@code null}
+     * @param pattern       日期时间格式字符串，不能为空
+     * @param locale        地区，若为 {@code null} 则使用默认地区
+     * @return {@code ZonedDateTime} 日期时间对象
+     * @since 1.8.0
+     */
+    public static ZonedDateTime parseZonedDateTime(String zonedDateTime, String pattern, Locale locale) {
+        return StringUtils.isBlank(zonedDateTime) ? null : ZonedDateTime.parse(zonedDateTime, DateFormatter.createDateTimeFormatter(pattern, locale));
+    }
+
+    /**
+     * 日期时间字符串转自定义格式 {@code pattern} 的 {@code ZonedDateTime} 日期时间对象<br>
+     * {@code zonedDateTime} 与 {@code pattern} 需对应，且必须包含时间<br>
+     * {@code pattern} 可以包含年月日时分秒毫秒数，例如：
+     * <pre>
+     *     yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+     *     yyyy-MM-dd'T'HH:mm:ss.SSSZ
+     *     yyyy-MM-dd HH:mm:ss.SSS
+     *     yyyy-MM-dd'T'HH:mm:ssXXX
+     *     yyyy-MM-dd'T'HH:mm:ssZ
+     *     yyyy-MM-dd HH:mm:ss
+     *     yyyy-MM-dd HH:mm
+     *     yyyy年MM月dd日 HH时mm分ss秒
+     * </pre>
+     *
+     * @param zonedDateTime 日期时间字符串，为空时返回 {@code null}
+     * @param pattern       日期时间格式字符串，不能为空
+     * @param locale        地区，若为 {@code null} 则使用默认地区
+     * @param zoneId        时区，若为 {@code null} 则使用默认时区
+     * @return {@code ZonedDateTime} 日期时间对象
+     * @since 1.8.0
+     */
+    public static ZonedDateTime parseZonedDateTime(String zonedDateTime, String pattern, Locale locale, ZoneId zoneId) {
+        return StringUtils.isBlank(zonedDateTime) ? null : ZonedDateTime.parse(zonedDateTime, DateFormatter.createDateTimeFormatter(pattern, locale, zoneId));
+    }
+
+    /**
+     * 日期时间字符串转自定义格式 {@code formatter} 的 {@code LocalDateTime} 日期时间对象<br>
+     * {@code localDateTime} 与 {@code formatter} 需对应，且必须包含时间<br>
+     * {@code formatter} 可以包含年月日时分秒毫秒数，例如：
+     * <pre>
+     *     yyyy-MM-dd HH:mm:ss.SSS
+     *     yyyy-MM-dd HH:mm:ss
+     *     yyyy-MM-dd HH:mm
+     *     yyyy年MM月dd日 HH时mm分ss秒
+     * </pre>
+     *
+     * @param localDateTime 日期时间字符串，为空时返回 {@code null}
+     * @param formatter     日期时间格式，不能为空
+     * @return {@code LocalDateTime} 日期时间对象
+     * @since 1.8.0
+     */
+    public static LocalDateTime parseDateTime(String localDateTime, DateTimeFormatter formatter) {
+        return StringUtils.isBlank(localDateTime) ? null : LocalDateTime.parse(localDateTime, formatter);
     }
 
     /**
@@ -213,7 +556,50 @@ public class LocalDateTimeUtils {
      * @return {@code LocalDateTime} 日期时间对象
      */
     public static LocalDateTime parseDateTime(String localDateTime, String pattern) {
-        return StringUtils.isBlank(localDateTime) ? null : LocalDateTime.parse(localDateTime, getDateTimeFormatter(pattern));
+        return StringUtils.isBlank(localDateTime) ? null : LocalDateTime.parse(localDateTime, DateFormatter.createDateTimeFormatter(pattern));
+    }
+
+    /**
+     * 日期时间字符串转自定义格式 {@code pattern} 的 {@code LocalDateTime} 日期时间对象<br>
+     * {@code localDateTime} 与 {@code pattern} 需对应，且必须包含时间<br>
+     * {@code pattern} 可以包含年月日时分秒毫秒数，例如：
+     * <pre>
+     *     yyyy-MM-dd HH:mm:ss.SSS
+     *     yyyy-MM-dd HH:mm:ss
+     *     yyyy-MM-dd HH:mm
+     *     yyyy年MM月dd日 HH时mm分ss秒
+     * </pre>
+     *
+     * @param localDateTime 日期时间字符串，为空时返回 {@code null}
+     * @param pattern       日期时间格式字符串，不能为空
+     * @param locale        地区，若为 {@code null} 则使用默认地区
+     * @return {@code LocalDateTime} 日期时间对象
+     * @since 1.8.0
+     */
+    public static LocalDateTime parseDateTime(String localDateTime, String pattern, Locale locale) {
+        return StringUtils.isBlank(localDateTime) ? null : LocalDateTime.parse(localDateTime, DateFormatter.createDateTimeFormatter(pattern, locale));
+    }
+
+    /**
+     * 日期时间字符串转自定义格式 {@code pattern} 的 {@code LocalDateTime} 日期时间对象<br>
+     * {@code localDateTime} 与 {@code pattern} 需对应，且必须包含时间<br>
+     * {@code pattern} 可以包含年月日时分秒毫秒数，例如：
+     * <pre>
+     *     yyyy-MM-dd HH:mm:ss.SSS
+     *     yyyy-MM-dd HH:mm:ss
+     *     yyyy-MM-dd HH:mm
+     *     yyyy年MM月dd日 HH时mm分ss秒
+     * </pre>
+     *
+     * @param localDateTime 日期时间字符串，为空时返回 {@code null}
+     * @param pattern       日期时间格式字符串，不能为空
+     * @param locale        地区，若为 {@code null} 则使用默认地区
+     * @param zoneId        时区，若为 {@code null} 则使用默认时区
+     * @return {@code LocalDateTime} 日期时间对象
+     * @since 1.8.0
+     */
+    public static LocalDateTime parseDateTime(String localDateTime, String pattern, Locale locale, ZoneId zoneId) {
+        return StringUtils.isBlank(localDateTime) ? null : LocalDateTime.parse(localDateTime, DateFormatter.createDateTimeFormatter(pattern, locale, zoneId));
     }
 
     /**
@@ -223,7 +609,7 @@ public class LocalDateTimeUtils {
      * @return {@code LocalDateTime} 日期时间对象
      */
     public static LocalDateTime parseDateTime(String localDateTime) {
-        return StringUtils.isBlank(localDateTime) ? null : LocalDateTime.parse(localDateTime, DATE_TIME_FORMATTER);
+        return StringUtils.isBlank(localDateTime) ? null : LocalDateTime.parse(localDateTime, DateFormatter.NORMAL_DATETIME_FORMATTER);
     }
 
     /**
@@ -233,7 +619,25 @@ public class LocalDateTimeUtils {
      * @return {@code LocalDateTime} 日期时间对象
      */
     public static LocalDateTime parseDateTimeMillis(String localDateTimeMillis) {
-        return StringUtils.isBlank(localDateTimeMillis) ? null : LocalDateTime.parse(localDateTimeMillis, DATE_TIME_MILLIS_FORMATTER);
+        return StringUtils.isBlank(localDateTimeMillis) ? null : LocalDateTime.parse(localDateTimeMillis, DateFormatter.NORMAL_DATETIME_MILLIS_FORMATTER);
+    }
+
+    /**
+     * 日期字符串转自定义格式 {@code formatter} 的 {@code LocalDate} 日期对象<br>
+     * {@code localDate} 与 {@code formatter} 需对应，且不能包含时间<br>
+     * {@code formatter} 可以包含年月日，例如：
+     * <pre>
+     *     yyyy-MM-dd
+     *     yyyy年MM月dd日
+     * </pre>
+     *
+     * @param localDate 日期字符串，为空时返回 {@code null}
+     * @param formatter 日期格式，不能为空
+     * @return {@code LocalDate} 日期对象
+     * @since 1.8.0
+     */
+    public static LocalDate parseDate(String localDate, DateTimeFormatter formatter) {
+        return StringUtils.isBlank(localDate) ? null : LocalDate.parse(localDate, formatter);
     }
 
     /**
@@ -250,7 +654,46 @@ public class LocalDateTimeUtils {
      * @return {@code LocalDate} 日期对象
      */
     public static LocalDate parseDate(String localDate, String pattern) {
-        return StringUtils.isBlank(localDate) ? null : LocalDate.parse(localDate, getDateTimeFormatter(pattern));
+        return StringUtils.isBlank(localDate) ? null : LocalDate.parse(localDate, DateFormatter.createDateTimeFormatter(pattern));
+    }
+
+    /**
+     * 日期字符串转自定义格式 {@code pattern} 的 {@code LocalDate} 日期对象<br>
+     * {@code localDate} 与 {@code pattern} 需对应，且不能包含时间<br>
+     * {@code pattern} 可以包含年月日，例如：
+     * <pre>
+     *     yyyy-MM-dd
+     *     yyyy年MM月dd日
+     * </pre>
+     *
+     * @param localDate 日期字符串，为空时返回 {@code null}
+     * @param pattern   日期格式字符串，不能为空
+     * @param locale    地区，若为 {@code null} 则使用默认地区
+     * @return {@code LocalDate} 日期对象
+     * @since 1.8.0
+     */
+    public static LocalDate parseDate(String localDate, String pattern, Locale locale) {
+        return StringUtils.isBlank(localDate) ? null : LocalDate.parse(localDate, DateFormatter.createDateTimeFormatter(pattern, locale));
+    }
+
+    /**
+     * 日期字符串转自定义格式 {@code pattern} 的 {@code LocalDate} 日期对象<br>
+     * {@code localDate} 与 {@code pattern} 需对应，且不能包含时间<br>
+     * {@code pattern} 可以包含年月日，例如：
+     * <pre>
+     *     yyyy-MM-dd
+     *     yyyy年MM月dd日
+     * </pre>
+     *
+     * @param localDate 日期字符串，为空时返回 {@code null}
+     * @param pattern   日期格式字符串，不能为空
+     * @param locale    地区，若为 {@code null} 则使用默认地区
+     * @param zoneId    时区，若为 {@code null} 则使用默认时区
+     * @return {@code LocalDate} 日期对象
+     * @since 1.8.0
+     */
+    public static LocalDate parseDate(String localDate, String pattern, Locale locale, ZoneId zoneId) {
+        return StringUtils.isBlank(localDate) ? null : LocalDate.parse(localDate, DateFormatter.createDateTimeFormatter(pattern, locale, zoneId));
     }
 
     /**
@@ -260,7 +703,26 @@ public class LocalDateTimeUtils {
      * @return {@code LocalDate} 日期对象
      */
     public static LocalDate parseDate(String localDate) {
-        return StringUtils.isBlank(localDate) ? null : LocalDate.parse(localDate, DATE_FORMATTER);
+        return StringUtils.isBlank(localDate) ? null : LocalDate.parse(localDate, DateFormatter.NORMAL_DATE_FORMATTER);
+    }
+
+    /**
+     * 时间字符串转自定义格式 {@code formatter} 的 {@code LocalTime} 日期时间对象<br>
+     * {@code localTime} 与 {@code formatter} 需对应，且不能包含年月日<br>
+     * {@code formatter} 可以包含时分秒毫秒数，例如：
+     * <pre>
+     *     HH:mm:ss.SSS
+     *     HH:mm:ss
+     *     HH时mm分ss秒
+     * </pre>
+     *
+     * @param localTime 时间字符串，为空时返回 {@code null}
+     * @param formatter 时间格式，不能为空
+     * @return {@code LocalTime} 时间对象
+     * @since 1.8.0
+     */
+    public static LocalTime parseTime(String localTime, DateTimeFormatter formatter) {
+        return StringUtils.isBlank(localTime) ? null : LocalTime.parse(localTime, formatter);
     }
 
     /**
@@ -278,7 +740,48 @@ public class LocalDateTimeUtils {
      * @return {@code LocalTime} 时间对象
      */
     public static LocalTime parseTime(String localTime, String pattern) {
-        return StringUtils.isBlank(localTime) ? null : LocalTime.parse(localTime, getDateTimeFormatter(pattern));
+        return StringUtils.isBlank(localTime) ? null : LocalTime.parse(localTime, DateFormatter.createDateTimeFormatter(pattern));
+    }
+
+    /**
+     * 时间字符串转自定义格式 {@code pattern} 的 {@code LocalTime} 日期时间对象<br>
+     * {@code localTime} 与 {@code pattern} 需对应，且不能包含年月日<br>
+     * {@code pattern} 可以包含时分秒毫秒数，例如：
+     * <pre>
+     *     HH:mm:ss.SSS
+     *     HH:mm:ss
+     *     HH时mm分ss秒
+     * </pre>
+     *
+     * @param localTime 时间字符串，为空时返回 {@code null}
+     * @param pattern   时间格式字符串，不能为空
+     * @param locale    地区，若为 {@code null} 则使用默认地区
+     * @return {@code LocalTime} 时间对象
+     * @since 1.8.0
+     */
+    public static LocalTime parseTime(String localTime, String pattern, Locale locale) {
+        return StringUtils.isBlank(localTime) ? null : LocalTime.parse(localTime, DateFormatter.createDateTimeFormatter(pattern, locale));
+    }
+
+    /**
+     * 时间字符串转自定义格式 {@code pattern} 的 {@code LocalTime} 日期时间对象<br>
+     * {@code localTime} 与 {@code pattern} 需对应，且不能包含年月日<br>
+     * {@code pattern} 可以包含时分秒毫秒数，例如：
+     * <pre>
+     *     HH:mm:ss.SSS
+     *     HH:mm:ss
+     *     HH时mm分ss秒
+     * </pre>
+     *
+     * @param localTime 时间字符串，为空时返回 {@code null}
+     * @param pattern   时间格式字符串，不能为空
+     * @param locale    地区，若为 {@code null} 则使用默认地区
+     * @param zoneId    时区，若为 {@code null} 则使用默认时区
+     * @return {@code LocalTime} 时间对象
+     * @since 1.8.0
+     */
+    public static LocalTime parseTime(String localTime, String pattern, Locale locale, ZoneId zoneId) {
+        return StringUtils.isBlank(localTime) ? null : LocalTime.parse(localTime, DateFormatter.createDateTimeFormatter(pattern, locale, zoneId));
     }
 
     /**
@@ -288,7 +791,7 @@ public class LocalDateTimeUtils {
      * @return {@code LocalTime} 时间对象
      */
     public static LocalTime parseTime(String localTime) {
-        return StringUtils.isBlank(localTime) ? null : LocalTime.parse(localTime, TIME_FORMATTER);
+        return StringUtils.isBlank(localTime) ? null : LocalTime.parse(localTime, DateFormatter.NORMAL_TIME_FORMATTER);
     }
 
     /**
@@ -298,17 +801,18 @@ public class LocalDateTimeUtils {
      * @return {@code LocalTime} 时间对象
      */
     public static LocalTime parseTimeMillis(String localTimeMillis) {
-        return StringUtils.isBlank(localTimeMillis) ? null : LocalTime.parse(localTimeMillis, TIME_MILLIS_FORMATTER);
+        return StringUtils.isBlank(localTimeMillis) ? null : LocalTime.parse(localTimeMillis, DateFormatter.NORMAL_TIME_MILLIS_FORMATTER);
     }
 
     /**
-     * EEE MMM dd HH:mm:ss zzz yyyy 格式字符串转 {@code LocalDateTime} 日期时间对象
+     * 获取当前日期时间的自定义格式 {@code formatter} 字符串
      *
-     * @param originalDateTime 日期时间字符串，为空时返回 {@code null}
-     * @return {@code LocalDateTime} 日期时间对象
+     * @param formatter 时间格式
+     * @return {@code formatter} 格式字符串
+     * @since 1.8.0
      */
-    public static LocalDateTime parseOriginalDateTime(String originalDateTime) {
-        return StringUtils.isBlank(originalDateTime) ? null : ZonedDateTime.parse(originalDateTime, ORIGINAL_DATETIME_FORMATTER).toLocalDateTime();
+    public static String now(DateTimeFormatter formatter) {
+        return LocalDateTime.now().format(formatter);
     }
 
     /**
@@ -318,7 +822,7 @@ public class LocalDateTimeUtils {
      * @return {@code pattern} 格式字符串
      */
     public static String now(String pattern) {
-        return LocalDateTime.now().format(getDateTimeFormatter(pattern));
+        return LocalDateTime.now().format(DateFormatter.createDateTimeFormatter(pattern));
     }
 
     /**
@@ -327,7 +831,7 @@ public class LocalDateTimeUtils {
      * @return yyyy-MM-dd HH:mm:ss 格式字符串
      */
     public static String nowDateTime() {
-        return LocalDateTime.now().format(DATE_TIME_FORMATTER);
+        return LocalDateTime.now().format(DateFormatter.NORMAL_DATETIME_FORMATTER);
     }
 
     /**
@@ -336,7 +840,7 @@ public class LocalDateTimeUtils {
      * @return yyyy-MM-dd HH:mm:ss.SSS 格式字符串
      */
     public static String nowDateTimeMillis() {
-        return LocalDateTime.now().format(DATE_TIME_MILLIS_FORMATTER);
+        return LocalDateTime.now().format(DateFormatter.NORMAL_DATETIME_MILLIS_FORMATTER);
     }
 
     /**
@@ -345,7 +849,7 @@ public class LocalDateTimeUtils {
      * @return yyyy-MM-dd 格式字符串
      */
     public static String nowDate() {
-        return LocalDate.now().format(DATE_FORMATTER);
+        return LocalDate.now().format(DateFormatter.NORMAL_DATE_FORMATTER);
     }
 
     /**
@@ -354,7 +858,7 @@ public class LocalDateTimeUtils {
      * @return HH:mm:ss 格式字符串
      */
     public static String nowTime() {
-        return LocalTime.now().format(TIME_FORMATTER);
+        return LocalTime.now().format(DateFormatter.NORMAL_TIME_FORMATTER);
     }
 
     /**
@@ -363,7 +867,7 @@ public class LocalDateTimeUtils {
      * @return HH:mm:ss.SSS 格式字符串
      */
     public static String nowTimeMillis() {
-        return LocalTime.now().format(TIME_MILLIS_FORMATTER);
+        return LocalTime.now().format(DateFormatter.NORMAL_TIME_MILLIS_FORMATTER);
     }
 
     /**
@@ -372,7 +876,7 @@ public class LocalDateTimeUtils {
      * @return yyyy-MM-dd 格式字符串
      */
     public static String yesterday() {
-        return minus(LocalDate.now(), 1, ChronoUnit.DAYS).format(DATE_FORMATTER);
+        return LocalDate.now().minus(1, ChronoUnit.DAYS).format(DateFormatter.NORMAL_DATE_FORMATTER);
     }
 
     /**
@@ -381,7 +885,37 @@ public class LocalDateTimeUtils {
      * @return yyyy-MM-dd 格式字符串
      */
     public static String tomorrow() {
-        return plus(LocalDate.now(), 1, ChronoUnit.DAYS).format(DATE_FORMATTER);
+        return LocalDate.now().plus(1, ChronoUnit.DAYS).format(DateFormatter.NORMAL_DATE_FORMATTER);
+    }
+
+    /**
+     * 获取当前年月字符串
+     *
+     * @return yyyy-MM 格式字符串
+     * @since 1.8.0
+     */
+    public static String month() {
+        return LocalDate.now().format(DateFormatter.NORMAL_MONTH_FORMATTER);
+    }
+
+    /**
+     * 获取上个月年月字符串
+     *
+     * @return yyyy-MM 格式字符串
+     * @since 1.8.0
+     */
+    public static String lastMonth() {
+        return LocalDate.now().minus(1, ChronoUnit.MONTHS).format(DateFormatter.NORMAL_MONTH_FORMATTER);
+    }
+
+    /**
+     * 获取下个月年月字符串
+     *
+     * @return yyyy-MM 格式字符串
+     * @since 1.8.0
+     */
+    public static String nextMonth() {
+        return LocalDate.now().plus(1, ChronoUnit.MONTHS).format(DateFormatter.NORMAL_MONTH_FORMATTER);
     }
 
     /**
@@ -464,7 +998,7 @@ public class LocalDateTimeUtils {
      */
     public static ZonedDateTime convertToZonedDateTime(Date date) {
         return date == null ? null : Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault())
-                                            .toLocalDateTime().atZone(ZoneId.systemDefault());
+                .toLocalDateTime().atZone(ZoneId.systemDefault());
     }
 
     /**
@@ -595,7 +1129,7 @@ public class LocalDateTimeUtils {
      */
     public static LocalDateTime convertTimeZone(LocalDateTime localDateTime, ZoneId zoneId) {
         return localDateTime == null ? null : localDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(zoneId)
-                                                           .toLocalDateTime();
+                .toLocalDateTime();
     }
 
     /**
@@ -621,7 +1155,7 @@ public class LocalDateTimeUtils {
      */
     public static LocalDateTime convertTimeZone(LocalDateTime localDateTime, ZoneId sourceZoneId, ZoneId targetZoneId) {
         return localDateTime == null ? null : localDateTime.atZone(sourceZoneId).withZoneSameInstant(targetZoneId)
-                                                           .toLocalDateTime();
+                .toLocalDateTime();
     }
 
     /**
